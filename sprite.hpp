@@ -6,6 +6,10 @@
 using std::vector;
 
 class CSpriteSheet{
+private:
+  GLuint texture_handle;
+  SDL_Surface *sdl_texture;
+  
 public:
   CSpriteSheet(char* filename);
   char* sheetname;
