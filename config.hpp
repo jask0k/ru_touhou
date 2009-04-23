@@ -1,0 +1,12 @@
+#ifndef _CONFIG_HPP
+#define _CONFIG_HPP
+
+#define DEFAULT_X 640
+#define DEFAULT_Y 480
+#define DEFAULT_COLOUR 32
+
+#define GAME_FULLSCREEN 1
+#define GAME_WINDOWED 0
+#define WINDOW_DEFAULT GAME_WINDOWED
+
+#endif

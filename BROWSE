@@ -1,0 +1,144 @@
+[ebrowse-hs "ebrowse 5.0" " -x" () ()][ebrowse-ts [ebrowse-cs "CSpriteSheetManager" () 0"sprite.hpp" "class CSpriteSheetManager{" 373() ]
+()([ebrowse-ms "collection" () 0 () "  vector<CSpriteSheet*> collection;" 498 0  () () 0]
+)
+([ebrowse-ms "dispatch" () 0 () "  CSpriteSheet* dispatch(char" 449 0  () () 0]
+[ebrowse-ms "load" () 0 () "  CSpriteSheet* load(char" 407 0  () () 0]
+)
+()
+()
+()
+()
+()()
+][ebrowse-ts [ebrowse-cs "std" () 0() () 0"sprite.hpp" ]
+()([ebrowse-ms "vector" () 0 () () 0 0  () "using std::vector;" 101]
+)
+()
+()
+()
+()
+()
+()()
+][ebrowse-ts [ebrowse-cs "CEngine" () 0"game.hpp" "class CEngine{" 278"game.cpp" ]
+()([ebrowse-ms "colour" () 0 () "  int colour;" 843 0  () () 0]
+[ebrowse-ms "frames" () 0 () "  unsigned long frames;" 685 2  () () 0]
+[ebrowse-ms "fullscreen" () 0 () "  int fullscreen;" 895 0  () () 0]
+[ebrowse-ms "hero" () 0 () "  CHero* hero;" 763 2  () () 0]
+[ebrowse-ms "screen" () 0 () "  SDL_Surface* screen;" 468 2  () () 0]
+[ebrowse-ms "state" () 0 () "  EngineState state;" 627 2  () () 0]
+[ebrowse-ms "yres" () 0 () "  int xres,yres;" 794 0  () () 0]
+)
+([ebrowse-ms "CEngine" () 0 () "  CEngine();" 907 0  () "CEngine::CEngine(){" 164]
+[ebrowse-ms "draw" () 0 () "  void draw()" 1111 0  () "void CEngine::draw()" 2748]
+[ebrowse-ms "draw_game" () 0 () "  void draw_game()" 1184 0  () "void CEngine::draw_game()" 2705]
+[ebrowse-ms "loop" () 0 () "  void loop()" 1060 0  () "void CEngine::loop()" 1726]
+[ebrowse-ms "new_game" () 0 () "  void new_game()" 1022 0  () "void CEngine::new_game()" 1627]
+[ebrowse-ms "read_config" () 0 () "  int read_config()" 525 2  () "int CEngine::read_config()" 1236]
+[ebrowse-ms "think" () 0 () "  void think()" 302 2  () "void CEngine::think()" 1205]
+[ebrowse-ms "write_config" () 0 () "  int write_config()" 576 2  () "int CEngine::write_config()" 1475]
+[ebrowse-ms "~CEngine" () 0 () "  ~CEngine()" 1003 0  () "CEngine::~CEngine()" 1074]
+)
+()
+()
+()
+()
+()()
+][ebrowse-ts [ebrowse-cs "CEnemyBullet" () 0"bullet.hpp" "class CEnemyBullet{" 258"bullet.cpp" ]
+()([ebrowse-ms "grazed" () 0 () "  bool grazed;" 533 2  () () 0]
+[ebrowse-ms "hitbox_size" () 0 () "  GLfloat hitbox_size;" 463 2  () () 0]
+[ebrowse-ms "rotation" () 0 () "  GLfloat rotation;" 387 2  () () 0]
+[ebrowse-ms "speed_set" () 0 () "  bool speed_set;" 626 2  () () 0]
+[ebrowse-ms "vy" () 0 () "  GLfloat vx,vy;" 330 2  () () 0]
+[ebrowse-ms "y" () 0 () "  GLfloat x,y;" 282 2  () () 0]
+)
+([ebrowse-ms "CEnemyBullet" () 0 () "emyBullet(GLfloat x0, GLfloat y0, GLfloat size);" 719 0  () "emyBullet(GLfloat x0, GLfloat y0, GLfloat size){" 99]
+[ebrowse-ms "graze" () 0 () "  GLint graze(GLfloat" 917 0  () () 0]
+[ebrowse-ms "rotate" () 0 () "  GLint rotate(GLfloat" 1337 0  () () 0]
+[ebrowse-ms "set_angle" () 0 () "  GLint set_angle(GLfloat" 1225 0  () () 0]
+[ebrowse-ms "set_target" () 0 () "  GLint set_target(GLfloat" 1106 0  () () 0]
+[ebrowse-ms "think" () 0 () "  GLint think()" 794 0  () () 0]
+)
+()
+()
+()
+()
+()()
+][ebrowse-ts [ebrowse-cs "CSpriteSheet" () 0"sprite.hpp" "class CSpriteSheet{" 122() ]
+()([ebrowse-ms "animations" () 0 () "  vector<vector<int> > animations;" 216 0  () () 0]
+[ebrowse-ms "sheetname" () 0 () "  char* sheetname;" 181 0  () () 0]
+)
+([ebrowse-ms "CSpriteSheet" () 0 () "  CSpriteSheet(char* filename);" 150 0  () () 0]
+[ebrowse-ms "draw" () 0 () "  void draw(GLfloat" 294 0  () () 0]
+[ebrowse-ms "parse_animations" () 0 () "  vector<vector<int> > parse_animations(char" 261 0  () () 0]
+)
+()
+()
+()
+()
+()()
+][ebrowse-ts [ebrowse-cs "CHero" () 0"hero.hpp" "class CHero{" 90"hero.cpp" ]
+()([ebrowse-ms "angle" () 0 () "  GLfloat speed,angle;" 154 0  () () 0]
+[ebrowse-ms "h" () 0 () "  unsigned int w,h;" 191 0  () () 0]
+[ebrowse-ms "texture" () 0 () "  GLuint texture;" 131 0  () () 0]
+[ebrowse-ms "vy" () 0 () "  GLfloat vx,vy;" 171 0  () () 0]
+[ebrowse-ms "y" () 0 () "  GLfloat x,y;" 113 0  () () 0]
+)
+([ebrowse-ms "CHero" () 0 () "  CHero(char*);" 215 0  () "CHero::CHero(char* texture_file){" 173]
+[ebrowse-ms "CHero" () 0 () "  CHero();" 201 0  () "CHero::CHero(){" 78]
+[ebrowse-ms "draw" () 0 () "  void draw()" 285 0  () "void CHero::draw()" 262]
+[ebrowse-ms "load_texture" () 0 () "  GLuint load_texture(SDL_Surface" 252 0  () "GLuint CHero::load_texture (SDL_Surface" 854]
+[ebrowse-ms "think" () 0 () "  void think()" 270 0  () () 0]
+)
+()
+()
+()
+()
+()()
+][ebrowse-ts [ebrowse-cs "CSprite" () 0"sprite.hpp" "class CSprite{" 517() ]
+()([ebrowse-ms "ssheet" () 0 () "  CSpriteSheet* ssheet;" 653 0  () () 0]
+[ebrowse-ms "state" () 0 () "  GLuint anmation,state;" 678 0  () () 0]
+[ebrowse-ms "vy" () 0 () "  GLfloat vx,vy;" 629 0  () () 0]
+[ebrowse-ms "y" () 0 () "  GLfloat x,y;" 612 0  () () 0]
+)
+([ebrowse-ms "CSprite" () 0 () "  CSprite(char* sheetname);" 584 0  () () 0]
+[ebrowse-ms "CSprite" () 0 () "  CSprite();" 568 0  () () 0]
+[ebrowse-ms "draw" () 0 () "  void draw()" 555 0  () () 0]
+[ebrowse-ms "think" () 0 () "  void think()" 540 0  () () 0]
+)
+()
+()
+()
+()
+()()
+][ebrowse-ts [ebrowse-cs "*Globals*" () 0() () 0"bullet.hpp" ]
+()([ebrowse-ms "std" () 0 () () 0 0  "game.cpp" "using namespace std;" 144]
+)
+([ebrowse-ms "main" () 0 "main.cpp" "int main(int" 53 0  "main.cpp" "int main(int" 53]
+)
+()
+()
+([ebrowse-ms "DEFAULT_COLOUR" () 512 () () 0 0  "config.hpp" "#define DEFAULT_COLOUR " 108]
+[ebrowse-ms "DEFAULT_X" () 512 () () 0 0  "config.hpp" "#define DEFAULT_X " 59]
+[ebrowse-ms "DEFAULT_Y" () 512 () () 0 0  "config.hpp" "#define DEFAULT_Y " 81]
+[ebrowse-ms "GAME_FULLSCREEN" () 512 () () 0 0  "config.hpp" "#define GAME_FULLSCREEN " 136]
+[ebrowse-ms "GAME_WINDOWED" () 512 () () 0 0  "config.hpp" "#define GAME_WINDOWED " 160]
+[ebrowse-ms "GRAZE_KILL" () 512 () () 0 0  () "#define GRAZE_KILL " 200]
+[ebrowse-ms "GRAZE_MISS" () 512 () () 0 0  () "#define GRAZE_MISS " 80]
+[ebrowse-ms "GRAZE_WOUND" () 512 () () 0 0  () "#define GRAZE_WOUND " 138]
+[ebrowse-ms "WINDOW_DEFAULT" () 512 () () 0 0  "config.hpp" "#define WINDOW_DEFAULT " 185]
+[ebrowse-ms "_BULLET_HPP" () 512 () () 0 0  () "#define _BULLET_HPP
+" 40]
+[ebrowse-ms "_CONFIG_HPP" () 512 () () 0 0  "config.hpp" "#define _CONFIG_HPP
+" 40]
+[ebrowse-ms "_GAME_HPP" () 512 () () 0 0  "game.hpp" "#define _GAME_HPP
+" 36]
+[ebrowse-ms "_HERO_HPP" () 512 () () 0 0  "hero.hpp" "#define _HERO_HPP
+" 36]
+[ebrowse-ms "_MAIN_HPP" () 512 () () 0 0  "main.hpp" "#define _MAIN_HPP
+" 36]
+[ebrowse-ms "_SPRITE_HPP" () 512 () () 0 0  "sprite.hpp" "#define _SPRITE_HPP
+" 40]
+)
+([ebrowse-ms "EngineState" () 0 () () 0 0  "game.hpp" "enum EngineState{" 172]
+)
+()()
+]

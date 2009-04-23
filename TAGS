@@ -1,0 +1,68 @@
+
+bullet.cpp,33
+CEnemyBullet::CEnemyBullet(6,65
+
+game.cpp,273
+CEngine::CEngine(10,146
+CEngine::~CEngine(43,1055
+void CEngine::think(53,1184
+int CEngine::read_config(56,1210
+int CEngine::write_config(70,1448
+void CEngine::new_game(81,1603
+void CEngine::loop(87,1706
+void CEngine::draw_game(130,2680
+void CEngine::draw(134,2728
+
+hero.cpp,100
+CHero::CHero(5,64
+CHero::CHero(13,156
+void CHero::draw(18,244
+GLuint CHero::load_texture 46,815
+
+main.cpp,15
+int main(4,41
+
+bullet.hpp,143
+#define _BULLET_HPP2,20
+#define GRAZE_MISS 6,61
+#define GRAZE_WOUND 7,118
+#define GRAZE_KILL 8,181
+class CEnemyBullet{CEnemyBullet10,239
+
+config.hpp,193
+#define _CONFIG_HPP2,20
+#define DEFAULT_X 4,41
+#define DEFAULT_Y 5,63
+#define DEFAULT_COLOUR 6,85
+#define GAME_FULLSCREEN 8,112
+#define GAME_WINDOWED 9,138
+#define WINDOW_DEFAULT 10,162
+
+game.hpp,329
+#define _GAME_HPP2,18
+enum EngineState{EngineState10,155
+  ENGINE_STATE_MENU,EngineState::ENGINE_STATE_MENU11,173
+  ENGINE_STATE_GAME,EngineState::ENGINE_STATE_GAME12,194
+  ENGINE_STATE_QUIT,EngineState::ENGINE_STATE_QUIT13,215
+  ENGINE_STATE_PAUSEDEngineState::ENGINE_STATE_PAUSED14,236
+class CEngine{CEngine17,264
+
+hero.hpp,47
+#define _HERO_HPP2,18
+class CHero{CHero6,78
+
+main.hpp,23
+#define _MAIN_HPP2,18
+
+sprite.hpp,172
+#define _SPRITE_HPP2,20
+using std::vector;6,83
+class CSpriteSheet{CSpriteSheet8,103
+class CSpriteSheetManager{CSpriteSheetManager17,347
+class CSprite{CSprite24,503
+
+enemy.hpp,0
+
+sprite.cpp,0
+
+enemy.cpp,0
