@@ -44,7 +44,7 @@ void CHero::draw(){
 }
 
 GLuint CHero::load_texture (SDL_Surface* texture_face){
-  GLenum texture_format;
+  /*  GLenum texture_format;
   GLint  nOfColors;
 
 #ifdef DEBUG
@@ -90,6 +90,7 @@ GLuint CHero::load_texture (SDL_Surface* texture_face){
 		texture_format, GL_UNSIGNED_BYTE, texture_face->pixels );
 #ifdef DEBUG
   std::cerr << ".done!" <<std::endl;
-#endif
+#endif*/
+  texture = 0;
   return texture;
 }

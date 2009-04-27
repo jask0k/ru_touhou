@@ -2,6 +2,8 @@
 #define _SPRITE_HPP
 
 #include "SDL_opengl.h"
+#include "SDL.h"
+
 #include <vector>
 using std::vector;
 

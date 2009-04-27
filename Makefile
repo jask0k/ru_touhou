@@ -18,7 +18,7 @@ all: $(PROJNAME)
 
 $(PROJNAME): $(OBJFILES)
 
-	$(CC) $(CFLAGS) -lSDL_image -g -o $(PROJNAME) $(OBJFILES)
+	$(CC) $(CFLAGS) -lSDL_image -lGL -lGLU -g -o $(PROJNAME) $(OBJFILES)
 
 $(PROJNAME)-static: $(OBJFILES) 
 
