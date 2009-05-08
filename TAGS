@@ -2,25 +2,33 @@
 bullet.cpp,33
 CEnemyBullet::CEnemyBullet(6,65
 
-game.cpp,273
-CEngine::CEngine(10,146
-CEngine::~CEngine(43,1055
-void CEngine::think(53,1184
-int CEngine::read_config(56,1210
-int CEngine::write_config(70,1448
-void CEngine::new_game(81,1603
-void CEngine::loop(87,1706
-void CEngine::draw_game(130,2680
-void CEngine::draw(134,2728
+copypasta.cpp,25
+GLuint LoadTexture(3,80
+
+game.cpp,310
+CEngine::CEngine(9,125
+CEngine::~CEngine(42,1059
+void CEngine::think(52,1203
+int CEngine::read_config(55,1229
+int CEngine::write_config(69,1482
+void CEngine::new_game(80,1652
+void CEngine::handle_events(86,1755
+void CEngine::loop(123,2607
+void CEngine::draw_game(146,3152
+void CEngine::draw(150,3200
 
 hero.cpp,100
 CHero::CHero(5,64
 CHero::CHero(13,156
-void CHero::draw(18,244
-GLuint CHero::load_texture 46,815
+void CHero::draw(18,252
+GLuint CHero::load_texture 46,841
 
 main.cpp,15
 int main(4,41
+
+sprite.cpp,79
+CSpriteSheet::CSpriteSheet(4,24
+vvint* CSpriteSheet::parse_animations(27,700
 
 bullet.hpp,143
 #define _BULLET_HPP2,20
@@ -38,31 +46,50 @@ config.hpp,193
 #define GAME_WINDOWED 9,138
 #define WINDOW_DEFAULT 10,162
 
-game.hpp,329
+copypasta.hpp,98
+#define _COPYPASTA_HPP2,23
+#define TEXTURE_LOAD_FAIL 9,132
+#define TEXTURE_LOAD_SUCCESS 10,160
+
+game.hpp,398
 #define _GAME_HPP2,18
 enum EngineState{EngineState10,155
   ENGINE_STATE_MENU,EngineState::ENGINE_STATE_MENU11,173
   ENGINE_STATE_GAME,EngineState::ENGINE_STATE_GAME12,194
   ENGINE_STATE_QUIT,EngineState::ENGINE_STATE_QUIT13,215
-  ENGINE_STATE_PAUSEDEngineState::ENGINE_STATE_PAUSED14,236
-class CEngine{CEngine17,264
+  ENGINE_STATE_PAUSED,EngineState::ENGINE_STATE_PAUSED14,236
+  ENGINE_STATE_MINIMIZEDEngineState::ENGINE_STATE_MINIMIZED15,259
+class CEngine{CEngine18,290
 
-hero.hpp,47
+hero.hpp,48
 #define _HERO_HPP2,18
-class CHero{CHero6,78
+class CHero{CHero7,100
 
 main.hpp,23
 #define _MAIN_HPP2,18
 
-sprite.hpp,172
+sprite.hpp,251
 #define _SPRITE_HPP2,20
-using std::vector;6,83
-class CSpriteSheet{CSpriteSheet8,103
-class CSpriteSheetManager{CSpriteSheetManager17,347
-class CSprite{CSprite24,503
+using std::vector;13,184
+typedef vector<int> vint;14,203
+typedef vector<vector<int> > vvint;15,229
+class CSpriteSheet{CSpriteSheet17,266
+class CSpriteSheetManager{CSpriteSheetManager31,645
+class CSprite{CSprite38,801
+
+Makefile,211
+PROJNAME 1,0
+CC 3,20
+CFLAGS 5,30
+COMPILE 7,101
+OBJFILES 9,131
+HEADERS 11,184
+all:all15,216
+$(PROJNAME)$(PROJNAME19,236
+$(PROJNAME)-static:$(PROJNAME)-static23,334
+%.o:%.o27,456
+clean:clean31,496
 
 enemy.hpp,0
-
-sprite.cpp,0
 
 enemy.cpp,0
