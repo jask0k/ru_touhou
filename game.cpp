@@ -19,8 +19,7 @@ CEngine::CEngine(){
   screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
   //начало установки 2d-режима
-  glEnable( GL_TEXTURE_2D );
- 
+  glEnable( GL_ARB_texture_rectangle );
   glViewport( 0, 0, 640, 480 );
  
   glClear( GL_COLOR_BUFFER_BIT );
@@ -32,6 +31,9 @@ CEngine::CEngine(){
 	
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
+
+  glEnable( GL_BLEND );
+  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
   //конец установки 2d-режима
   SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
 #ifdef DEBUG
@@ -83,44 +85,61 @@ void CEngine::new_game(){
   hero = new CHero("aya.png");
 }
 
+void CEngine::handle_events(){
+  SDL_Event *event = new SDL_Event;
+  while (SDL_PollEvent(event)){
+    switch (event -> type){  
+    case SDL_KEYDOWN:	//обработка нажатий клавиш
+      switch (event -> key.keysym.sym){
+      case SDLK_ESCAPE:
+	state = ENGINE_STATE_QUIT;
+	break;
+      default:
+#ifdef DEBUG
+	std::cerr << "Don't know dis baton!"<< std::endl;
+#endif
+	break;
+      }
+      break;
+	
+    case SDL_QUIT://обработка закрытия окна
+      state = ENGINE_STATE_QUIT;
+      break;
+	
+    case SDL_ACTIVEEVENT://обработка сворачивания/разворачивания окна
+      if (event -> active.gain)
+	state = last_state;
+      else{
+	last_state = state;
+	state = ENGINE_STATE_MINIMIZED;
+	
+	std::cerr << "minimizing!" << std::endl;
+      }
+    default:
+      break;
+    }
+  }
+  
+}
+
 void CEngine::loop(){
 #ifdef DEBUG
   std::cerr << "Starting game loop!" << std::endl;
 #endif
   int frame_begin;
   new_game();
-  SDL_Event *event = new SDL_Event;
   while (state!=ENGINE_STATE_QUIT){
     frame_begin=SDL_GetTicks();
-    while (SDL_PollEvent(event)){
-      switch (event -> type){  
-      case SDL_KEYDOWN:	//обработка нажатий клавиш
-	switch (event -> key.keysym.sym){
-	case SDLK_ESCAPE:
-	  state = ENGINE_STATE_QUIT;
-	  break;
-	default:
-#ifdef DEBUG
-	  std::cerr << "Don't know dis baton!"<< std::endl;
-#endif
-	  break;
-	}
-	break;
-	
-      case SDL_QUIT://обработка закрытия окна
-	state = ENGINE_STATE_QUIT;
-	break;
-      }
-    }
+    handle_events();
     if (state == ENGINE_STATE_GAME){
       frames++;
       think();//а что тут думать, тут писать надо!
     }
     draw();
     SDL_Delay(1000/60-(SDL_GetTicks()-frame_begin));
-#ifdef DEBUG
-    std::cerr << 1000/(SDL_GetTicks()-frame_begin)<< "FPS" << std::endl;
-#endif
+// #ifdef DEBUG
+//     std::cerr << 1000/(SDL_GetTicks()-frame_begin)<< "FPS" << std::endl;
+// #endif
   }
  
   write_config();
@@ -134,15 +153,17 @@ void CEngine::draw(){
   glClear(GL_COLOR_BUFFER_BIT);
   switch (state){
   case ENGINE_STATE_GAME:
+    glEnable2D();
     draw_game();
+    glDisable2D();
     break;
   case ENGINE_STATE_MENU:
     break;
   case ENGINE_STATE_PAUSED:
     draw_game();
     break;
-  case ENGINE_STATE_QUIT:
-    break;
+  default:
+    return;
   }
   SDL_GL_SwapBuffers();
 }

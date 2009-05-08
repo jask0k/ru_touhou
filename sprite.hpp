@@ -5,7 +5,15 @@
 #include "SDL.h"
 
 #include <vector>
-using std::vector;
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <map>
+
+#include "copypasta.hpp"
+typedef std::vector<int> vint;
+typedef std::vector<std::vector<int> > vvint;
 
 class CSpriteSheet{
 private:
@@ -13,19 +21,24 @@ private:
   SDL_Surface *sdl_texture;
   
 public:
+  SDL_Rect rectangle;
+  //rectangle.w и h -> размер спрайта
+  //rectangle.x и у -> количество спрайтов по вертикали и горизонтали
   CSpriteSheet(char* filename);
-  char* sheetname;
-  vector<vector<int> >* animations;
-  vector<vector<int> >* parse_animations(char* anim_defs);
-  void draw(GLuint animation, GLfloat state, GLfloat x, GLfloat y);
-  void draw(GLuint animation, GLfloat state, GLfloat x, GLfloat y, GLfloat rotation);
+  std::string sheetname;
+  vvint* animations;
+  vvint* parse_props(char* filename);
+  void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y);
+  void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation);
+  void draw(GLuint frame, GLfloat x, GLfloat y);
+  void draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation);
 };
 
 class CSpriteSheetManager{
 public:
   CSpriteSheet* load(char* filename);
   CSpriteSheet* dispatch(char* sheetname);
-  vector<CSpriteSheet*> collection;
+  std::map<std::string,CSpriteSheet*> collection;
 };
 
 class CSprite{
@@ -37,6 +50,6 @@ private:
   GLfloat x,y;
   GLfloat rotation;
   CSpriteSheet* ssheet;
-  GLuint anmation,state;
+  GLuint animation,state;
 };
 #endif

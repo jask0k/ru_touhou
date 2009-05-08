@@ -1,6 +1,6 @@
 #include "copypasta.hpp"
 //copypasta from http://gpwiki.org/index.php/C:SDL_OGL
-GLuint LoadTexture(char* filename, GLuint* texture, SDL_Surface* surface){
+GLuint LoadTexture(const char* filename, GLuint* texture, SDL_Surface* surface){
   GLenum texture_format;
   GLint  nOfColors;
   
@@ -32,7 +32,7 @@ GLuint LoadTexture(char* filename, GLuint* texture, SDL_Surface* surface){
 	  texture_format = GL_BGR;
       } else {
       std::cerr << "warning: the image is not truecolor..  this will probably break" << std::endl;
-      texture_format = GL_RGB4
+      texture_format = GL_RGB4;
       //TODO: this error should not go unhandled
     }
         
@@ -40,7 +40,7 @@ GLuint LoadTexture(char* filename, GLuint* texture, SDL_Surface* surface){
     glGenTextures( 1, texture );
  
     // Bind the texture object
-    glBindTexture( GL_TEXTURE_2D, *texture);
+    glBindTexture( GL_ARB_texture_rectangle, *texture);
  
     // Set the texture's stretching properties
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
@@ -51,10 +51,57 @@ GLuint LoadTexture(char* filename, GLuint* texture, SDL_Surface* surface){
 		  texture_format, GL_UNSIGNED_BYTE, surface->pixels );
   } 
   else {
-    std::cerr << "SDL could not load " << filename <<": " << SDL_GetError() << std:endl;
+    std::cerr << "SDL could not load " << filename <<": " << SDL_GetError() << std::endl;
     SDL_Quit();
     return TEXTURE_LOAD_FAIL;
   }    
  
   return TEXTURE_LOAD_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+// Name: glEnable2D
+// Desc: Enabled 2D primitive rendering by setting up the appropriate orthographic
+//		 perspectives and matrices.
+//-----------------------------------------------------------------------------
+void glEnable2D()
+{
+	GLint iViewport[4];
+
+	// Get a copy of the viewport
+	glGetIntegerv( GL_VIEWPORT, iViewport );
+
+	// Save a copy of the projection matrix so that we can restore it 
+	// when it's time to do 3D rendering again.
+	glMatrixMode( GL_PROJECTION );
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Set up the orthographic projection
+	glOrtho( iViewport[0], iViewport[0]+iViewport[2],
+			 iViewport[1]+iViewport[3], iViewport[1], -1, 1 );
+	glMatrixMode( GL_MODELVIEW );
+	glPushMatrix();
+	glLoadIdentity();
+
+	// Make sure depth testing and lighting are disabled for 2D rendering until
+	// we are finished rendering in 2D
+	glPushAttrib( GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT );
+	glDisable( GL_DEPTH_TEST );
+	glDisable( GL_LIGHTING );
+}
+
+
+//-----------------------------------------------------------------------------
+// Name: glDisable2D
+// Desc: Disables 2D rendering and restores the previous matrix and render states
+//		 before they were modified.
+//-----------------------------------------------------------------------------
+void glDisable2D()
+{
+	glPopAttrib();
+	glMatrixMode( GL_PROJECTION );
+	glPopMatrix();
+	glMatrixMode( GL_MODELVIEW );
+	glPopMatrix();
 }

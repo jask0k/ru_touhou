@@ -1,95 +1,0 @@
-
-bullet.cpp,33
-CEnemyBullet::CEnemyBullet(6,65
-
-copypasta.cpp,25
-GLuint LoadTexture(3,80
-
-game.cpp,310
-CEngine::CEngine(9,125
-CEngine::~CEngine(42,1059
-void CEngine::think(52,1203
-int CEngine::read_config(55,1229
-int CEngine::write_config(69,1482
-void CEngine::new_game(80,1652
-void CEngine::handle_events(86,1755
-void CEngine::loop(123,2607
-void CEngine::draw_game(146,3152
-void CEngine::draw(150,3200
-
-hero.cpp,100
-CHero::CHero(5,64
-CHero::CHero(13,156
-void CHero::draw(18,252
-GLuint CHero::load_texture 46,841
-
-main.cpp,15
-int main(4,41
-
-sprite.cpp,79
-CSpriteSheet::CSpriteSheet(4,24
-vvint* CSpriteSheet::parse_animations(27,700
-
-bullet.hpp,143
-#define _BULLET_HPP2,20
-#define GRAZE_MISS 6,61
-#define GRAZE_WOUND 7,118
-#define GRAZE_KILL 8,181
-class CEnemyBullet{CEnemyBullet10,239
-
-config.hpp,193
-#define _CONFIG_HPP2,20
-#define DEFAULT_X 4,41
-#define DEFAULT_Y 5,63
-#define DEFAULT_COLOUR 6,85
-#define GAME_FULLSCREEN 8,112
-#define GAME_WINDOWED 9,138
-#define WINDOW_DEFAULT 10,162
-
-copypasta.hpp,98
-#define _COPYPASTA_HPP2,23
-#define TEXTURE_LOAD_FAIL 9,132
-#define TEXTURE_LOAD_SUCCESS 10,160
-
-game.hpp,398
-#define _GAME_HPP2,18
-enum EngineState{EngineState10,155
-  ENGINE_STATE_MENU,EngineState::ENGINE_STATE_MENU11,173
-  ENGINE_STATE_GAME,EngineState::ENGINE_STATE_GAME12,194
-  ENGINE_STATE_QUIT,EngineState::ENGINE_STATE_QUIT13,215
-  ENGINE_STATE_PAUSED,EngineState::ENGINE_STATE_PAUSED14,236
-  ENGINE_STATE_MINIMIZEDEngineState::ENGINE_STATE_MINIMIZED15,259
-class CEngine{CEngine18,290
-
-hero.hpp,48
-#define _HERO_HPP2,18
-class CHero{CHero7,100
-
-main.hpp,23
-#define _MAIN_HPP2,18
-
-sprite.hpp,251
-#define _SPRITE_HPP2,20
-using std::vector;13,184
-typedef vector<int> vint;14,203
-typedef vector<vector<int> > vvint;15,229
-class CSpriteSheet{CSpriteSheet17,266
-class CSpriteSheetManager{CSpriteSheetManager31,645
-class CSprite{CSprite38,801
-
-Makefile,211
-PROJNAME 1,0
-CC 3,20
-CFLAGS 5,30
-COMPILE 7,101
-OBJFILES 9,131
-HEADERS 11,184
-all:all15,216
-$(PROJNAME)$(PROJNAME19,236
-$(PROJNAME)-static:$(PROJNAME)-static23,334
-%.o:%.o27,456
-clean:clean31,496
-
-enemy.hpp,0
-
-enemy.cpp,0

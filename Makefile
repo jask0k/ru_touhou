@@ -2,7 +2,7 @@ PROJNAME = danmaku
 
 CC = g++
 
-CFLAGS = -Wall -O2 -DDEBUG -march=athlon-xp `sdl-config --cflags` 
+CFLAGS = -Wall -O2 -DDEBUG -march=athlon-xp `sdl-config --cflags` -g2
 
 COMPILE = $(CC) $(CFLAGS) -c
 
@@ -18,7 +18,7 @@ all: $(PROJNAME)
 
 $(PROJNAME): $(OBJFILES)
 
-	$(CC) $(CFLAGS) -lSDL_image -lGL -lGLU -g -o $(PROJNAME) $(OBJFILES)
+	$(CC) $(CFLAGS) -lSDL_image -lGL -lGLU -g2 -o $(PROJNAME) $(OBJFILES)
 
 $(PROJNAME)-static: $(OBJFILES) 
 

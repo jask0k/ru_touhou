@@ -3,6 +3,7 @@
 
 #include "config.hpp"
 #include "hero.hpp"
+#include "copypasta.hpp"
 
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -11,7 +12,8 @@ enum EngineState{
   ENGINE_STATE_MENU,
   ENGINE_STATE_GAME,
   ENGINE_STATE_QUIT,
-  ENGINE_STATE_PAUSED
+  ENGINE_STATE_PAUSED,
+  ENGINE_STATE_MINIMIZED
 };
   
 class CEngine{
@@ -20,7 +22,9 @@ private:
   SDL_Surface* screen;//поверхность экрана
   int read_config();//чтение конфига
   int write_config();//запись конфига
+  void handle_events();
   EngineState state; //состояние движка
+  EngineState last_state;
   unsigned long frames; //количество кадров от начала игры
   CHero* hero;//ГГ
 public:

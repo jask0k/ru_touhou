@@ -12,13 +12,13 @@ CHero::CHero(){
 
 CHero::CHero(char* texture_file){
   CHero();
-  load_texture(IMG_Load(texture_file));
+  spritesheet = new CSpriteSheet(texture_file);
 }
 
 void CHero::draw(){
-#ifdef DEBUG
-  std::cerr << "Begin to draw Aya.";
-#endif
+// #ifdef DEBUG
+//   std::cerr << "Begin to draw Aya.";
+// #endif
   glBindTexture( GL_TEXTURE_2D, texture );
  
   glBegin( GL_QUADS );
@@ -38,12 +38,13 @@ void CHero::draw(){
 	glTexCoord2i( 0, 2 );
 	glVertex3f( 100, 228, 0 );
   glEnd();
-#ifdef DEBUG
-  std::cerr << ".done!" << std::endl;
-#endif
+// #ifdef DEBUG
+//   std::cerr << ".done!" << std::endl;
+// #endif
 }
 
 GLuint CHero::load_texture (SDL_Surface* texture_face){
+
   /*  GLenum texture_format;
   GLint  nOfColors;
 
