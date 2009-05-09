@@ -29,20 +29,22 @@ vvint* CSpriteSheet::parse_props(char* filename){
   std::string element;
   char symbol;
   while ((symbol = props_file.get())!='\n'){
-    bool width_submitted = false;
     if (symbol >= '0' && symbol <= '9')
       element.push_back(symbol);
-    else if (symbol == 'x' && !element.empty() && !width_submitted){
-      width_submitted = true;
+    else if (symbol == 'x' && !element.empty()){
       parse_numbers.str(element);
       parse_numbers >> rectangle.w;
+      parse_numbers.sync();
       element.clear();
+      parse_numbers.clear();
     }
-    else if (symbol == ';' && !element.empty() && width_submitted){
+    else if (symbol == ';' && !element.empty()){
       parse_numbers.str(element);
       parse_numbers >> rectangle.h;
+      element.clear();
     }
     else {
+      std::cerr << "char:" << symbol << " string:" << element << std::endl;
       std::cerr << ".Parsing error!";
     }
   }
@@ -81,6 +83,7 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
 void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   //биндим текстуру
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
+  //сохраняем матрицу преобразования
   glPushMatrix();
   //вращаем спрайт
   glTranslatef(x,y,0.0f);
@@ -99,4 +102,37 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
     glVertex2f( x-rectangle.w, y+rectangle.h );
   glEnd();
+  //возвращаем матрицу состояния
+  glPopMatrix();
+}
+
+CSpriteSheet* CSpriteSheetManager::load(char* filename){
+  CSpriteSheet* spritesheet = new CSpriteSheet(filename);
+  std::string sheetname(filename);
+  collection[sheetname] = spritesheet;
+  return spritesheet;
+}
+
+CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
+  return collection[sheetname];
+}
+
+CSprite::CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no){
+  ssheet = manager -> dispatch(sheetname);
+  frame = frame_no;
+  rotation = 0;
+}
+
+void CSprite::draw(){
+  ssheet -> draw (frame,x,y,rotation);
+}
+
+void CSprite::set_position(GLfloat new_x, GLfloat new_y){
+  x = new_x;
+  y = new_y;
+}
+
+void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
+  set_position(new_x,new_y);
+  rotation = new_rotation;
 }

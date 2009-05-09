@@ -37,19 +37,29 @@ public:
 class CSpriteSheetManager{
 public:
   CSpriteSheet* load(char* filename);
-  CSpriteSheet* dispatch(char* sheetname);
+  CSpriteSheet* dispatch(std::string sheetname);
   std::map<std::string,CSpriteSheet*> collection;
 };
 
 class CSprite{
 public:
-  void setposition();
+  void set_position(GLfloat x, GLfloat y, GLfloat rotation);
+  void set_position(GLfloat x, GLfloat y);  
   void draw();
-  CSprite(char* sheetname, CSpriteSheetManager* manager);
+  CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no);
 private:
   GLfloat x,y;
   GLfloat rotation;
   CSpriteSheet* ssheet;
+  GLuint frame;
+  //  GLuint animation,state;
+};
+
+class CAnimatedSprite:public CSprite{
+public:
+  void draw();
+private:
   GLuint animation,state;
 };
+
 #endif

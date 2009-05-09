@@ -14,9 +14,9 @@ CEngine::CEngine(){
   //инициализация видео SDL
   if ( SDL_Init(SDL_INIT_VIDEO||SDL_INIT_TIMER) != 0 ) {
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
-    return;
   }
-  screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
+  //  screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
+  screen = SDL_SetVideoMode( 640, 480, 32, SDL_OPENGL );
   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
   //начало установки 2d-режима
   glEnable( GL_ARB_texture_rectangle );
@@ -39,6 +39,8 @@ CEngine::CEngine(){
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
+  ssmanager.load("aya.png");
+  hero = new CHero("aya.png", &ssmanager);
 }
 
 CEngine::~CEngine(){
@@ -82,7 +84,6 @@ int CEngine::write_config(){
 void CEngine::new_game(){
   state = ENGINE_STATE_GAME;
   frames = 0;
-  hero = new CHero("aya.png");
 }
 
 void CEngine::handle_events(){

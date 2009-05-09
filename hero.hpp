@@ -6,15 +6,12 @@
 #include "SDL.h"
 class CHero{
 public:
-  GLfloat x,y;
   GLuint texture;
   GLfloat speed,angle;
   GLfloat vx,vy;
   unsigned int w,h;
-  CSpriteSheet* spritesheet;
-  CHero();
-  CHero(char*);
-  GLuint load_texture(SDL_Surface*);
+  CSprite* sprite;
+  CHero(char*, CSpriteSheetManager*);
   void think();
   void draw();
 };

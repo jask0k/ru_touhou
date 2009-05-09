@@ -3,6 +3,7 @@
 
 #include "config.hpp"
 #include "hero.hpp"
+#include "sprite.hpp"
 #include "copypasta.hpp"
 
 #include "SDL.h"
@@ -27,6 +28,7 @@ private:
   EngineState last_state;
   unsigned long frames; //количество кадров от начала игры
   CHero* hero;//ГГ
+  CSpriteSheetManager ssmanager;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах
