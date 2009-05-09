@@ -15,8 +15,7 @@ CEngine::CEngine(){
   if ( SDL_Init(SDL_INIT_VIDEO||SDL_INIT_TIMER) != 0 ) {
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
   }
-  //  screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
-  screen = SDL_SetVideoMode( 640, 480, 32, SDL_OPENGL );
+  screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
   //начало установки 2d-режима
   glEnable( GL_ARB_texture_rectangle );
@@ -27,20 +26,23 @@ CEngine::CEngine(){
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
  
-  glOrtho(0.0f, 640, 480, 0.0f, -1.0f, 1.0f);
+  //  glOrtho(0.0f, 640, 0.0f, 480, -1.0f, 1.0f);
 	
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
 
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+  glEnable(GL_TEXTURE_RECTANGLE_ARB);
   //конец установки 2d-режима
   SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
-  ssmanager.load("aya.png");
-  hero = new CHero("aya.png", &ssmanager);
+  ssmanager = new CSpriteSheetManager;
+  ssmanager -> load("aya.png");
+  hero = new CHero("aya.png", ssmanager);
 }
 
 CEngine::~CEngine(){
@@ -147,16 +149,16 @@ void CEngine::loop(){
 }
 
 void CEngine::draw_game(){
+  glEnable2D();
   hero -> draw();
+  glDisable2D();
 }
 
 void CEngine::draw(){
   glClear(GL_COLOR_BUFFER_BIT);
   switch (state){
   case ENGINE_STATE_GAME:
-    glEnable2D();
     draw_game();
-    glDisable2D();
     break;
   case ENGINE_STATE_MENU:
     break;

@@ -43,10 +43,10 @@ public:
 
 class CSprite{
 public:
+  CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no);
   void set_position(GLfloat x, GLfloat y, GLfloat rotation);
   void set_position(GLfloat x, GLfloat y);  
   void draw();
-  CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no);
 private:
   GLfloat x,y;
   GLfloat rotation;

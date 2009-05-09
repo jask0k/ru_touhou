@@ -81,8 +81,6 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
   draw(frame,x,y,0);
 }
 void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
-  //биндим текстуру
-  glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
   //сохраняем матрицу преобразования
   glPushMatrix();
   //вращаем спрайт
@@ -92,15 +90,17 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   SDL_Rect frame_dimensions = rectangle;
   frame_dimensions.x = rectangle.w * frame % rectangle.x;
   frame_dimensions.y = rectangle.h * frame / rectangle.x;
+  //биндим текстуру
+  glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
   glBegin( GL_QUADS );
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
-    glVertex2f( x-rectangle.w,y-rectangle.h );
+    glVertex2f( x-rectangle.w/2,y-rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	
-    glVertex2f( x+rectangle.w, y-rectangle.h );
+    glVertex2f( x+rectangle.w/2, y-rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y );	
-    glVertex2f( x+rectangle.w, y+rectangle.h );
+    glVertex2f( x+rectangle.w/2, y+rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
-    glVertex2f( x-rectangle.w, y+rectangle.h );
+    glVertex2f( x-rectangle.w/2, y+rectangle.h/2 );
   glEnd();
   //возвращаем матрицу состояния
   glPopMatrix();

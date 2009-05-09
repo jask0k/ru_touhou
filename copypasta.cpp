@@ -40,14 +40,14 @@ GLuint LoadTexture(const char* filename, GLuint* texture, SDL_Surface* surface){
     glGenTextures( 1, texture );
  
     // Bind the texture object
-    glBindTexture( GL_ARB_texture_rectangle, *texture);
+    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, *texture);
  
     // Set the texture's stretching properties
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
  
     // Edit the texture object's image data using the information SDL_Surface gives us
-    glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
+    glTexImage2D( GL_TEXTURE_RECTANGLE_ARB, 0, nOfColors, surface->w, surface->h, 0,
 		  texture_format, GL_UNSIGNED_BYTE, surface->pixels );
   } 
   else {
@@ -79,7 +79,7 @@ void glEnable2D()
 
 	// Set up the orthographic projection
 	glOrtho( iViewport[0], iViewport[0]+iViewport[2],
-			 iViewport[1]+iViewport[3], iViewport[1], -1, 1 );
+			  iViewport[1], iViewport[1]+iViewport[3], -1, 1 );
 	glMatrixMode( GL_MODELVIEW );
 	glPushMatrix();
 	glLoadIdentity();

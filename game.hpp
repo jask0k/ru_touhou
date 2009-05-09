@@ -28,7 +28,7 @@ private:
   EngineState last_state;
   unsigned long frames; //количество кадров от начала игры
   CHero* hero;//ГГ
-  CSpriteSheetManager ssmanager;
+  CSpriteSheetManager* ssmanager;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах
