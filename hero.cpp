@@ -14,3 +14,8 @@ void CHero::draw(){
   sprite -> draw();
 }
 
+void CHero::set_position(GLfloat x0, GLfloat y0){
+  x = x0;
+  y = y0;
+  sprite -> set_position(x0, y0);
+}

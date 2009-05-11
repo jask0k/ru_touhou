@@ -17,6 +17,20 @@ enum EngineState{
   ENGINE_STATE_MINIMIZED
 };
   
+class CFrameManager{
+private:
+  unsigned int begin_time;
+  GLfloat FPS;
+  GLfloat averageFPS;
+  unsigned long frames;
+public:
+  CFrameManager();
+  GLfloat get_FPS();
+  GLfloat get_aFPS();
+  void begin_frame();//начало кадра -- сохраняем время начала кадра
+  void end_frame();//конец кадра -- ждём время, обновляем FPS
+};
+
 class CEngine{
 private:
   void think();//то, что будет выполнятся каждый кадр(кроме рисования), математика и всё такое
@@ -29,6 +43,7 @@ private:
   unsigned long frames; //количество кадров от начала игры
   CHero* hero;//ГГ
   CSpriteSheetManager* ssmanager;
+  CFrameManager* fps_manager;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах

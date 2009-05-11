@@ -1,7 +1,7 @@
 #ifndef _BULLET_HPP
 #define _BULLET_HPP
-#include <GL/gl.h>
-
+#include "SDL_opengl.h"
+#include "SDL.h"
 
 #define GRAZE_MISS 0 //пуля промахнулась
 #define GRAZE_WOUND 1 //пуля загрейзила цель

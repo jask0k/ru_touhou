@@ -6,6 +6,31 @@
 #include "math.h"
 #include <iostream>
 
+CFrameManager::CFrameManager(){
+  frames = 0;
+  FPS = 0;
+  averageFPS = 0;
+}
+
+void CFrameManager::begin_frame(){
+  begin_time = SDL_GetTicks();  
+}
+
+void CFrameManager::end_frame(){
+  SDL_Delay(1000/60-(SDL_GetTicks()-begin_time));
+  ++frames;
+  FPS = 1000/(SDL_GetTicks()-begin_time);
+  averageFPS += (FPS-averageFPS)/frames;
+}
+
+GLfloat CFrameManager::get_FPS(){
+  return FPS;
+}
+
+GLfloat CFrameManager::get_aFPS(){
+  return averageFPS;
+}
+
 CEngine::CEngine(){
   read_config();
 #ifdef DEBUG
@@ -40,6 +65,7 @@ CEngine::CEngine(){
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
+  fps_manager = new CFrameManager;
   ssmanager = new CSpriteSheetManager;
   ssmanager -> load("aya.png");
   hero = new CHero("aya.png", ssmanager);
@@ -129,20 +155,18 @@ void CEngine::loop(){
 #ifdef DEBUG
   std::cerr << "Starting game loop!" << std::endl;
 #endif
-  int frame_begin;
+
   new_game();
   while (state!=ENGINE_STATE_QUIT){
-    frame_begin=SDL_GetTicks();
+    fps_manager -> begin_frame();
     handle_events();
     if (state == ENGINE_STATE_GAME){
       frames++;
       think();//а что тут думать, тут писать надо!
     }
     draw();
-    SDL_Delay(1000/60-(SDL_GetTicks()-frame_begin));
-// #ifdef DEBUG
-//     std::cerr << 1000/(SDL_GetTicks()-frame_begin)<< "FPS" << std::endl;
-// #endif
+    fps_manager -> end_frame();
+    std::cerr << (fps_manager -> get_aFPS()) << "fps" <<std::endl;
   }
  
   write_config();
