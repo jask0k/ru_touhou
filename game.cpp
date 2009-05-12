@@ -72,6 +72,9 @@ CEngine::CEngine(){
 }
 
 CEngine::~CEngine(){
+  delete hero;
+  delete ssmanager;
+  delete fps_manager;
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif

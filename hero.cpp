@@ -10,6 +10,10 @@ CHero::CHero(char* texture_file, CSpriteSheetManager* manager){
   sprite->set_position(100,100);
 }
 
+CHero::~CHero(){
+  delete sprite;
+}
+
 void CHero::draw(){
   sprite -> draw();
 }

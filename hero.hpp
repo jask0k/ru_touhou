@@ -13,6 +13,7 @@ public:
   unsigned int w,h;
   CSprite* sprite;
   CHero(char*, CSpriteSheetManager*);
+  ~CHero();
   void think();
   void draw();
   void set_position(GLfloat x0, GLfloat y0);
