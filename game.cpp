@@ -6,6 +6,7 @@
 #include "math.h"
 #include <iostream>
 
+
 CFrameManager::CFrameManager(){
   frames = 0;
   FPS = 0;
@@ -17,7 +18,9 @@ void CFrameManager::begin_frame(){
 }
 
 void CFrameManager::end_frame(){
-  SDL_Delay(1000/60-(SDL_GetTicks()-begin_time));
+  int delay = 1000/60-(SDL_GetTicks()-begin_time);
+  if (delay>0)
+    SDL_Delay(delay);
   ++frames;
   FPS = 1000/(SDL_GetTicks()-begin_time);
   averageFPS += (FPS-averageFPS)/frames;
@@ -43,7 +46,6 @@ CEngine::CEngine(){
   screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
   //начало установки 2d-режима
-  glEnable( GL_ARB_texture_rectangle );
   glViewport( 0, 0, 640, 480 );
  
   glClear( GL_COLOR_BUFFER_BIT );
@@ -69,6 +71,7 @@ CEngine::CEngine(){
   ssmanager = new CSpriteSheetManager;
   ssmanager -> load("aya.png");
   hero = new CHero("aya.png", ssmanager);
+  ui_background = LoadTexture_simple("images/ui.png");
 }
 
 CEngine::~CEngine(){
@@ -114,6 +117,7 @@ int CEngine::write_config(){
 
 void CEngine::new_game(){
   state = ENGINE_STATE_GAME;
+  last_state = ENGINE_STATE_GAME;
   frames = 0;
 }
 
@@ -145,7 +149,9 @@ void CEngine::handle_events(){
 	last_state = state;
 	state = ENGINE_STATE_MINIMIZED;
 	
+#ifdef DEBUG
 	std::cerr << "minimizing!" << std::endl;
+#endif
       }
     default:
       break;
@@ -169,15 +175,40 @@ void CEngine::loop(){
     }
     draw();
     fps_manager -> end_frame();
-    std::cerr << (fps_manager -> get_aFPS()) << "fps" <<std::endl;
+    //    std::cerr << (fps_manager -> get_aFPS()) << "fps" <<std::endl;
   }
  
   write_config();
 }
 
 void CEngine::draw_game(){
+  glViewport(0,0,640,480);
+  glLoadIdentity();
   glEnable2D();
+  //рисуем панельку со статами здесь
+  glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,ui_background);
+  glBegin( GL_QUADS );
+    glTexCoord2i( 0,480 );
+    glVertex2f( 0,0 );
+    glTexCoord2i( 640, 480 );	
+    glVertex2f( 640, 0 );
+    glTexCoord2i( 640, 0 );	
+    glVertex2f( 640, 480 );
+    glTexCoord2i( 0, 0 );		
+    glVertex2f( 0, 480 );
+  glEnd();
+
+  glDisable2D();
+  
+  glViewport(32,16,384,448);
+  glLoadIdentity();
+  //  glClear(GL_COLOR_BUFFER_BIT);
+  //рисуем фон
+  glEnable2D();
+
+  //рисуем спрайты
   hero -> draw();
+
   glDisable2D();
 }
 

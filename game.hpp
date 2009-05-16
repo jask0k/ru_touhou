@@ -19,7 +19,7 @@ enum EngineState{
   
 class CFrameManager{
 private:
-  unsigned int begin_time;
+  GLuint begin_time;
   GLfloat FPS;
   GLfloat averageFPS;
   unsigned long frames;
@@ -35,6 +35,7 @@ class CEngine{
 private:
   void think();//то, что будет выполнятся каждый кадр(кроме рисования), математика и всё такое
   SDL_Surface* screen;//поверхность экрана
+  GLuint ui_background;
   int read_config();//чтение конфига
   int write_config();//запись конфига
   void handle_events();
