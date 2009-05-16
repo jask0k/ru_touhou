@@ -4,7 +4,7 @@
 CSpriteSheet::CSpriteSheet(char* filename){
   std::string full_filename = "images/";
   full_filename += filename;
-  if (LoadTexture(full_filename.c_str(), &texture_handle, sdl_texture)){
+  if (LoadTexture(full_filename.c_str(), &texture_handle,  &sdl_texture)){
 #ifdef DEBUG
     std::cerr << "Loaded spritesheet '" << filename << "'!" << std::endl;
 #endif
@@ -14,6 +14,7 @@ CSpriteSheet::CSpriteSheet(char* filename){
   }
   else{
     std::cerr << "could not load spritesheet " << filename << std::endl;
+    SDL_Quit();
   }
 }
 

@@ -8,7 +8,7 @@
 
 #define TEXTURE_LOAD_FAIL 0
 #define TEXTURE_LOAD_SUCCESS 1
-GLuint LoadTexture(const char* filename, GLuint* texture, SDL_Surface* surface);
+GLuint LoadTexture(const char* filename, GLuint* texture, SDL_Surface** surface);
 GLuint LoadTexture_simple(const char* filename);
 void glEnable2D();
 void glDisable2D();
