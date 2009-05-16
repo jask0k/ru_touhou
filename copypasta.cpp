@@ -63,7 +63,7 @@ GLuint LoadTexture_simple(const char* filename){
   GLenum texture_format;
   GLint  nOfColors;
   SDL_Surface* surface;
-  GLuint* texture = NULL;
+  GLuint* texture;
   
   if ( (surface = IMG_Load(filename)) ) { 
  

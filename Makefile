@@ -24,7 +24,7 @@ $(PROJNAME)-static: $(OBJFILES)
 
 	$(CC) -static `sdl-config --static-libs` $(CFLAGS)  -o $(PROJNAME)-static $(OBJFILES)
 
-%.o: %.cpp %.hpp
+%.o: %.cpp %.hpp config.hpp
 
 	$(COMPILE) -o $@ $<
 

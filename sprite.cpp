@@ -78,14 +78,6 @@ vvint* CSpriteSheet::parse_props(char* filename){
 }
 
 void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
-  draw(frame,x,y,0);
-}
-void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
-  //сохраняем матрицу преобразования
-  glPushMatrix();
-  //вращаем спрайт
-  glTranslatef(x,y,0.0f);
-  glRotatef(rotation,0.0f,0.0f,1.0f);
   //вычисляем координаты кадра
   SDL_Rect frame_dimensions = rectangle;
   frame_dimensions.x = rectangle.w * frame % rectangle.x;
@@ -102,6 +94,15 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
     glVertex2f( x-rectangle.w/2, y+rectangle.h/2 );
   glEnd();
+}
+void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
+  //сохраняем матрицу преобразования
+  glPushMatrix();
+  //вращаем спрайт
+  glTranslatef(x,y,0.0f);
+  glRotatef(rotation,0.0f,0.0f,1.0f);
+  //рисуем его
+  draw(frame,x,y);
   //возвращаем матрицу состояния
   glPopMatrix();
 }
