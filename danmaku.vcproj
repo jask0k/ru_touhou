@@ -65,7 +65,7 @@
 				OutputFile="$(SolutionDir)$(ProjectName)_d.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				ManifestFile="$(SolutionDir)$(TargetFileName)_d.intermediate.manifest"
+				ManifestFile="$(SolutionDir)$(TargetFileName).intermediate.manifest"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(SolutionDir)$(ProjectName)_d.pdb"
 				SubSystem="1"
