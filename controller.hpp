@@ -1,5 +1,6 @@
 #ifndef _CONTROLLER_HPP
 #define _CONTROLLER_HPP
+#define _USE_MATH_DEFINES
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include <set>

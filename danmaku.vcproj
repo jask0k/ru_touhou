@@ -187,6 +187,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\controller.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\copypasta.cpp"
 				>
 			</File>
@@ -222,6 +226,10 @@
 			</File>
 			<File
 				RelativePath=".\config.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\controller.hpp"
 				>
 			</File>
 			<File
