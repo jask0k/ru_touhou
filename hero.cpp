@@ -38,15 +38,15 @@ void CHero::set_speed_angle(GLfloat velocity, GLfloat direction){
 void CHero::think(){
   if (x+vx < 0)
     x = 0;
-  else if (x+vx > GAME_FIELD_WIDTH)
-    x = GAME_FIELD_WIDTH;
+  else if (x+vx > GAME_FIELD_WIDTH/2)
+    x = GAME_FIELD_WIDTH/2;
   else
     x += vx;
   if (y+vy < 0)
     y = 0;
-  else if (y+vy > GAME_FIELD_HEIGHT)
-    y = GAME_FIELD_HEIGHT;
+  else if (y+vy > GAME_FIELD_HEIGHT/2)
+    y = GAME_FIELD_HEIGHT/2;
   else
     y += vy;
-  sprite -> set_position(x,y);
+  sprite -> set_position(floor(x),floor(y));
 }

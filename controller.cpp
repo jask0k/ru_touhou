@@ -81,8 +81,8 @@ void CController::analog_sync(){
   else{
     analog_state.pow = 1;
     angle = atan2((float)vy,(float)vx);}
-  //  if (angle < 0)
-  //    angle = 2*M_PI-angle;
+    if (angle < 0)
+      angle = 2*M_PI+angle;
   analog_state.dir = angle;
 #ifdef DEBUG
   std::cerr << "angle:" << angle << std::endl;
@@ -103,6 +103,7 @@ struct controller_state CController::get_state(){
 EButton CController::get_confirm(){
   if (state -> count(B_ATTACK)){
     state -> erase(B_ATTACK);
+    state -> erase(B_BOMB);
     return B_ATTACK;}
   else if (state -> count(B_BOMB)){
     state -> erase(B_BOMB);

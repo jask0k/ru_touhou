@@ -191,6 +191,7 @@ void CEngine::loop(){
 }
 
 void CEngine::draw_game(){
+  
   glViewport(0,0,640,480);
   glLoadIdentity();
   glEnable2D();
@@ -200,25 +201,31 @@ void CEngine::draw_game(){
     glTexCoord2i( 0,480 );
     glVertex2f( 0,0 );
     glTexCoord2i( 640, 480 );	
-    glVertex2f( 640, 0 );
+    glVertex2f( xres, 0 );
     glTexCoord2i( 640, 0 );	
-    glVertex2f( 640, 480 );
+    glVertex2f( xres, yres );
     glTexCoord2i( 0, 0 );		
-    glVertex2f( 0, 480 );
+    glVertex2f( 0, yres );
   glEnd();
 
   glDisable2D();
   
   glViewport(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
+  glScissor(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
   glLoadIdentity();
-  //  glClear(GL_COLOR_BUFFER_BIT);
+
+  glEnable(GL_SCISSOR_TEST);
+  glClear(GL_COLOR_BUFFER_BIT);
+
   //рисуем фон
+
   glEnable2D();
 
   //рисуем спрайты
   hero -> draw();
 
   glDisable2D();
+  glDisable(GL_SCISSOR_TEST);
 }
 
 void CEngine::draw(){
