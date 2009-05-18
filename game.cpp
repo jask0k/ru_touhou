@@ -3,7 +3,7 @@
 #include "SDL.h"
 #include "SDL_opengl.h" 
 #include "SDL_image.h"
-#include "math.h"
+#include <cmath>
 #include <iostream>
 
 
@@ -69,6 +69,7 @@ CEngine::CEngine(){
 #endif
   fps_manager = new CFrameManager;
   ssmanager = new CSpriteSheetManager;
+  controller = new CController;
   ssmanager -> load("aya.png");
   hero = new CHero("aya.png", ssmanager);
   ui_background = LoadTexture_simple("images/ui.png");
@@ -78,6 +79,7 @@ CEngine::~CEngine(){
   delete hero;
   delete ssmanager;
   delete fps_manager;
+  delete controller;
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif
@@ -85,9 +87,6 @@ CEngine::~CEngine(){
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
-}
-
-void CEngine::think(){
 }
 
 int CEngine::read_config(){
@@ -121,9 +120,19 @@ void CEngine::new_game(){
   frames = 0;
 }
 
+void CEngine::think(){
+  controller_state c_state = controller -> get_state();
+  GLfloat speed;
+  speed = (c_state.focus)?0.5f:1.0f;
+  hero -> set_speed_angle(c_state.strength * speed, c_state.direction);
+  hero ->think();
+}
+
 void CEngine::handle_events(){
   SDL_Event *event = new SDL_Event;
   while (SDL_PollEvent(event)){
+    if (controller -> handle_event(event))
+      continue;
     switch (event -> type){  
     case SDL_KEYDOWN:	//обработка нажатий клавиш
       switch (event -> key.keysym.sym){
@@ -200,7 +209,7 @@ void CEngine::draw_game(){
 
   glDisable2D();
   
-  glViewport(32,16,384,448);
+  glViewport(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
   glLoadIdentity();
   //  glClear(GL_COLOR_BUFFER_BIT);
   //рисуем фон

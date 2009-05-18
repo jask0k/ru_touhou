@@ -2,7 +2,7 @@ PROJNAME = danmaku
 
 CC = g++
 
-CFLAGS = -Wall -O2 -DDEBUG -march=athlon-xp `sdl-config --cflags` -g2
+CFLAGS = -Wall -DDEBUG `sdl-config --cflags` -g2
 
 COMPILE = $(CC) $(CFLAGS) -c
 

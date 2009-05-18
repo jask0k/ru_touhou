@@ -4,17 +4,18 @@
 #include "sprite.hpp"
 #include "SDL_opengl.h"
 #include "SDL.h"
+#include <cmath>
+#include "config.hpp"
+
 class CHero{
 public:
-  GLuint texture;
-  GLfloat speed,angle;
-  GLfloat x,y;
-  GLfloat vx,vy;
-  unsigned int w,h;
-  CSprite* sprite;
+  GLfloat max_speed;
+  GLfloat x,y;//координаты героя
+  GLfloat vx,vy;//скорость
+  CSprite* sprite;//спрайт персонажа
   CHero(char*, CSpriteSheetManager*);
   ~CHero();
-  void think();
+  void think();//движение
   void draw();
   void set_position(GLfloat x0, GLfloat y0);
   void set_speed(GLfloat vx0, GLfloat vy0);

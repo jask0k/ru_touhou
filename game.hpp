@@ -5,6 +5,7 @@
 #include "hero.hpp"
 #include "sprite.hpp"
 #include "copypasta.hpp"
+#include "controller.hpp"
 
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -45,6 +46,7 @@ private:
   CHero* hero;//ГГ
   CSpriteSheetManager* ssmanager;
   CFrameManager* fps_manager;
+  CController* controller;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах
