@@ -85,7 +85,7 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
   frame_dimensions.y = rectangle.h * frame / rectangle.x;
   //биндим текстуру
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
-  glBegin( GL_QUADS );
+  glBegin( GL_QUADS );{
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
     glVertex2f( x-rectangle.w/2,y-rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	
@@ -93,7 +93,7 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y );	
     glVertex2f( x+rectangle.w/2, y+rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
-    glVertex2f( x-rectangle.w/2, y+rectangle.h/2 );
+    glVertex2f( x-rectangle.w/2, y+rectangle.h/2 );}
   glEnd();
 }
 void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){

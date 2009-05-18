@@ -72,9 +72,9 @@ void CController::analog_sync(){
   GLfloat angle;
   vx = (state -> count(B_RIGHT)) - (state -> count(B_LEFT));
   vy = (state -> count(B_UP)) - (state -> count(B_DOWN));
-#ifdef DEBUG
-  std::cerr << "vx:"<<vx << " vy:" << vy<<std::endl;
-#endif
+  //#ifdef DEBUG
+  //std::cerr << "vx:"<<vx << " vy:" << vy<<std::endl;
+  //#endif
   if (vx==0 && vy==0){
     analog_state.pow = 0;
     angle = 0;}
@@ -84,9 +84,9 @@ void CController::analog_sync(){
     if (angle < 0)
       angle = 2*M_PI+angle;
   analog_state.dir = angle;
-#ifdef DEBUG
-  std::cerr << "angle:" << angle << std::endl;
-#endif
+  //#ifdef DEBUG
+  //std::cerr << "angle:" << angle << std::endl;
+  //#endif
 
 }
 

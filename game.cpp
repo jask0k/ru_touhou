@@ -44,6 +44,9 @@ CEngine::CEngine(){
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
   }
   screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
+  
+  SDL_ShowCursor(SDL_DISABLE);
+
   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
   //начало установки 2d-режима
   glViewport( 0, 0, 640, 480 );
@@ -196,16 +199,12 @@ void CEngine::draw_game(){
   glLoadIdentity();
   glEnable2D();
   //рисуем панельку со статами здесь
-  glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,ui_background);
-  glBegin( GL_QUADS );
-    glTexCoord2i( 0,480 );
-    glVertex2f( 0,0 );
-    glTexCoord2i( 640, 480 );	
-    glVertex2f( xres, 0 );
-    glTexCoord2i( 640, 0 );	
-    glVertex2f( xres, yres );
-    glTexCoord2i( 0, 0 );		
-    glVertex2f( 0, yres );
+  glBindTexture(GL_TEXTURE_RECTANGLE_ARB , ui_background);
+  glBegin( GL_QUADS );{
+    glTexCoord2i( 0  , 480 ); glVertex2f( 0,    0 );
+    glTexCoord2i( 640, 480 ); glVertex2f( xres, 0 );
+    glTexCoord2i( 640, 0   ); glVertex2f( xres, yres );
+    glTexCoord2i( 0  , 0   ); glVertex2f( 0,    yres );}
   glEnd();
 
   glDisable2D();
