@@ -10,12 +10,17 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 //состояния движка
-enum EngineState{
-  ENGINE_STATE_MENU,
+
+enum EngineMainState{
+  ENGINE_STATE_MAIN_MENU,
   ENGINE_STATE_GAME,
   ENGINE_STATE_QUIT,
-  ENGINE_STATE_PAUSED,
-  ENGINE_STATE_MINIMIZED
+  ENGINE_STATE_PAUSED
+};
+
+struct EngineState{
+  EngineMainState main_state;
+  bool active;
 };
   
 class CFrameManager{
@@ -41,7 +46,6 @@ private:
   int write_config();//запись конфига
   void handle_events();
   EngineState state; //состояние движка
-  EngineState last_state;
   unsigned long frames; //количество кадров от начала игры
   CHero* hero;//ГГ
   CSpriteSheetManager* ssmanager;

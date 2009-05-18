@@ -118,8 +118,8 @@ int CEngine::write_config(){
 }
 
 void CEngine::new_game(){
-  state = ENGINE_STATE_GAME;
-  last_state = ENGINE_STATE_GAME;
+  state.main_state = ENGINE_STATE_GAME;
+  state.active = true;
   frames = 0;
 }
 
@@ -140,7 +140,7 @@ void CEngine::handle_events(){
     case SDL_KEYDOWN:	//обработка нажатий клавиш
       switch (event -> key.keysym.sym){
       case SDLK_ESCAPE:
-	state = ENGINE_STATE_QUIT;
+	state.main_state = ENGINE_STATE_QUIT;
 	break;
       default:
 #ifdef DEBUG
@@ -151,16 +151,14 @@ void CEngine::handle_events(){
       break;
 	
     case SDL_QUIT://обработка закрытия окна
-      state = ENGINE_STATE_QUIT;
+      state.main_state = ENGINE_STATE_QUIT;
       break;
 	
     case SDL_ACTIVEEVENT://обработка сворачивания/разворачивания окна
       if (event -> active.gain)
-	state = last_state;
+	state.active = true;
       else{
-	last_state = state;
-	state = ENGINE_STATE_MINIMIZED;
-	
+        state.active = false;	
 #ifdef DEBUG
 	std::cerr << "minimizing!" << std::endl;
 #endif
@@ -178,10 +176,10 @@ void CEngine::loop(){
 #endif
 
   new_game();
-  while (state!=ENGINE_STATE_QUIT){
+  while (state.main_state!=ENGINE_STATE_QUIT){
     fps_manager -> begin_frame();
     handle_events();
-    if (state == ENGINE_STATE_GAME){
+    if (state.main_state == ENGINE_STATE_GAME){
       frames++;
       think();//а что тут думать, тут писать надо!
     }
@@ -229,17 +227,18 @@ void CEngine::draw_game(){
 
 void CEngine::draw(){
   glClear(GL_COLOR_BUFFER_BIT);
-  switch (state){
+  switch (state.main_state){
   case ENGINE_STATE_GAME:
     draw_game();
     break;
-  case ENGINE_STATE_MENU:
+  case ENGINE_STATE_MAIN_MENU:
     break;
   case ENGINE_STATE_PAUSED:
     draw_game();
     break;
   default:
-    return;
+    break;
   }
+  if (state.active)
   SDL_GL_SwapBuffers();
 }
