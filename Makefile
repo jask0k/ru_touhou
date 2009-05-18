@@ -2,7 +2,7 @@ PROJNAME = danmaku
 
 CC = g++
 
-CFLAGS = -Wall -DDEBUG `sdl-config --cflags` -g2
+CFLAGS = -Wall -Wextra -DDEBUG `sdl-config --cflags` -ggdb3
 
 COMPILE = $(CC) $(CFLAGS) -c
 
@@ -18,11 +18,7 @@ all: $(PROJNAME)
 
 $(PROJNAME): $(OBJFILES)
 
-	$(CC) $(CFLAGS) -lSDL_image -lGL -lGLU -g2 -o $(PROJNAME) $(OBJFILES)
-
-$(PROJNAME)-static: $(OBJFILES) 
-
-	$(CC) -static `sdl-config --static-libs` $(CFLAGS)  -o $(PROJNAME)-static $(OBJFILES)
+	$(CC) $(CFLAGS) -lSDL_image -lGL -lGLU -ggdb3 -o $(PROJNAME) $(OBJFILES)
 
 %.o: %.cpp %.hpp config.hpp
 
