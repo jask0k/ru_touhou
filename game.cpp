@@ -56,7 +56,7 @@ CEngine::CEngine(){
   glMatrixMode( GL_PROJECTION );
   glLoadIdentity();
  
-  //  glOrtho(0.0f, 640, 0.0f, 480, -1.0f, 1.0f);
+  glOrtho(0.0f, xres, 0.0f, yres, -1.0f, 1.0f);
 	
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
@@ -201,10 +201,10 @@ void CEngine::draw_game(){
   //рисуем панельку со статами здесь
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB , ui_background);
   glBegin( GL_QUADS );{
-    glTexCoord2i( 0  , 480 ); glVertex2f( 0,    0 );
-    glTexCoord2i( 640, 480 ); glVertex2f( xres, 0 );
-    glTexCoord2i( 640, 0   ); glVertex2f( xres, yres );
-    glTexCoord2i( 0  , 0   ); glVertex2f( 0,    yres );}
+    glTexCoord2i( 0  , 480 ); glVertex2i( 0,    0 );
+    glTexCoord2i( 640, 480 ); glVertex2i( xres, 0 );
+    glTexCoord2i( 640, 0   ); glVertex2i( xres, yres );
+    glTexCoord2i( 0  , 0   ); glVertex2i( 0,    yres );}
   glEnd();
 
   glDisable2D();

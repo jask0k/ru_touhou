@@ -82,7 +82,7 @@ void CController::analog_sync(){
     analog_state.pow = 1;
     angle = atan2((float)vy,(float)vx);}
     if (angle < 0)
-      angle = 2*M_PI+angle;
+      angle += 2*M_PI;
   analog_state.dir = angle;
   //#ifdef DEBUG
   //std::cerr << "angle:" << angle << std::endl;
@@ -94,9 +94,9 @@ struct controller_state CController::get_state(){
   controller_state result;
   result.direction = analog_state.dir;
   result.strength = analog_state.pow;
-  result.focus = state -> count(B_FOCUS);
-  result.attack = state -> count(B_ATTACK);
-  result.skip = state -> count(B_SKIP);
+  result.focus = (bool)state -> count(B_FOCUS);
+  result.attack = (bool)state -> count(B_ATTACK);
+  result.skip = (bool)state -> count(B_SKIP);
   return result;
 }
 
