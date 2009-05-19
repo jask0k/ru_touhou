@@ -48,5 +48,5 @@ void CHero::think(){
     y = GAME_FIELD_HEIGHT/2;
   else
     y += vy;
-  sprite -> set_position(floor(x),floor(y));
+  sprite -> set_position(x,y);
 }

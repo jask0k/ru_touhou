@@ -155,14 +155,15 @@ void CEngine::handle_events(){
       break;
 	
     case SDL_ACTIVEEVENT://обработка сворачивания/разворачивания окна
-      if (event -> active.gain)
-	state.active = true;
-      else{
-        state.active = false;	
+      if (event -> active.state == SDL_APPACTIVE)
+	if (event -> active.gain)
+	  state.active = true;
+	else{
+	  state.active = false;	
 #ifdef DEBUG
-	std::cerr << "minimizing!" << std::endl;
+	  std::cerr << "minimizing!" << std::endl;
 #endif
-      }
+	}
     default:
       break;
     }

@@ -43,7 +43,7 @@ GLuint LoadTexture(const char* filename, GLuint* texture, SDL_Surface** surface)
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, *texture);
  
     // Set the texture's stretching properties
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
     glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
  
     // Edit the texture object's image data using the information SDL_Surface gives us
@@ -104,7 +104,7 @@ GLuint LoadTexture_simple(const char* filename){
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, *texture);
  
     // Set the texture's stretching properties
-    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
     glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
  
     // Edit the texture object's image data using the information SDL_Surface gives us
