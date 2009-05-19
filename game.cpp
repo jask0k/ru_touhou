@@ -142,6 +142,10 @@ void CEngine::handle_events(){
       case SDLK_ESCAPE:
 	state.main_state = ENGINE_STATE_QUIT;
 	break;
+      case SDLK_RETURN:
+	if (SDL_WM_ToggleFullScreen(screen)==0)
+	  std::cerr << "Failure!" << std::endl;
+	break;
       default:
 #ifdef DEBUG
 	std::cerr << "Don't know dis baton!"<< std::endl;
@@ -164,6 +168,7 @@ void CEngine::handle_events(){
 	  std::cerr << "minimizing!" << std::endl;
 #endif
 	}
+      break;
     default:
       break;
     }
@@ -241,5 +246,5 @@ void CEngine::draw(){
     break;
   }
   if (state.active)
-  SDL_GL_SwapBuffers();
+    SDL_GL_SwapBuffers();
 }
