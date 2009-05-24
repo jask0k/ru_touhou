@@ -6,6 +6,7 @@
 #include "sprite.hpp"
 #include "copypasta.hpp"
 #include "controller.hpp"
+#include "text.hpp"
 
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -29,8 +30,9 @@ private:
   GLfloat FPS;
   GLfloat averageFPS;
   unsigned long frames;
+  CLabel* fps_label;
 public:
-  CFrameManager();
+  CFrameManager(CLabel* label);
   GLfloat get_FPS();
   GLfloat get_aFPS();
   void begin_frame();//начало кадра -- сохраняем время начала кадра
@@ -51,6 +53,7 @@ private:
   CSpriteSheetManager* ssmanager;
   CFrameManager* fps_manager;
   CController* controller;
+  CText* text;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах

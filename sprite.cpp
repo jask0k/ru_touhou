@@ -4,7 +4,7 @@
 CSpriteSheet::CSpriteSheet(char* filename){
   std::string full_filename = "images/";
   full_filename += filename;
-  if (LoadTexture(full_filename.c_str(), &texture_handle,  &sdl_texture)){
+  if (LoadTexture(full_filename.c_str(), texture_handle,  sdl_texture)){
 #ifdef DEBUG
     std::cerr << "Loaded spritesheet '" << filename << "'!" << std::endl;
 #endif
@@ -79,13 +79,17 @@ vvint* CSpriteSheet::parse_props(char* filename){
 }
 
 void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
+  if (frame >= rectangle.x * rectangle.y){
+    std::cerr << "incorrect frame!" << std::endl;
+    SDL_Quit();
+  }
   //вычисляем координаты кадра
   SDL_Rect frame_dimensions = rectangle;
   frame_dimensions.x = rectangle.w * frame % rectangle.x;
   frame_dimensions.y = rectangle.h * frame / rectangle.x;
   //биндим текстуру
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
-  glBegin( GL_QUADS );{
+  glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
     glVertex2f( x-rectangle.w/2,y-rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	

@@ -7,10 +7,11 @@
 #include <iostream>
 
 
-CFrameManager::CFrameManager(){
+CFrameManager::CFrameManager(CLabel* label){
   frames = 0;
   FPS = 0;
   averageFPS = 0;
+  fps_label=label;
 }
 
 void CFrameManager::begin_frame(){
@@ -24,6 +25,7 @@ void CFrameManager::end_frame(){
   ++frames;
   FPS = 1000/(SDL_GetTicks()-begin_time);
   averageFPS += (FPS-averageFPS)/frames;
+  fps_label -> change_text(FPS);
 }
 
 GLfloat CFrameManager::get_FPS(){
@@ -70,9 +72,13 @@ CEngine::CEngine(){
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
-  fps_manager = new CFrameManager;
   ssmanager = new CSpriteSheetManager;
   controller = new CController;
+  text = new CText(ssmanager);
+  ssmanager -> load("fontg.png");
+  text -> font_load (std::string("fontg.png"));
+  text -> text_add(9.0f,9.0f,std::string("fps:"),0);
+  fps_manager = new CFrameManager(text -> text_add(45.0f,9.0f,std::string("0"),0));
   ssmanager -> load("aya.png");
   hero = new CHero("aya.png", ssmanager);
   ui_background = LoadTexture_simple("images/ui.png");
@@ -129,6 +135,7 @@ void CEngine::think(){
   speed = (c_state.focus)?0.5f:1.0f;
   hero -> set_speed_angle(c_state.strength * speed, c_state.direction);
   hero ->think();
+  text ->think();
 }
 
 void CEngine::handle_events(){
@@ -226,6 +233,8 @@ void CEngine::draw_game(){
 
   //рисуем спрайты
   hero -> draw();
+  
+  text -> draw();
 
   glDisable2D();
   glDisable(GL_SCISSOR_TEST);
