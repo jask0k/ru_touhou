@@ -195,10 +195,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\enemy.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\game.cpp"
 				>
 			</File>
@@ -212,6 +208,10 @@
 			</File>
 			<File
 				RelativePath=".\sprite.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\text.cpp"
 				>
 			</File>
 		</Filter>
@@ -237,10 +237,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\enemy.hpp"
-				>
-			</File>
-			<File
 				RelativePath=".\game.hpp"
 				>
 			</File>
@@ -254,6 +250,10 @@
 			</File>
 			<File
 				RelativePath=".\sprite.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\text.hpp"
 				>
 			</File>
 		</Filter>
