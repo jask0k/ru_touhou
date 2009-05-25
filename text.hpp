@@ -22,7 +22,7 @@ enum decay_state{
 
 class CLabel{
 public:
-  CLabel(GLfloat x, GLfloat y, std::string text, CSpriteSheet* font, GLuint decay=0);
+  CLabel(GLint x, GLint y, std::string text, CSpriteSheet* font, GLuint decay=0);
   ~CLabel();
   void draw();
   decay_state think();
@@ -31,7 +31,7 @@ public:
 private:
   GLuint decay_timer;
   bool decay_active;
-  GLfloat x,y;
+  GLint x,y;
   text_align align;
   std::string text;
   CSpriteSheet* font;
@@ -44,7 +44,7 @@ public:
   void draw();
   void think();
   int font_load(std::string fontname);
-  CLabel* text_add(GLfloat x, GLfloat y, std::string text, GLuint font_n);
+  CLabel* text_add(GLint x, GLint y, std::string text, GLuint font_n);
 private:
   std::vector<CLabel*> labels;
   std::vector<CSpriteSheet*> fonts;

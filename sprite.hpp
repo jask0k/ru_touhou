@@ -32,6 +32,7 @@ public:
   void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation);
   void draw(GLuint frame, GLfloat x, GLfloat y);
   void draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation);
+  void draw_int(GLuint frame, GLint x, GLint y);//целочесленное рисование
   GLuint get_width(){return rectangle.w;}
   GLuint get_height(){return rectangle.h;}
 };

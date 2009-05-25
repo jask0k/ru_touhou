@@ -1,6 +1,6 @@
 #include "text.hpp"
 
-CLabel::CLabel(GLfloat x, GLfloat y, std::string text, CSpriteSheet* font, GLuint decay){
+CLabel::CLabel(GLint x, GLint y, std::string text, CSpriteSheet* font, GLuint decay){
   this->x = x;
   this->y = y;
   this->font = font;
@@ -28,17 +28,19 @@ void CLabel::change_text(std::string text){
 }
 
 void CLabel::change_text(GLfloat number){
-  std::ostringstream reader(this->text);
+  std::ostringstream reader;
+  text.clear();
   reader << std::fixed << number;
+  text = reader.str();
 }
 
 void CLabel::draw(){
   std::string::iterator c;
-  GLfloat label_x;
+  GLint label_x;
   GLuint char_width = font -> get_width();
-  for (c = text.begin(), label_x = x; c < text.end(); ++c, label_x+=char_width){
-    if (*c >= (char)32 && *c <= (char)127){ //английские буквы
-      font -> draw((int)(*c)-32,label_x,y);
+  for (c = text.begin(), label_x = x; c < text.end(); ++c, label_x+=(char_width-1)){
+    if ((GLuint)*c >= 32 && (GLuint)*c <= 127){ //английские буквы
+      font -> draw_int(((GLuint)*c-32),label_x,y);
     } else{ //юникод
     }
   }
@@ -57,7 +59,7 @@ CText::~CText(){
     
 }
 
-CLabel* CText::text_add(GLfloat x, GLfloat y, std::string text, GLuint font_n){
+CLabel* CText::text_add(GLint x, GLint y, std::string text, GLuint font_n){
   if (font_n < fonts.size()){
     CLabel* label = new CLabel(x, y, text, fonts[font_n]);
     labels.push_back(label);

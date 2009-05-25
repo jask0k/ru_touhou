@@ -85,8 +85,8 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
   }
   //вычисляем координаты кадра
   SDL_Rect frame_dimensions = rectangle;
-  frame_dimensions.x = rectangle.w * frame % rectangle.x;
-  frame_dimensions.y = rectangle.h * frame / rectangle.x;
+  frame_dimensions.x = rectangle.w * (frame % rectangle.x);
+  frame_dimensions.y = rectangle.h * (frame / rectangle.x);
   //биндим текстуру
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
@@ -110,6 +110,28 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   draw(frame,x,y);
   //возвращаем матрицу состояния
   glPopMatrix();
+}
+void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
+  if (frame >= rectangle.x * rectangle.y){
+    std::cerr << "incorrect frame!" << std::endl;
+    SDL_Quit();
+  }
+  //вычисляем координаты кадра
+  SDL_Rect frame_dimensions = rectangle;
+  frame_dimensions.x = rectangle.w * (frame % rectangle.x);
+  frame_dimensions.y = rectangle.h * (frame / rectangle.x);
+  //биндим текстуру
+  glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
+  glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
+    glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
+    glVertex2i( x,y );
+    glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	
+    glVertex2i( x+rectangle.w, y );
+    glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y );	
+    glVertex2i( x+rectangle.w, y+rectangle.h );
+    glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
+    glVertex2i( x, y+rectangle.h );}
+  glEnd();
 }
 
 CSpriteSheet* CSpriteSheetManager::load(char* filename){
