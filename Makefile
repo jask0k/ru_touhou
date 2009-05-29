@@ -41,7 +41,7 @@ copypasta.o: copypasta.cpp copypasta.hpp config.hpp
 
 	$(COMPILE) -o $@ copypasta.cpp
 
-game.o: game.cpp game.hpp sprite.o copypasta.o controller.o hero.o config.hpp
+game.o: game.cpp game.hpp sprite.o copypasta.o controller.o hero.o text.o config.hpp
 
 	$(COMPILE) -o $@ game.cpp
 

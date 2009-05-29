@@ -59,9 +59,9 @@ CText::~CText(){
     
 }
 
-CLabel* CText::text_add(GLint x, GLint y, std::string text, GLuint font_n){
+CLabel* CText::text_add(GLint x, GLint y, std::string text, GLuint font_n, GLuint decay){
   if (font_n < fonts.size()){
-    CLabel* label = new CLabel(x, y, text, fonts[font_n]);
+    CLabel* label = new CLabel(x, y, text, fonts[font_n], decay);
     labels.push_back(label);
     return label;
   }
@@ -74,15 +74,13 @@ CLabel* CText::text_add(GLint x, GLint y, std::string text, GLuint font_n){
 void CText::think(){
   if (labels.size() > 0){
     std::vector<CLabel*>::iterator curr_label;
-    bool cleanup = false;
-    for (curr_label = labels.begin(); curr_label < labels.end(); curr_label++)
-      if ((*curr_label) -> think() == DECOMPOSED){
-
-	cleanup=true;
+    for (curr_label = labels.begin(); curr_label < labels.end();)//итерируем надписи
+      if ((*curr_label) -> think() == DECOMPOSED){//если надпись сгнила, то
+	delete *curr_label;//удаляем её из памяти
+	curr_label = labels.erase(curr_label);//и из списка, переходя на следующую запись
+      } else {//иначе просто переходим на следующую запись
+	++curr_label;
       }
-    if (cleanup == true){
-      //удаляем сгнившие надписи
-    }
       
   }
 }

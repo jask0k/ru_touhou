@@ -132,6 +132,9 @@ void CEngine::new_game(){
 void CEngine::think(){
   controller_state c_state = controller -> get_state();
   GLfloat speed;
+  if (c_state.attack){
+    text -> text_add(0,0,"shootan!",0,65);//debug!
+  }
   speed = (c_state.focus)?0.5f:1.0f;
   hero -> set_speed_angle(c_state.strength * speed, c_state.direction);
   hero ->think();

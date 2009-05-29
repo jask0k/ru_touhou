@@ -44,7 +44,7 @@ public:
   void draw();
   void think();
   int font_load(std::string fontname);
-  CLabel* text_add(GLint x, GLint y, std::string text, GLuint font_n);
+  CLabel* text_add(GLint x, GLint y, std::string text, GLuint font_n, GLuint decay=0);
 private:
   std::vector<CLabel*> labels;
   std::vector<CSpriteSheet*> fonts;
