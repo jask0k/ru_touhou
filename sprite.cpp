@@ -21,7 +21,7 @@ CSpriteSheet::CSpriteSheet(char* filename){
 vvint* CSpriteSheet::parse_props(char* filename){
   vvint* result = new vvint;
   vvint::iterator current_animation = result->begin();
-  vint::iterator current_frame;
+  //vint::iterator current_frame;
   std::ifstream props_file(filename);
   std::istringstream parse_numbers;
 #ifdef DEBUG
@@ -51,25 +51,47 @@ vvint* CSpriteSheet::parse_props(char* filename){
   }
   rectangle.x = (sdl_texture -> w) / rectangle.w;
   rectangle.y = (sdl_texture -> h) / rectangle.h;
+  bool comment = false;
   while (!props_file.eof()){
     symbol = props_file.get();
-    if (symbol == '-' && element.empty())
-      //встретили минус, предположительно в начале числа
-      element.push_back(symbol);
-    else if (symbol >= '0' && symbol <= '9') //встретили цифру
-      element.push_back(symbol);
-    else if (symbol == ';')//встретили ограничитель анимации,
-      //смотрим, отправлен ли кадр в последовательность
-      if (element.size()){
+    if (!comment){
+      if (symbol == '#') {
+	//начало строчного комментария
+	comment = true;
       }
-      else{
+      else if (symbol == '-' && element.empty())
+	//встретили минус, предположительно в начале числа
+	element.push_back(symbol);
+      else if (symbol >= '0' && symbol <= '9') //встретили цифру
+	element.push_back(symbol);
+      else if (symbol == ';')//встретили ограничитель анимации,
+	//смотрим, отправлен ли кадр в последовательность
+	if (element.size()){
+	  if (current_animation == result->end()){
+	    result->push_back(*(new vint()));
+	    (current_animation = result->end())--;
+	  }
+	  (*current_animation).push_back(std::atoi(element.c_str()));
+	  current_animation++;
+	  element.clear();
+	}else{
+	  if (current_animation != result->end())
+	    current_animation++;
+	}
+      else if (element.size() == 1 && element[0] == '-')
+	//встретили непонятно что, а в элементе нет цифр, а только один минус
+	element.clear();
+      else if (element.size()>0){
+	//встретили непонятно что, в элементе есть цифры -> надо записать номер кадра
+	if (current_animation == result->end()){
+	  result->push_back(*(new vint()));
+	  (current_animation = result->end())--;
+	}
+	(*current_animation).push_back(std::atoi(element.c_str()));
+	element.clear();
       }
-    else if (element.size() == 1 && element[0] == '-')
-      //встретили непонятно что, а в элементе нет цифр, а только один минус
-      element.clear();
-    else if (element.size()>0){
-      //встретили непонятно что, в элементе есть цифры -> надо записать номер кадра
-      
+    } else if (symbol == '\n') {
+      comment = false;
     }
   }
 #ifdef DEBUG

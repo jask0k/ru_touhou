@@ -4,6 +4,7 @@
 #include "SDL_opengl.h"
 #include "SDL.h"
 
+#include <cstdlib>
 #include <vector>
 #include <string>
 #include <iostream>
