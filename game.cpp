@@ -65,9 +65,14 @@ CEngine::CEngine(){
 
   glEnable( GL_BLEND );
   glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  //^это для работы (полу-)прозрачности
+
+  glScissor(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
+  glDisable(GL_SCISSOR_TEST);
+  //^это чтобы спрайты игрока, фона и прочего не вылезали
 
   glEnable(GL_TEXTURE_RECTANGLE_ARB);
-  //конец установки 2d-режима
+  
   SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
@@ -156,6 +161,9 @@ void CEngine::handle_events(){
 	if (SDL_WM_ToggleFullScreen(screen)==0)
 	  std::cerr << "Failure!" << std::endl;
 	break;
+      case SDLK_PRINT:
+	state.screenshot=true;
+	break;
       default:
 #ifdef DEBUG
 	std::cerr << "Don't know dis baton!"<< std::endl;
@@ -222,9 +230,10 @@ void CEngine::draw_game(){
   glEnd();
 
   glDisable2D();
-  
+
   glViewport(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
-  glScissor(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
+
+  glMatrixMode( GL_MODELVIEW );
   glLoadIdentity();
 
   glEnable(GL_SCISSOR_TEST);
@@ -257,6 +266,15 @@ void CEngine::draw(){
   default:
     break;
   }
-  if (state.active)
+  if (state.active){
     SDL_GL_SwapBuffers();
+    if (state.screenshot){
+      state.screenshot=false;
+      save_screenshot();
+    }
+  }
+}
+
+void CEngine::save_screenshot(){
+  //сохранение скриншота идёт сюда.
 }

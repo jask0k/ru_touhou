@@ -4,8 +4,9 @@
 
 CHero::CHero(char* texture_file, CSpriteSheetManager* manager){
   vx = vy = 0;
-  x = y = 100;
-  max_speed = 4;
+  y = 100;
+  x = GAME_FIELD_WIDTH/2;
+  max_speed = 8;
   sprite = new CSprite(texture_file, manager, 0);
   sprite->set_position(100,100);
   
@@ -38,14 +39,14 @@ void CHero::set_speed_angle(GLfloat velocity, GLfloat direction){
 void CHero::think(){
   if (x+vx < 0)
     x = 0;
-  else if (x+vx > GAME_FIELD_WIDTH/2)
-    x = GAME_FIELD_WIDTH/2;
+  else if (x+vx > GAME_FIELD_WIDTH)
+    x = GAME_FIELD_WIDTH;
   else
     x += vx;
   if (y+vy < 0)
     y = 0;
-  else if (y+vy > GAME_FIELD_HEIGHT/2)
-    y = GAME_FIELD_HEIGHT/2;
+  else if (y+vy > GAME_FIELD_HEIGHT)
+    y = GAME_FIELD_HEIGHT;
   else
     y += vy;
   sprite -> set_position(x,y);

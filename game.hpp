@@ -22,6 +22,7 @@ enum EngineMainState{
 struct EngineState{
   EngineMainState main_state;
   bool active;
+  bool screenshot;
 };
   
 class CFrameManager{
@@ -64,6 +65,7 @@ public:
   void loop();//основной цикл игры
   void draw();//рендеринг картинки, менюшек
   void draw_game();//рисование гуя и игры(нужно для красивого заблюривания во время паузы)
+  void save_screenshot();
   
 };
 #endif

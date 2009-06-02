@@ -19,22 +19,27 @@ typedef std::vector<std::vector<int> > vvint;
 class CSpriteSheet{
 private:
   GLuint texture_handle;
+  //хендлер текстуры
   SDL_Surface *sdl_texture;
-  
-public:
+  //поверхность для SDL
   SDL_Rect rectangle;
   //rectangle.w и h -> размер спрайта
   //rectangle.x и у -> количество спрайтов по вертикали и горизонтали
+  vvint* animations;
+  //вектор векторов анимаций
+  
+public:
   CSpriteSheet(char* filename);
   std::string sheetname;
-  vvint* animations;
   vvint* parse_props(char* filename);
-  void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation=0);
-  void draw(GLuint frame, GLfloat x, GLfloat y);
-  void draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation);
-  void draw_int(GLuint frame, GLint x, GLint y);//целочесленное рисование
+  void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation=0.0f);
+  void draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation=0.0f); 
+  //рисование с плавающими координатами
+  void draw_int(GLuint frame, GLint x, GLint y);
+  //рисование с целыми координатами
   GLuint get_width(){return rectangle.w;}
   GLuint get_height(){return rectangle.h;}
+  GLuint get_count(){return rectangle.x*rectangle.y;}
 };
 
 class CSpriteSheetManager{
@@ -47,9 +52,9 @@ public:
 class CSprite{
 public:
   CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no);
-  void set_position(GLfloat x, GLfloat y, GLfloat rotation);
-  void set_position(GLfloat x, GLfloat y);  
+  void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);
   void draw();
+  void think();
 private:
   GLfloat x,y;
   GLfloat rotation;

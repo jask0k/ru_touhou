@@ -69,13 +69,13 @@ vvint* CSpriteSheet::parse_props(char* filename){
 	if (element.size()){
 	  if (current_animation == result->end()){
 	    result->push_back(*(new vint()));
-	    (current_animation = result->end())--;
+	    current_animation = (result->end()) - 1;
 	  }
 	  (*current_animation).push_back(std::atoi(element.c_str()));
 	  current_animation++;
 	  element.clear();
 	}else{
-	  if (current_animation != result->end())
+	  if (current_animation < result->end())
 	    current_animation++;
 	}
       else if (element.size() == 1 && element[0] == '-')
@@ -85,7 +85,7 @@ vvint* CSpriteSheet::parse_props(char* filename){
 	//встретили непонятно что, в элементе есть цифры -> надо записать номер кадра
 	if (current_animation == result->end()){
 	  result->push_back(*(new vint()));
-	  (current_animation = result->end())--;
+	  current_animation=(result->end())-1;
 	}
 	(*current_animation).push_back(std::atoi(element.c_str()));
 	element.clear();
@@ -100,7 +100,11 @@ vvint* CSpriteSheet::parse_props(char* filename){
   return result;
 }
 
-void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
+void CSpriteSheet::draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation){
+  draw((*animations)[animation][state*2],x,y,rotation);
+}
+
+void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   if (frame >= rectangle.x * rectangle.y){
     std::cerr << "incorrect frame!" << std::endl;
     SDL_Quit();
@@ -109,28 +113,24 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y){
   SDL_Rect frame_dimensions = rectangle;
   frame_dimensions.x = rectangle.w * (frame % rectangle.x);
   frame_dimensions.y = rectangle.h * (frame / rectangle.x);
+  //сохраняем матрицу преобразования
+  glPushMatrix();
+  //устанавливаем координаты центра спрайта
+  glTranslatef(x,y,0.0f);
+  //вращаем спрайт
+  glRotatef(rotation,0.0f,0.0f,1.0f);
   //биндим текстуру
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
-    glVertex2f( x-rectangle.w/2,y-rectangle.h/2 );
+    glVertex2f( -rectangle.w/2,-rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	
-    glVertex2f( x+rectangle.w/2, y-rectangle.h/2 );
+    glVertex2f( rectangle.w/2, -rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y );	
-    glVertex2f( x+rectangle.w/2, y+rectangle.h/2 );
+    glVertex2f( rectangle.w/2, rectangle.h/2 );
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
-    glVertex2f( x-rectangle.w/2, y+rectangle.h/2 );}
+    glVertex2f( -rectangle.w/2, rectangle.h/2 );}
   glEnd();
-}
-void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
-  //сохраняем матрицу преобразования
-  glPushMatrix();
-  //вращаем спрайт
-  glTranslatef(x,y,0.0f);
-  glRotatef(rotation,0.0f,0.0f,1.0f);
-  //рисуем его
-  draw(frame,x,y);
-  //возвращаем матрицу состояния
   glPopMatrix();
 }
 void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
@@ -144,7 +144,7 @@ void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
   frame_dimensions.y = rectangle.h * (frame / rectangle.x);
   //биндим текстуру
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
-  glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
+  glBegin( GL_QUADS );{//фигурные скобки добавлены, чтоб были отступы
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
     glVertex2i( x,y );
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	
@@ -177,12 +177,8 @@ void CSprite::draw(){
   ssheet -> draw (frame,x,y,rotation);
 }
 
-void CSprite::set_position(GLfloat new_x, GLfloat new_y){
+void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
   x = new_x;
   y = new_y;
-}
-
-void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
-  set_position(new_x,new_y);
   rotation = new_rotation;
 }
