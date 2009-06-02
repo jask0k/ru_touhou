@@ -7,6 +7,7 @@
 #include "copypasta.hpp"
 #include "controller.hpp"
 #include "text.hpp"
+#include "back.hpp"
 
 #include "SDL.h"
 #include "SDL_opengl.h"
@@ -55,6 +56,7 @@ private:
   CFrameManager* fps_manager;
   CController* controller;
   CText* text;
+  CBack* background;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах

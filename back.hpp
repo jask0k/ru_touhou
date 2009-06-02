@@ -4,6 +4,7 @@
 #include "SDL_opengl.h"
 #include "SDL.h"
 #include "copypasta.hpp"
+#include "config.hpp"
 
 class CBack{
 private:
@@ -11,9 +12,10 @@ private:
   GLuint ground_texture;
   GLint vy;
 public:
-  void init(std::string filename, GLint vy=4);
+  void init(const char* filename, GLint vy=4);
   void draw();
   void think();
+  void set_speed(GLint vy);
 };
 
 #endif

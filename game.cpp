@@ -87,6 +87,7 @@ CEngine::CEngine(){
   ssmanager -> load("aya.png");
   hero = new CHero("aya.png", ssmanager);
   ui_background = LoadTexture_simple("images/ui.png");
+  background = new CBack;
 }
 
 CEngine::~CEngine(){
@@ -94,6 +95,7 @@ CEngine::~CEngine(){
   delete ssmanager;
   delete fps_manager;
   delete controller;
+  delete background;
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif
@@ -132,6 +134,7 @@ void CEngine::new_game(){
   state.main_state = ENGINE_STATE_GAME;
   state.active = true;
   frames = 0;
+  background -> init("images/grnd03.jpg",4);
 }
 
 void CEngine::think(){
@@ -144,6 +147,7 @@ void CEngine::think(){
   hero -> set_speed_angle(c_state.strength * speed, c_state.direction);
   hero ->think();
   text ->think();
+  background -> think();
 }
 
 void CEngine::handle_events(){
@@ -239,7 +243,7 @@ void CEngine::draw_game(){
   glEnable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT);
 
-  //рисуем фон
+  background -> draw();
 
   glEnable2D();
 

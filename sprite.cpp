@@ -143,7 +143,7 @@ void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
   frame_dimensions.x = rectangle.w * (frame % rectangle.x);
   frame_dimensions.y = rectangle.h * (frame / rectangle.x);
   //биндим текстуру
-  glBindTexture(GL_TEXTURE_RECTANGLE_ARB ,texture_handle);
+  glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены, чтоб были отступы
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
     glVertex2i( x,y );
@@ -152,7 +152,8 @@ void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
     glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y );	
     glVertex2i( x+rectangle.w, y+rectangle.h );
     glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
-    glVertex2i( x, y+rectangle.h );}
+    glVertex2i( x, y+rectangle.h );
+  }
   glEnd();
 }
 
