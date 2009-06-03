@@ -9,16 +9,19 @@ void CBack::init(const char* filename, GLint vy){
 
 void CBack::draw(){
   glPushMatrix();{
-    perspectiveGL(100.0f, GAME_FIELD_WIDTH/GAME_FIELD_HEIGHT, 0.0f, 100.0f);
+    glMatrixMode(GL_PROJECTION); 
     glLoadIdentity();
-    glTranslatef(0.0f,100.0f,0.0f);
-    //    glRotatef(-10.0f,1.0f,0.0f,0.0f);
+    gluPerspective(45.0f, (GLfloat)GAME_FIELD_WIDTH/(GLfloat)GAME_FIELD_HEIGHT, 1.0f, 20.0f);
+    glMatrixMode(GL_MODELVIEW); 
+    glLoadIdentity();
+    //    glTranslatef(0.0f,.0f,0.0f);
+    glRotatef(-45.0f,1.0f,0.0f,0.0f);
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, ground_texture);
     glBegin(GL_QUADS);{
-      glTexCoord2i(0,flightY); glVertex3i(-GAME_FIELD_WIDTH,-GAME_FIELD_HEIGHT,0);
-      glTexCoord2i(GAME_FIELD_WIDTH,flightY); glVertex3i(GAME_FIELD_WIDTH,-GAME_FIELD_HEIGHT,0);
-      glTexCoord2i(GAME_FIELD_WIDTH,flightY+100); glVertex3i(GAME_FIELD_WIDTH,100,0);
-      glTexCoord2i(0, flightY+100);glVertex3i(-GAME_FIELD_WIDTH,100,0);
+      glTexCoord2i(0,flightY); glVertex3i(-1,-1,-1);
+      glTexCoord2i(GAME_FIELD_WIDTH,flightY); glVertex3i(1,-1,-1);
+      glTexCoord2i(GAME_FIELD_WIDTH,flightY+100); glVertex3i(1,1,-1);
+      glTexCoord2i(0, flightY+100);glVertex3i(-1,1,-1);
     }
     glEnd();
   }
@@ -26,5 +29,5 @@ void CBack::draw(){
 }
 
 void CBack::think(){
-  flightY+=vy;
+  flightY++;
 }
