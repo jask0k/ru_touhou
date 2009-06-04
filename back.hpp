@@ -8,14 +8,14 @@
 
 class CBack{
 private:
-  GLuint flightY;
+  GLfloat flightY;
   GLuint ground_texture;
-  GLint vy;
+  GLfloat vy;
 public:
-  void init(const char* filename, GLint vy=4);
+  void init(const char* filename, GLfloat vy=0.04);
   void draw();
   void think();
-  void set_speed(GLint vy);
+  void set_speed(GLfloat vy);
 };
 
 #endif

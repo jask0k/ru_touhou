@@ -71,7 +71,9 @@ CEngine::CEngine(){
   glDisable(GL_SCISSOR_TEST);
   //^это чтобы спрайты игрока, фона и прочего не вылезали
 
-  glEnable(GL_TEXTURE_RECTANGLE_ARB);
+  //  glEnable(GL_TEXTURE_RECTANGLE_ARB);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_ARB_texture_non_power_of_two);
   
   SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
 #ifdef DEBUG
@@ -134,7 +136,7 @@ void CEngine::new_game(){
   state.main_state = ENGINE_STATE_GAME;
   state.active = true;
   frames = 0;
-  background -> init("images/grnd03.jpg",4);
+  background -> init("images/grnd03.jpg",.02f);
 }
 
 void CEngine::think(){
@@ -225,11 +227,15 @@ void CEngine::draw_game(){
   glLoadIdentity();
   glEnable2D();
   //рисуем панельку со статами здесь
-  glBindTexture(GL_TEXTURE_RECTANGLE_ARB , ui_background);
+  glBindTexture(GL_TEXTURE_2D, ui_background);
   glBegin( GL_QUADS );{
-    glTexCoord2i( 0  , 480 ); glVertex2i( 0,    0 );
-    glTexCoord2i( 640, 480 ); glVertex2i( xres, 0 );
-    glTexCoord2i( 640, 0   ); glVertex2i( xres, yres );
+    //    glTexCoord2i( 0  , 480 ); glVertex2i( 0,    0 );
+    //    glTexCoord2i( 640, 480 ); glVertex2i( xres, 0 );
+    //    glTexCoord2i( 640, 0   ); glVertex2i( xres, yres );
+    //    glTexCoord2i( 0  , 0   ); glVertex2i( 0,    yres );}
+    glTexCoord2i( 0  , 1 ); glVertex2i( 0,    0 );
+    glTexCoord2i( 1, 1 ); glVertex2i( xres, 0 );
+    glTexCoord2i( 1, 0   ); glVertex2i( xres, yres );
     glTexCoord2i( 0  , 0   ); glVertex2i( 0,    yres );}
   glEnd();
 
