@@ -113,6 +113,9 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   SDL_Rect frame_dimensions = rectangle;
   frame_dimensions.x = rectangle.w * (frame % rectangle.x);
   frame_dimensions.y = rectangle.h * (frame / rectangle.x);
+  GLfloat kx = (GLfloat)(sdl_texture->w);
+  GLfloat ky = (GLfloat)(sdl_texture->h);
+
   //сохраняем матрицу преобразования
   glPushMatrix();
   //устанавливаем координаты центра спрайта
@@ -122,13 +125,13 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   //биндим текстуру
   glBindTexture(GL_TEXTURE_2D ,texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
-    glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
+    glTexCoord2f( (GLfloat)frame_dimensions.x/kx, (frame_dimensions.y+frame_dimensions.h)/ky );
     glVertex2f( -rectangle.w/2,-rectangle.h/2 );
-    glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	
+    glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, (frame_dimensions.y+frame_dimensions.h)/ky );	
     glVertex2f( rectangle.w/2, -rectangle.h/2 );
-    glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y );	
+    glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, frame_dimensions.y/ky );	
     glVertex2f( rectangle.w/2, rectangle.h/2 );
-    glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
+    glTexCoord2f( frame_dimensions.x/kx, frame_dimensions.y/ky );		
     glVertex2f( -rectangle.w/2, rectangle.h/2 );}
   glEnd();
   glPopMatrix();
@@ -138,6 +141,8 @@ void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
     std::cerr << "incorrect frame!" << std::endl;
     SDL_Quit();
   }
+  GLfloat kx = (GLfloat)(sdl_texture->w);
+  GLfloat ky = (GLfloat)(sdl_texture->h);
   //вычисляем координаты кадра
   SDL_Rect frame_dimensions = rectangle;
   frame_dimensions.x = rectangle.w * (frame % rectangle.x);
@@ -145,13 +150,13 @@ void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
   //биндим текстуру
   glBindTexture(GL_TEXTURE_2D, texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены, чтоб были отступы
-    glTexCoord2i( frame_dimensions.x, frame_dimensions.y+frame_dimensions.h );
+    glTexCoord2f( frame_dimensions.x/kx, (frame_dimensions.y+frame_dimensions.h)/ky );
     glVertex2i( x,y );
-    glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y+frame_dimensions.h );	
+    glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, (frame_dimensions.y+frame_dimensions.h)/ky );	
     glVertex2i( x+rectangle.w, y );
-    glTexCoord2i( frame_dimensions.x+frame_dimensions.w, frame_dimensions.y );	
+    glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, frame_dimensions.y/ky );	
     glVertex2i( x+rectangle.w, y+rectangle.h );
-    glTexCoord2i( frame_dimensions.x, frame_dimensions.y );		
+    glTexCoord2f( frame_dimensions.x/kx, frame_dimensions.y/ky );		
     glVertex2i( x, y+rectangle.h );
   }
   glEnd();
