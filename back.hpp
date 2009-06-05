@@ -12,7 +12,7 @@ private:
   GLuint ground_texture;
   GLfloat vy;
 public:
-  void init(const char* filename, GLfloat vy=0.04);
+  void init(const char* filename, GLfloat vy=0.05f);
   void draw();
   void think();
   void set_speed(GLfloat vy);
