@@ -1,7 +1,6 @@
 #include "controller.hpp"
 
-CController::CController(){
-  state = new std::set<EButton>;
+CController::CController(): state(new std::set<EButton>){
   analog_state.dir=0;
   analog_state.pow=0;
   state->insert(B_NIL);

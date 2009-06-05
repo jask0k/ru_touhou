@@ -1,11 +1,7 @@
 #include "text.hpp"
 
-CLabel::CLabel(GLint x, GLint y, std::string text, CSpriteSheet* font, GLuint decay){
-  this->x = x;
-  this->y = y;
-  this->font = font;
-  this->text = text;
-  this->align = ALIGN_LEFT;
+CLabel::CLabel(GLint x, GLint y, std::string text, CSpriteSheet* font, GLuint decay):
+  x(x),y(y),align(ALIGN_LEFT),text(text),font(font){
   if (decay>0){
     this->decay_timer = decay;
     this->decay_active = true;
@@ -46,9 +42,7 @@ void CLabel::draw(){
   }
 }
 
-CText::CText(CSpriteSheetManager* manager){
-  ssmanager = manager;
-}
+CText::CText(CSpriteSheetManager* manager): ssmanager(manager){}
 
 CText::~CText(){
   if (labels.size()>0){

@@ -7,12 +7,7 @@
 #include <iostream>
 
 
-CFrameManager::CFrameManager(CLabel* label){
-  frames = 0;
-  FPS = 0;
-  averageFPS = 0;
-  fps_label=label;
-}
+CFrameManager::CFrameManager(CLabel* label): FPS(0),averageFPS(0),frames(0),fps_label(label){}
 
 void CFrameManager::begin_frame(){
   begin_time = SDL_GetTicks();  

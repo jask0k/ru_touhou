@@ -173,11 +173,8 @@ CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
   return collection[sheetname];
 }
 
-CSprite::CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no){
-  ssheet = manager -> dispatch(sheetname);
-  frame = frame_no;
-  rotation = 0;
-}
+CSprite::CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no):
+  rotation(0),ssheet(manager->dispatch(sheetname)),frame(frame_no) {}
 
 void CSprite::draw(){
   ssheet -> draw (frame,x,y,rotation);
