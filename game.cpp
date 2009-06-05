@@ -83,7 +83,7 @@ CEngine::CEngine(){
   fps_manager = new CFrameManager(text -> text_add(45,18,std::string("0"),0));
   ssmanager -> load("aya.png");
   hero = new CHero("aya.png", ssmanager);
-  ui_background = LoadTexture_simple("images/ui.png");
+  ui_background = LoadTexture_simple("th_ru/ui.png");
   background = new CBack;
 }
 
@@ -131,7 +131,7 @@ void CEngine::new_game(){
   state.main_state = ENGINE_STATE_GAME;
   state.active = true;
   frames = 0;
-  background -> init("images/grnd03.jpg",.02f);
+  background -> init("th_ru/grnd03.jpg",.02f);
 }
 
 void CEngine::think(){

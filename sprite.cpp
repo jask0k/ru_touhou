@@ -2,7 +2,7 @@
 
 
 CSpriteSheet::CSpriteSheet(char* filename){
-  std::string full_filename = "images/";
+  std::string full_filename = "th_ru/";
   full_filename += filename;
   if (LoadTexture(full_filename.c_str(), texture_handle,  sdl_texture)){
 #ifdef DEBUG
