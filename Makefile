@@ -11,7 +11,7 @@ LINK = $(CC) $(CFLAGS) `sdl-config --libs` -lSDL_image -lGL -lGLU -o
 LINK-STATIC = $(CC) $(CFLAGS) -static `sdl-config --static-libs` -lSDL_image -lGL -lGLU -o 
 
 
-OBJFILES := bullet.o controller.o copypasta.o game.o hero.o main.o sprite.o text.o back.o
+OBJFILES := controller.o copypasta.o game.o hero.o main.o sprite.o text.o back.o
 
 HEADERS := $(wildcard *.hpp)
 
@@ -28,10 +28,6 @@ $(PROJNAME): $(OBJFILES)
 $(PROJNAME)-static: $(OBJFILES)
 
 	$(LINK-STATIC) $@ $(OBJFILES)
-
-bullet.o: bullet.cpp bullet.hpp config.hpp
-
-	$(COMPILE) -o $@ bullet.cpp
 
 controller.o: controller.cpp controller.hpp config.hpp
 
