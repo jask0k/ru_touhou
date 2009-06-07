@@ -80,7 +80,6 @@ int CController::jbutton(Uint8 key, bool key_state){
     control = B_SKIP;
     break;
   default:
-    std::cerr << "value: "<< (int)key_state << std::endl;
     return 0;
   }
   //быдлокод енд
@@ -108,7 +107,9 @@ int CController::axismove(Uint8 axis, Sint16 value){
   default:
     return 0;
   }
+#ifdef DEBUG
   std::cerr << "value: "<< value << " axis: " << (int)axis << " control: " << control << " key_state: " << key_state << std::endl;
+#endif
   button(control, key_state);
   return 1;
 }
