@@ -12,10 +12,16 @@ CController::~CController(){
 
 int CController::handle_event(SDL_Event* event){
   switch (event -> type){
-  case SDL_KEYDOWN:
+  case SDL_KEYDOWN: //нажата кнопка на клаве
     return button(event -> key.keysym.sym, STATE_DOWN);
-  case SDL_KEYUP:
+  case SDL_KEYUP: //отпущена кнопка на клаве
     return button(event -> key.keysym.sym, STATE_UP);
+  case SDL_JOYBUTTONDOWN: //нажата кнопка на джойстике
+    return jbutton(event -> jbutton.button, STATE_DOWN);
+  case SDL_JOYBUTTONUP: //отпущена кнопка на джойстике
+    return jbutton(event -> jbutton.button, STATE_UP);
+  case SDL_JOYAXISMOTION: //управление джойстиком
+	return axismove(event -> jaxis.axis, event -> jaxis.value);
   default:
     return 0;
   }
@@ -53,6 +59,56 @@ int CController::button(SDLKey key, bool key_state){
     return 0;
   }
   //быдлокод енд
+  button(control, key_state);
+  return 1;
+}
+
+int CController::jbutton(Uint8 key, bool key_state){
+  EButton control;
+  //Ахтунг! Увага! БЫДЛОКОД!
+  switch (key){
+  case JOY_BUTTON_A:
+    control = B_ATTACK;
+    break;
+  case JOY_BUTTON_B:
+    control = B_BOMB;
+    break;
+  case JOY_BUTTON_C:
+    control = B_FOCUS;
+    break;
+  case JOY_BUTTON_D:
+    control = B_SKIP;
+    break;
+  default:
+    std::cerr << "value: "<< (int)key_state << std::endl;
+    return 0;
+  }
+  //быдлокод енд
+  button(control, key_state);
+  return 1;
+}
+
+//пока что пашет не так, как от него требуется. ПОПРАВИТЬ!!!
+int CController::axismove(Uint8 axis, Sint16 value){
+  EButton control;
+  bool key_state = ((value > -300) && (value < 300)) ? STATE_UP : STATE_DOWN ;
+  switch (axis){
+  case JOY_AXIS_LR:
+    if ( value <= 0 )
+		control = B_LEFT;
+	else if ( value > 0 )
+		control = B_RIGHT;
+    break;
+  case JOY_AXIS_UD:
+    if ( value <= 0 )
+		control = B_UP;
+	else if ( value > 0 )
+		control = B_DOWN;
+    break;
+  default:
+    return 0;
+  }
+  std::cerr << "value: "<< value << " axis: " << (int)axis << " control: " << control << " key_state: " << key_state << std::endl;
   button(control, key_state);
   return 1;
 }

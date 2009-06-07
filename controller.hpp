@@ -6,6 +6,7 @@
 #include <set>
 #include <cmath>
 #include <iostream>
+#include <iomanip>
 enum EButton{
   B_NIL = 0,
   B_UP = 1,
@@ -21,6 +22,21 @@ enum EButton{
 #define STATE_DOWN true
 #define STATE_UP false
 
+//дефайны кнопок геймпада
+#define JOY_BUTTON_A            0
+#define JOY_BUTTON_B            1
+#define JOY_BUTTON_C            2
+#define JOY_BUTTON_D            3
+#define JOY_BUTTON_LBSHIFT      4
+#define JOY_BUTTON_RBSHIFT      5
+#define JOY_BUTTON_LTSHIFT      6
+#define JOY_BUTTON_RTSHIFT      7
+#define JOY_BUTTON_SELECT       8
+#define JOY_BUTTON_START        9
+//дефайны осей геймпада
+#define JOY_AXIS_LR             0
+#define JOY_AXIS_UD             1
+
 struct controller_state{
   GLfloat direction;//угол наклона вектора действия
   GLfloat strength;//0..1 процент действия
@@ -35,6 +51,8 @@ public:
   int handle_event(SDL_Event* event);
   void button(EButton key, bool key_state);
   int button(SDLKey key, bool key_state);
+  int jbutton(Uint8 key, bool key_state);
+  int axismove(Uint8 axis, Sint16 value);
   void move_analog(GLfloat x, GLfloat y);
   GLfloat get_kx();
   GLfloat get_ky();
