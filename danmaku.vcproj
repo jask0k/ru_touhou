@@ -187,10 +187,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\bullet.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\controller.cpp"
 				>
 			</File>
@@ -226,10 +222,6 @@
 			>
 			<File
 				RelativePath=".\back.hpp"
-				>
-			</File>
-			<File
-				RelativePath=".\bullet.hpp"
 				>
 			</File>
 			<File
