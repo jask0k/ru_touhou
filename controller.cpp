@@ -88,9 +88,11 @@ int CController::jbutton(Uint8 key, bool key_state){
 }
 
 //пока что пашет не так, как от него требуется. ПОПРАВИТЬ!!!
+//всё ещё хуже, чем я думал. это реализация порочна. ПЕРЕПИСАТЬ!!!
 int CController::axismove(Uint8 axis, Sint16 value){
   EButton control;
-  bool key_state = ((value > -300) && (value < 300)) ? STATE_UP : STATE_DOWN ;
+  //считаем, что при таких значениях ось отпущена иначе её теребят
+  bool key_state = !((value > -300) && (value < 300));
   switch (axis){
   case JOY_AXIS_LR:
     if ( value <= 0 )
