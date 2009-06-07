@@ -6,7 +6,6 @@
 #include <set>
 #include <cmath>
 #include <iostream>
-#include <iomanip>
 enum EButton{
   B_NIL = 0,
   B_UP = 1,
@@ -64,6 +63,7 @@ public:
   int get_pause();
   
 private:
+  SDL_Joystick *stick;//джойстик
   void analog_sync();
   std::set<EButton>* state;
   struct{

@@ -37,33 +37,33 @@ CEngine::CEngine(){
   std::cerr << "Initializing video.";
 #endif
   //инициализация видео, джойстика и таймера в SDL
-  if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) != 0 ) {
+  if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) != 0) {
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
   }
-  screen = SDL_SetVideoMode( xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen) );
+  screen = SDL_SetVideoMode(xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen));
   
   //убираем курсор с экрана
   SDL_ShowCursor(SDL_DISABLE);
 
-  SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   //начало установки 2d-режима
-  glViewport( 0, 0, 640, 480 );
+  glViewport(0, 0, 640, 480);
  
-  glClear( GL_COLOR_BUFFER_BIT );
+  glClear(GL_COLOR_BUFFER_BIT);
  
-  glMatrixMode( GL_PROJECTION );
+  glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
  
   glOrtho(0.0f, xres, 0.0f, yres, -1.0f, 1.0f);
 	
-  glMatrixMode( GL_MODELVIEW );
+  glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  glEnable( GL_BLEND );
-  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   //^это для работы (полу-)прозрачности
 
-  glScissor(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
+  glScissor(32, 16, GAME_FIELD_WIDTH, GAME_FIELD_HEIGHT);
   glDisable(GL_SCISSOR_TEST);
   //^это чтобы спрайты игрока, фона и прочего не вылезали
 
@@ -76,35 +76,13 @@ CEngine::CEngine(){
   std::cerr << ".done!" << std::endl;
 #endif
 
-  //Открываем джойстик
-#ifdef DEBUG
-  std::cerr << "Initializing joystick.";
-#endif
-  
-  if( SDL_NumJoysticks() > 0 )
-  {
-	 stick = SDL_JoystickOpen(0);
-	 if(stick == NULL)
-#ifdef DEBUG
-		std::cerr << ".failed to open joystick!" << std::endl;
-#endif
-	 else
-#ifdef DEBUG
-		std::cerr << ".done!" << std::endl << "Joystick name: " << SDL_JoystickName(0) << std::endl;
-#endif
-  }
-  else
-#ifdef DEBUG
-	  std::cerr << ".there is no useable joystick!" << std::endl; 
-#endif
-
   ssmanager = new CSpriteSheetManager;
   controller = new CController;
   text = new CText(ssmanager);
   ssmanager -> load("fontg.png");
   text -> font_load (std::string("fontg.png"));
-  text -> text_add(9,18,std::string("fps:"),0);
-  fps_manager = new CFrameManager(text -> text_add(45,18,std::string("0"),0));
+  text -> text_add(9, 18, std::string("fps:"), 0);
+  fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
   ssmanager -> load("aya.png");
   hero = new CHero("aya.png", ssmanager);
   ui_background = LoadTexture_simple("th_ru/ui.png");
@@ -120,8 +98,6 @@ CEngine::~CEngine(){
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif
-  if(stick != NULL)
-	SDL_JoystickClose(stick);
   SDL_Quit();
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
@@ -165,7 +141,7 @@ void CEngine::think(){
   controller_state c_state = controller -> get_state();
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
-  hero -> set_speed_angle(c_state.strength * speed, c_state.direction);
+  hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
   text ->think();
   background -> think();
@@ -178,47 +154,46 @@ void CEngine::handle_events(){
       continue;
     switch (event -> type){  
     
-	case SDL_KEYDOWN:	//обработка нажатий клавиш
+    case SDL_KEYDOWN:	//обработка нажатий клавиш
       switch (event -> key.keysym.sym){
-		case SDLK_ESCAPE:
-			state.main_state = ENGINE_STATE_QUIT;
-		break;
-		case SDLK_RETURN:
-			if (SDL_WM_ToggleFullScreen(screen)==0)
-				std::cerr << "Failure!" << std::endl;
-		break;
-		case SDLK_PRINT:
-			state.screenshot=true;
-		break;
-		default:
+        case SDLK_ESCAPE:
+          state.main_state = ENGINE_STATE_QUIT;
+		  break;
+        case SDLK_RETURN:
+          if (SDL_WM_ToggleFullScreen(screen)==0)
+            std::cerr << "Failure!" << std::endl;
+          break;
+        case SDLK_PRINT:
+          state.screenshot=true;
+          break;
+        default:
 #ifdef DEBUG
-	std::cerr << "Don't know dis baton!"<< std::endl;
+          std::cerr << "Don't know dis baton!"<< std::endl;
 #endif
-		break;
+          break;
       }
       break;
-	
+      
     case SDL_QUIT: //обработка закрытия окна
       state.main_state = ENGINE_STATE_QUIT;
-    break;
-	
+      break;
+      
     case SDL_ACTIVEEVENT: //обработка сворачивания/разворачивания окна
       if (event -> active.state == SDL_APPACTIVE)
-		if (event -> active.gain)
-			state.active = true;
-		else{
-			state.active = false;	
+	    if (event -> active.gain)
+           state.active = true;
+	    else{
+           state.active = false;	
 #ifdef DEBUG
-	  std::cerr << "minimizing!" << std::endl;
+	       std::cerr << "minimizing!" << std::endl;
 #endif
 		}
-    break;
-    
-	default:
-    break;
+      break;
+      
+    default:
+      break;
     }
   }
-  
 }
 
 void CEngine::loop(){
@@ -227,16 +202,16 @@ void CEngine::loop(){
 #endif
 
   new_game();
-  while (state.main_state!=ENGINE_STATE_QUIT){
+  while (state.main_state != ENGINE_STATE_QUIT){
     fps_manager -> begin_frame();
     handle_events();
     if (state.main_state == ENGINE_STATE_GAME){
       frames++;
-      think();//а что тут думать, тут писать надо!
+      think(); //а что тут думать, тут писать надо!
     }
     draw();
     fps_manager -> end_frame();
-    //    std::cerr << (fps_manager -> get_aFPS()) << "fps" <<std::endl;
+    //std::cerr << (fps_manager -> get_aFPS()) << "fps" <<std::endl;
   }
  
   write_config();
@@ -244,7 +219,7 @@ void CEngine::loop(){
 
 void CEngine::draw_game(){
   
-  glViewport(0,0,640,480);
+  glViewport(0, 0, 640, 480);
   glLoadIdentity();
   glEnable2D();
   //рисуем панельку со статами здесь
@@ -254,17 +229,17 @@ void CEngine::draw_game(){
     //    glTexCoord2i( 640, 480 ); glVertex2i( xres, 0 );
     //    glTexCoord2i( 640, 0   ); glVertex2i( xres, yres );
     //    glTexCoord2i( 0  , 0   ); glVertex2i( 0,    yres );}
-    glTexCoord2i( 0  , 1 ); glVertex2i( 0,    0 );
-    glTexCoord2i( 1, 1 ); glVertex2i( xres, 0 );
-    glTexCoord2i( 1, 0   ); glVertex2i( xres, yres );
-    glTexCoord2i( 0  , 0   ); glVertex2i( 0,    yres );}
+    glTexCoord2i(0, 1); glVertex2i(0, 0);
+    glTexCoord2i(1, 1); glVertex2i(xres, 0);
+    glTexCoord2i(1, 0); glVertex2i(xres, yres);
+    glTexCoord2i(0, 0); glVertex2i(0, yres);}
   glEnd();
 
   glDisable2D();
 
-  glViewport(32,16,GAME_FIELD_WIDTH,GAME_FIELD_HEIGHT);
+  glViewport(32, 16, GAME_FIELD_WIDTH, GAME_FIELD_HEIGHT);
 
-  glMatrixMode( GL_MODELVIEW );
+  glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
   glEnable(GL_SCISSOR_TEST);
@@ -300,7 +275,7 @@ void CEngine::draw(){
   if (state.active){
     SDL_GL_SwapBuffers();
     if (state.screenshot){
-      state.screenshot=false;
+      state.screenshot = false;
       save_screenshot();
     }
   }

@@ -1,12 +1,32 @@
 #include "controller.hpp"
 
 CController::CController(): state(new std::set<EButton>){
+  //Открываем джойстик
+#ifdef DEBUG
+  std::cerr << "Initializing joystick.";
+#endif
+  if(SDL_NumJoysticks() > 0){
+    stick = SDL_JoystickOpen(0);
+    if(stick == NULL)
+#ifdef DEBUG
+      std::cerr << ".failed to open joystick!" << std::endl;
+#endif
+    else
+#ifdef DEBUG
+      std::cerr << ".done!" << std::endl << "Joystick name: " << SDL_JoystickName(0) << std::endl;
+#endif
+  }else
+#ifdef DEBUG
+    std::cerr << ".there is no useable joystick!" << std::endl; 
+#endif
   analog_state.dir=0;
   analog_state.pow=0;
   state->insert(B_NIL);
 }
 
 CController::~CController(){
+  if(stick != NULL)
+    SDL_JoystickClose(stick);
   delete state;
 }
 
@@ -65,7 +85,6 @@ int CController::button(SDLKey key, bool key_state){
 
 int CController::jbutton(Uint8 key, bool key_state){
   EButton control;
-  //Ахтунг! Увага! БЫДЛОКОД!
   switch (key){
   case JOY_BUTTON_A:
     control = B_ATTACK;
@@ -82,7 +101,6 @@ int CController::jbutton(Uint8 key, bool key_state){
   default:
     return 0;
   }
-  //быдлокод енд
   button(control, key_state);
   return 1;
 }

@@ -11,8 +11,8 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
-//состояния движка
 
+//состояния движка
 enum EngineMainState{
   ENGINE_STATE_MAIN_MENU,
   ENGINE_STATE_GAME,
@@ -45,7 +45,6 @@ class CEngine{
 private:
   void think();//то, что будет выполнятся каждый кадр(кроме рисования), математика и всё такое
   SDL_Surface* screen;//поверхность экрана
-  SDL_Joystick *stick;//джойстик
   GLuint ui_background;
   int read_config();//чтение конфига
   int write_config();//запись конфига
