@@ -15,13 +15,15 @@ CController::CController(): state(new std::set<EButton>){
 #ifdef DEBUG
       std::cerr << ".done!" << std::endl << "Joystick name: " << SDL_JoystickName(0) << std::endl;
 #endif
-  }else
+  }else{
 #ifdef DEBUG
     std::cerr << ".there is no useable joystick!" << std::endl; 
 #endif
+    stick = NULL;
+  }
   analog_state.dir=0;
   analog_state.pow=0;
-  state->insert(B_NIL);
+  state->insert(B_NIL);//я не понимаю, зачем я это написал, но пусть будет
 }
 
 CController::~CController(){
