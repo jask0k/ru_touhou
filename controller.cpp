@@ -7,12 +7,10 @@ CController::CController(): state(new std::set<EButton>){
 #endif
   if(SDL_NumJoysticks() > 0){
     stick = SDL_JoystickOpen(0);
+#ifdef DEBUG
     if(stick == NULL)
-#ifdef DEBUG
       std::cerr << ".failed to open joystick!" << std::endl;
-#endif
     else
-#ifdef DEBUG
       std::cerr << ".done!" << std::endl << "Joystick name: " << SDL_JoystickName(0) << std::endl;
 #endif
   }else{
