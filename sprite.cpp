@@ -122,6 +122,7 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   glTranslatef(x,y,0.0f);
   //вращаем спрайт
   glRotatef(rotation,0.0f,0.0f,1.0f);
+  glScalef(0.0625f,0.0625f,1.0f);
   //биндим текстуру
   glBindTexture(GL_TEXTURE_2D ,texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы

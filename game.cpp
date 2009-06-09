@@ -83,8 +83,8 @@ CEngine::CEngine(){
   text -> font_load (std::string("fontg.png"));
   text -> text_add(9, 18, std::string("fps:"), 0);
   fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
-  ssmanager -> load("aya.png");
-  hero = new CHero("aya.png", ssmanager);
+  ssmanager -> load("aya_2.png");
+  hero = new CHero("aya_2.png", ssmanager);
   ui_background = LoadTexture_simple("th_ru/ui.png");
   background = new CBack;
 }
