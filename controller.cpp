@@ -122,8 +122,8 @@ int CController::axismove(){
     vy = 0;
   
   analog_state.dir = atan2((float)-vy,(float)vx);
-  //тут не хватает ещё одного коэффициента, чтобы интерполировать с квадрата на окружность.
-  analog_state.pow = sqrt(pow((float)vx, 2) + pow((float)vy, 2))/32768;
+  
+  analog_state.pow = sqrt(pow((float)vx, 2) + pow((float)vy, 2))/32768/abs(sin(analog_state.dir))+abs(cos(analog_state.dir));
 
   return 1;
 }
