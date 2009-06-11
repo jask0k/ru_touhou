@@ -123,7 +123,7 @@ int CController::axismove(){
   
   analog_state.dir = atan2((float)-vy,(float)vx);
   
-  analog_state.pow = sqrt(pow((float)vx, 2) + pow((float)vy, 2))/32768/abs(sin(analog_state.dir))+abs(cos(analog_state.dir));
+  analog_state.pow = sqrt(pow((float)vx, 2) + pow((float)vy, 2))/32768/(abs(sin(analog_state.dir))+abs(cos(analog_state.dir)));
 
   return 1;
 }
