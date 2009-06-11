@@ -12,4 +12,6 @@
 #define GAME_FIELD_WIDTH 384
 #define GAME_FIELD_HEIGHT 448
 
+#define JOY_DEAD_ZONE 300
+
 #endif

@@ -1,6 +1,7 @@
 #ifndef _CONTROLLER_HPP
 #define _CONTROLLER_HPP
 #define _USE_MATH_DEFINES
+#include "config.hpp"
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include <set>
@@ -51,7 +52,7 @@ public:
   void button(EButton key, bool key_state);
   int button(SDLKey key, bool key_state);
   int jbutton(Uint8 key, bool key_state);
-  int axismove(Uint8 axis, Sint16 value);
+  int axismove();
   void move_analog(GLfloat x, GLfloat y);
   GLfloat get_kx();
   GLfloat get_ky();

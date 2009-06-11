@@ -41,12 +41,13 @@ int CController::handle_event(SDL_Event* event){
   case SDL_JOYBUTTONUP: //отпущена кнопка на джойстике
     return jbutton(event -> jbutton.button, STATE_UP);
   case SDL_JOYAXISMOTION: //управление джойстиком
-	return axismove(event -> jaxis.axis, event -> jaxis.value);
+	  return axismove();
   default:
     return 0;
   }
 }
 
+//обработчик нажатия кнопок клавы
 int CController::button(SDLKey key, bool key_state){
   EButton control;
   //Ахтунг! Увага! БЫДЛОКОД!
@@ -83,6 +84,7 @@ int CController::button(SDLKey key, bool key_state){
   return 1;
 }
 
+//обработчик нажатия кнопок джойстика
 int CController::jbutton(Uint8 key, bool key_state){
   EButton control;
   switch (key){
@@ -105,32 +107,24 @@ int CController::jbutton(Uint8 key, bool key_state){
   return 1;
 }
 
-//пока что пашет не так, как от него требуется. ПОПРАВИТЬ!!!
-//всё ещё хуже, чем я думал. это реализация порочна. ПЕРЕПИСАТЬ!!!
-int CController::axismove(Uint8 axis, Sint16 value){
-  EButton control;
-  //считаем, что при таких значениях ось отпущена иначе её теребят
-  bool key_state = !((value > -300) && (value < 300));
-  switch (axis){
-  case JOY_AXIS_LR:
-    if ( value <= 0 )
-		control = B_LEFT;
-	else if ( value > 0 )
-		control = B_RIGHT;
-    break;
-  case JOY_AXIS_UD:
-    if ( value <= 0 )
-		control = B_UP;
-	else if ( value > 0 )
-		control = B_DOWN;
-    break;
-  default:
-    return 0;
-  }
-#ifdef DEBUG
-  std::cerr << "value: "<< value << " axis: " << (int)axis << " control: " << control << " key_state: " << key_state << std::endl;
-#endif
-  button(control, key_state);
+//обработчик дёргания осей джойстика
+int CController::axismove(){
+  Sint16 vx, vy;
+  //Вместо того, чтобы полагаться на значения полученные во время события,
+  //будем каждый получать их самостоятельно для обоих осей.
+  //Так не понадобится запоминать их значения между вызовами.
+  vx = SDL_JoystickGetAxis(stick, JOY_AXIS_LR);
+  vy = SDL_JoystickGetAxis(stick, JOY_AXIS_UD);
+  //Обнуляем все значения попавшие в мёртвую зону
+  if ((vx >= -JOY_DEAD_ZONE) && (vx <= JOY_DEAD_ZONE))
+    vx = 0;
+  if ((vy >= -JOY_DEAD_ZONE) && (vy <= JOY_DEAD_ZONE))
+    vy = 0;
+  
+  analog_state.dir = atan2((float)-vy,(float)vx);
+  //тут не хватает ещё одного коэффициента, чтобы интерполировать с квадрата на окружность.
+  analog_state.pow = sqrt(pow((float)vx, 2) + pow((float)vy, 2))/32768;
+
   return 1;
 }
 
