@@ -135,6 +135,8 @@ void CEngine::new_game(){
   frames = 0;
   background -> init("th_ru/grnd03.jpg");
   hero -> set_position(GAME_FIELD_WIDTH/2, 100);
+  //это для дебагаVVVV
+  background -> set_fog_density(0.09f, -0.0001f);
 }
 
 void CEngine::think(){
