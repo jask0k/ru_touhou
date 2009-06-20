@@ -13,6 +13,8 @@
 #include <map>
 
 #include "copypasta.hpp"
+#include "config.hpp"
+
 typedef std::vector<int> vint;
 typedef std::vector<std::vector<int> > vvint;
 
@@ -33,7 +35,7 @@ public:
   std::string sheetname;
   vvint* parse_props(char* filename);
   void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation=0.0f);
-  void draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation=0.0f); 
+  void draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation=0.0f); 
   //рисование с плавающими координатами
   void draw_int(GLuint frame, GLint x, GLint y);
   //рисование с целыми координатами
@@ -43,31 +45,60 @@ public:
 };
 
 class CSpriteSheetManager{
+private:
+  std::map<std::string,CSpriteSheet*> collection;
 public:
   CSpriteSheet* load(char* filename);
   CSpriteSheet* dispatch(std::string sheetname);
-  std::map<std::string,CSpriteSheet*> collection;
 };
 
 class CSprite{
 public:
-  CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no);
-  void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);
-  void draw();
-  void think();
+  CSprite(CSpriteSheet* ssheet, GLint frame_no);
+  CSprite(CSpriteSheet* ssheet, GLuint anim_no);
+  void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);//установка положения
+  void set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r=0.f);//установка скорости
+  void set_tint(GLfloat red, GLfloat green, GLfloat blue);//установка окраски
+  void set_apha(GLfloat amount);//установка альфоты
+  void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
+  void draw();//отрисовка
+  decay_state think();//анимация, движение, и т.д.
+  
 private:
-  GLfloat x,y;
-  GLfloat rotation;
-  CSpriteSheet* ssheet;
-  GLuint frame;
-  //  GLuint animation,state;
+  GLfloat x,y;//координаты центра спрайта
+  GLfloat rotation;//поворот относительно центра
+  GLfloat alpha;//коэффициент альфа-канала спрайта
+  GLfloat tint_r,tint_g,tint_b;//окрашивание спрайта
+  CSpriteSheet* ssheet;//указатель на спрайтовый лист
+
+  GLfloat v_alpha;//скорость изменения альфаканала
+  GLfloat v_x,v_y,v_r;//скорость движения и вращения спрайта
+
+  GLint frame;//номер кадра
+  GLuint animation,state;//номер анимации и фрейма
+  GLuint animation_timer;//таймер переключения анимации
+  
+  GLuint decay_timer;//таймер исчезновения
+
+  GLboolean decay_active;//флаг активности таймера полного исчезновения
+  GLboolean animation_active;//флаг активности анимации
+
 };
 
-class CAnimatedSprite:public CSprite{
+class CSpriteManager{
 public:
+  CSpriteManager(CSpriteSheetManager* ssmanager);
+  void think();
   void draw();
+  GLuint create_sprite(std::string spritesheet, GLint frame_no);
+  GLuint create_sprite(std::string spritesheet, GLuint animation);
+  
+  GLuint destroy_sprite();
+  CSprite* get_sprite(GLuint handle);
 private:
-  GLuint animation,state;
+  CSpriteSheetManager* ssmanager;
+  std::map<GLuint,CSprite*> collection;
+  GLuint free_handle;//минимальный свободный псевдоуказатель
 };
 
 #endif

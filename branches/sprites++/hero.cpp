@@ -3,7 +3,7 @@
 #include "SDL_image.h"
 
 CHero::CHero(char* texture_file, CSpriteSheetManager* manager):
-  vx(0),vy(0),x(GAME_FIELD_WIDTH/2),max_speed(8),sprite(new CSprite(texture_file,manager,0)){
+  vx(0),vy(0),x(GAME_FIELD_WIDTH/2),max_speed(8),sprite(new CSprite(manager->dispatch(texture_file),0)){
   sprite->set_position(100,100);
 }
 

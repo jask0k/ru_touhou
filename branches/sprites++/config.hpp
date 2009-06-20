@@ -14,4 +14,9 @@
 
 #define JOY_DEAD_ZONE 300
 
+enum decay_state{
+  STILL_ALIVE,
+  DECOMPOSED
+};
+
 #endif

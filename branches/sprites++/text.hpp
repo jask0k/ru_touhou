@@ -3,6 +3,7 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "config.hpp"
 #include "sprite.hpp"
 #include <vector>
 #include <iostream>
@@ -15,10 +16,7 @@ enum text_align{
   ALIGN_LEFT = 1
 };
 
-enum decay_state{
-  STILL_ALIVE,
-  DECOMPOSED
-};
+
 
 class CLabel{
 public:

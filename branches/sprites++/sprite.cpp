@@ -104,10 +104,18 @@ void CSpriteSheet::draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GL
   draw((*animations)[animation][state*2],x,y,rotation);
 }
 
-void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
-  if (frame >= rectangle.x * rectangle.y){
+void CSpriteSheet::draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation){
+#ifdef DEBUG
+  if (frame >= rectangle.x * rectangle.y ||
+      -1-frame >= rectangle.x * rectangle.y ){
     std::cerr << "incorrect frame!" << std::endl;
     SDL_Quit();
+  }
+#endif
+  GLint invertk=1;
+  if (frame < 0){
+    invertk = -1;
+    frame = -frame-1;
   }
   //вычисляем координаты кадра
   SDL_Rect frame_dimensions = rectangle;
@@ -122,18 +130,18 @@ void CSpriteSheet::draw(GLuint frame, GLfloat x, GLfloat y, GLfloat rotation){
   glTranslatef(x,y,0.0f);
   //вращаем спрайт
   glRotatef(rotation,0.0f,0.0f,1.0f);
-  glScalef(0.0625f,0.0625f,1.0f);
+  //  glScalef(0.0625f,0.0625f,1.0f);
   //биндим текстуру
   glBindTexture(GL_TEXTURE_2D ,texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
     glTexCoord2f( (GLfloat)frame_dimensions.x/kx, (frame_dimensions.y+frame_dimensions.h)/ky );
-    glVertex2f( -rectangle.w/2,-rectangle.h/2 );
+    glVertex2f( -rectangle.w/2*invertk,-rectangle.h/2 );
     glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, (frame_dimensions.y+frame_dimensions.h)/ky );	
-    glVertex2f( rectangle.w/2, -rectangle.h/2 );
+    glVertex2f( rectangle.w/2*invertk, -rectangle.h/2 );
     glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, frame_dimensions.y/ky );	
-    glVertex2f( rectangle.w/2, rectangle.h/2 );
+    glVertex2f( rectangle.w/2*invertk, rectangle.h/2 );
     glTexCoord2f( frame_dimensions.x/kx, frame_dimensions.y/ky );		
-    glVertex2f( -rectangle.w/2, rectangle.h/2 );}
+    glVertex2f( -rectangle.w/2*invertk, rectangle.h/2 );}
   glEnd();
   glPopMatrix();
 }
@@ -174,8 +182,8 @@ CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
   return collection[sheetname];
 }
 
-CSprite::CSprite(std::string sheetname, CSpriteSheetManager* manager, GLuint frame_no):
-  rotation(0),ssheet(manager->dispatch(sheetname)),frame(frame_no) {}
+CSprite::CSprite(CSpriteSheet* ssheet, GLint frame_no):
+  rotation(0),ssheet(ssheet),frame(frame_no) {}
 
 void CSprite::draw(){
   ssheet -> draw (frame,x,y,rotation);
