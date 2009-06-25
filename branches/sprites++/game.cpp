@@ -135,14 +135,16 @@ void CEngine::new_game(){
   frames = 0;
   background -> init("th_ru/grnd03.jpg");
   hero -> set_position(GAME_FIELD_WIDTH/2, 100);
-  //это для дебагаVVVV
-  background -> set_fog_density(0.09f, -0.0001f);
 }
 
 void CEngine::think(){
   controller_state c_state = controller -> get_state();
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
+  if (c_state.focus)
+    hero->sprite->set_tint(.5f,1.f,.5f);
+  else
+    hero->sprite->clear_tint();
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
   text ->think();

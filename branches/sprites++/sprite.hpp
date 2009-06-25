@@ -34,8 +34,8 @@ public:
   CSpriteSheet(char* filename);
   std::string sheetname;
   vvint* parse_props(char* filename);
-  void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation=0.0f);
-  void draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation=0.0f); 
+  void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation=0.0f, GLfloat scale=1.0f);
+  void draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation=0.0f, GLfloat scale=1.0f); 
   //рисование с плавающими координатами
   void draw_int(GLuint frame, GLint x, GLint y);
   //рисование с целыми координатами
@@ -59,8 +59,10 @@ public:
   void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);//установка положения
   void set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r=0.f);//установка скорости
   void set_tint(GLfloat red, GLfloat green, GLfloat blue);//установка окраски
+  void clear_tint();
   void set_apha(GLfloat amount);//установка альфоты
   void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
+  void set_scale(GLfloat scale);//установка увеличения/уменьшения спрайта
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
   
@@ -82,6 +84,7 @@ private:
 
   GLboolean decay_active;//флаг активности таймера полного исчезновения
   GLboolean animation_active;//флаг активности анимации
+  GLfloat scale;
 
 };
 

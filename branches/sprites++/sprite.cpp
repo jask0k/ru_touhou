@@ -100,11 +100,11 @@ vvint* CSpriteSheet::parse_props(char* filename){
   return result;
 }
 
-void CSpriteSheet::draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation){
-  draw((*animations)[animation][state*2],x,y,rotation);
+void CSpriteSheet::draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation, GLfloat scale){
+  draw((*animations)[animation][state*2],x,y,rotation,scale);
 }
 
-void CSpriteSheet::draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation){
+void CSpriteSheet::draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation, GLfloat scale){
 #ifdef DEBUG
   if (frame >= rectangle.x * rectangle.y ||
       -1-frame >= rectangle.x * rectangle.y ){
@@ -130,7 +130,7 @@ void CSpriteSheet::draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation){
   glTranslatef(x,y,0.0f);
   //вращаем спрайт
   glRotatef(rotation,0.0f,0.0f,1.0f);
-  //  glScalef(0.0625f,0.0625f,1.0f);
+  glScalef(scale,scale,1.0f);
   //биндим текстуру
   glBindTexture(GL_TEXTURE_2D ,texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
@@ -183,14 +183,34 @@ CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
 }
 
 CSprite::CSprite(CSpriteSheet* ssheet, GLint frame_no):
-  rotation(0),ssheet(ssheet),frame(frame_no) {}
+  rotation(0),ssheet(ssheet),frame(frame_no),
+  alpha(1.0f),tint_r(1.0f),tint_g(1.0f),tint_b(1.0f) {}
 
 void CSprite::draw(){
-  ssheet -> draw (frame,x,y,rotation);
+  glPushAttrib (GL_CURRENT_BIT);
+  glColor4f(tint_r, tint_g, tint_b, alpha);
+  ssheet -> draw (frame, x, y, rotation, scale);
+  glPopAttrib ();
 }
 
 void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
   x = new_x;
   y = new_y;
   rotation = new_rotation;
+}
+
+void CSprite::set_scale(GLfloat scale){
+  this -> scale = scale;
+}
+
+void CSprite::set_tint(GLfloat red, GLfloat green, GLfloat blue){
+  this->tint_r = red;
+  this->tint_g = green;
+  this->tint_b = blue;
+}
+
+void CSprite::clear_tint(){
+  this->tint_r = 1.f;
+  this->tint_g = 1.f;
+  this->tint_b = 1.f;
 }
