@@ -142,11 +142,14 @@ void CEngine::think(){
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
   if (c_state.focus)
-    hero->sprite->set_tint(.5f,1.f,.5f);
-  else
-    hero->sprite->clear_tint();
+    hero->sprite->set_alpha_speed(-.005f);
+  else{
+    hero->sprite->set_alpha_speed(0.0f);
+    hero->sprite->set_alpha(1.0f);
+  }
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
+  hero ->sprite->think();
   text ->think();
   background -> think();
 }

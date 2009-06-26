@@ -171,6 +171,23 @@ void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
   glEnd();
 }
 
+GLuint CSpriteSheet::get_frames(GLuint animation){
+  if (animation < animations -> size())
+    return (GLuint)((*animations)[animation].size()/2);
+  else
+    return 0;
+}
+
+GLuint CSpriteSheet::get_pause(GLuint animation, GLuint state){
+  if (animation < animations -> size())
+    if (state < ((*animations)[animation].size()/2))
+      return (*animations)[animation][state*2+1];
+    else
+      return 0;
+  else
+    return 0;
+}
+
 CSpriteSheet* CSpriteSheetManager::load(char* filename){
   CSpriteSheet* spritesheet = new CSpriteSheet(filename);
   std::string sheetname(filename);
@@ -184,12 +201,24 @@ CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
 
 CSprite::CSprite(CSpriteSheet* ssheet, GLint frame_no):
   rotation(0),ssheet(ssheet),frame(frame_no),
-  alpha(1.0f),tint_r(1.0f),tint_g(1.0f),tint_b(1.0f) {}
+  alpha(1.f),tint_r(1.f),tint_g(1.f),tint_b(1.f),
+  animation_active(false),decay_active(false),
+  v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f){}
+
+CSprite::CSprite(CSpriteSheet* ssheet, GLuint anim_no):
+  rotation(0),ssheet(ssheet),animation(anim_no),
+  alpha(1.f),tint_r(1.f),tint_g(1.f),tint_b(1.f),
+  state(0),animation_active(true),decay_active(false),
+  v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f),
+  animation_timer(ssheet->get_pause(anim_no,0)){}
 
 void CSprite::draw(){
   glPushAttrib (GL_CURRENT_BIT);
   glColor4f(tint_r, tint_g, tint_b, alpha);
-  ssheet -> draw (frame, x, y, rotation, scale);
+  if (animation_active)
+    ssheet -> draw (animation, state, x, y, rotation, scale);
+  else
+    ssheet -> draw (frame, x, y, rotation, scale);
   glPopAttrib ();
 }
 
@@ -214,3 +243,50 @@ void CSprite::clear_tint(){
   this->tint_g = 1.f;
   this->tint_b = 1.f;
 }
+
+decay_state CSprite::think(){
+  rotation += v_r;
+  alpha += v_alpha;
+  x += v_x;
+  if (x < -GAME_FIELD_WIDTH || x > 2 * GAME_FIELD_WIDTH)
+    return DECOMPOSED;
+  y += v_y;
+  if (y < -GAME_FIELD_HEIGHT || y > 2 * GAME_FIELD_HEIGHT)
+    return DECOMPOSED;
+
+  if (animation_active)
+    if (--animation_timer == 0){
+      if (++state == ssheet -> get_frames(animation))
+	state = 0;
+      animation_timer = ssheet -> get_pause(animation,state);
+    }
+  if (decay_active)
+    if (--decay_timer == 0)
+      return DECOMPOSED;
+    else
+      return STILL_ALIVE;
+  else
+    return STILL_ALIVE;
+}
+
+void CSprite::set_alpha(GLfloat amount){
+  this -> alpha = amount;
+}
+
+void CSprite::set_alpha_speed(GLfloat amount){
+  this -> v_alpha = amount;
+}
+
+void CSprite::set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r){
+  this -> v_x = v_x;
+  this -> v_y = v_y;
+  this -> v_r = v_r;
+}
+
+void CSprite::set_angle(GLfloat v, GLfloat angle){
+  this -> v_r = 0.f;
+  this -> v_x = cos(M_PI*angle/180)*v;
+  this -> v_y = sin(M_PI*angle/180)*v;
+  this -> rotation = angle;
+}
+

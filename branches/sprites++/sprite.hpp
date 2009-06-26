@@ -39,9 +39,11 @@ public:
   //рисование с плавающими координатами
   void draw_int(GLuint frame, GLint x, GLint y);
   //рисование с целыми координатами
-  GLuint get_width(){return rectangle.w;}
-  GLuint get_height(){return rectangle.h;}
-  GLuint get_count(){return rectangle.x*rectangle.y;}
+  GLuint get_width(){return rectangle.w;}//ширина спрайта
+  GLuint get_height(){return rectangle.h;}//высота спрайта
+  GLuint get_count(){return rectangle.x*rectangle.y;}//количество спрайтов
+  GLuint get_frames(GLuint animation);
+  GLuint get_pause(GLuint animation, GLuint state);
 };
 
 class CSpriteSheetManager{
@@ -58,9 +60,10 @@ public:
   CSprite(CSpriteSheet* ssheet, GLuint anim_no);
   void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);//установка положения
   void set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r=0.f);//установка скорости
+  void set_angle(GLfloat v, GLfloat angle);//установка вектора скорости по углу
   void set_tint(GLfloat red, GLfloat green, GLfloat blue);//установка окраски
   void clear_tint();
-  void set_apha(GLfloat amount);//установка альфоты
+  void set_alpha(GLfloat amount);//установка альфоты
   void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
   void set_scale(GLfloat scale);//установка увеличения/уменьшения спрайта
   void draw();//отрисовка
@@ -82,8 +85,8 @@ private:
   
   GLuint decay_timer;//таймер исчезновения
 
-  GLboolean decay_active;//флаг активности таймера полного исчезновения
   GLboolean animation_active;//флаг активности анимации
+  GLboolean decay_active;//флаг активности таймера полного исчезновения
   GLfloat scale;
 
 };
@@ -96,7 +99,7 @@ public:
   GLuint create_sprite(std::string spritesheet, GLint frame_no);
   GLuint create_sprite(std::string spritesheet, GLuint animation);
   
-  GLuint destroy_sprite();
+  GLboolean destroy_sprite(GLuint handle);
   CSprite* get_sprite(GLuint handle);
 private:
   CSpriteSheetManager* ssmanager;
