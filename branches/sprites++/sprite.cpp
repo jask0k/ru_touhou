@@ -247,6 +247,10 @@ void CSprite::clear_tint(){
 decay_state CSprite::think(){
   rotation += v_r;
   alpha += v_alpha;
+  if (alpha > 1.f)
+    alpha = 1.f;
+  else if (alpha < 0.f)
+    alpha = 0.f;
   x += v_x;
   if (x < -GAME_FIELD_WIDTH || x > 2 * GAME_FIELD_WIDTH)
     return DECOMPOSED;
@@ -290,3 +294,54 @@ void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> rotation = angle;
 }
 
+CSpriteManager::CSpriteManager(CSpriteSheetManager* ssmanager):
+  ssmanager(ssmanager),free_handle(0){}
+
+GLuint CSpriteManager::create_sprite(std::string spritesheet, GLint frame_no){
+  CSprite* sprite = new CSprite(ssmanager->dispatch(spritesheet), frame_no);
+  GLuint result = free_handle;
+  collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
+  while(collection.count(free_handle))
+    ++free_handle;
+  return result;
+}
+
+GLuint CSpriteManager::create_sprite(std::string spritesheet, GLuint animation){
+  CSprite* sprite = new CSprite(ssmanager->dispatch(spritesheet), animation);
+  GLuint result = free_handle;
+  collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
+  while(collection.count(free_handle))
+    ++free_handle;
+  return result;
+}
+
+CSprite* CSpriteManager::get_sprite(GLuint handle){
+  return collection[handle];
+}
+
+void  CSpriteManager::draw(){
+  std::map<GLuint,CSprite*>::iterator i;
+  for (i = collection.begin(); i != collection.end(); ++i)
+    i -> second -> draw();
+}
+
+void CSpriteManager::think(){
+  std::map<GLuint,CSprite*>::iterator i;
+  for (i = collection.begin();i != collection.end();)
+    if (i -> second -> think() == DECOMPOSED){
+      GLuint bad_handle = i -> first;
+      ++i;
+      destroy_sprite(bad_handle);
+    }
+    else
+      ++i;
+}
+
+GLuint CSpriteManager::destroy_sprite(GLuint handle){
+  if (collection.count(handle) == 0)
+    return 0;
+  collection.erase(handle);
+  if (free_handle>handle)
+    free_handle=handle;
+  return free_handle;
+}

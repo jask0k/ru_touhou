@@ -66,6 +66,7 @@ public:
   void set_alpha(GLfloat amount);//установка альфоты
   void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
   void set_scale(GLfloat scale);//установка увеличения/уменьшения спрайта
+  void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
   
@@ -99,7 +100,7 @@ public:
   GLuint create_sprite(std::string spritesheet, GLint frame_no);
   GLuint create_sprite(std::string spritesheet, GLuint animation);
   
-  GLboolean destroy_sprite(GLuint handle);
+  GLuint destroy_sprite(GLuint handle);
   CSprite* get_sprite(GLuint handle);
 private:
   CSpriteSheetManager* ssmanager;

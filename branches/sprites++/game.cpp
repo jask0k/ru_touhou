@@ -78,6 +78,7 @@ CEngine::CEngine(){
 
   ssmanager = new CSpriteSheetManager;
   controller = new CController;
+  smanager = new CSpriteManager(ssmanager);
   text = new CText(ssmanager);
   ssmanager -> load("fontg.png");
   text -> font_load (std::string("fontg.png"));
@@ -87,6 +88,7 @@ CEngine::CEngine(){
   hero = new CHero("aya_2.png", ssmanager);
   ui_background = LoadTexture_simple("th_ru/ui.png");
   background = new CBack;
+  ssmanager -> load("bullets.png");
 }
 
 CEngine::~CEngine(){
@@ -95,6 +97,7 @@ CEngine::~CEngine(){
   delete fps_manager;
   delete controller;
   delete background;
+  delete smanager;
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif
@@ -144,14 +147,21 @@ void CEngine::think(){
   if (c_state.focus)
     hero->sprite->set_alpha_speed(-.005f);
   else{
-    hero->sprite->set_alpha_speed(0.0f);
-    hero->sprite->set_alpha(1.0f);
+    hero->sprite->set_alpha_speed(0.005f);
+  }
+  if (c_state.attack){
+    int i = smanager -> create_sprite("bullets.png", (GLint)0);
+    CSprite* bull_sprite = smanager -> get_sprite(i);
+    bull_sprite -> set_position(hero -> x, hero -> y);
+    //    bull_sprite -> set_decay(100);
+    bull_sprite -> set_speed(0.f,10.f);
   }
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
   hero ->sprite->think();
   text ->think();
   background -> think();
+  smanager -> think();
 }
 
 void CEngine::handle_events(){
@@ -257,6 +267,8 @@ void CEngine::draw_game(){
   glEnable2D();
 
   //рисуем спрайты
+  smanager -> draw();
+
   hero -> draw();
   
   text -> draw();
