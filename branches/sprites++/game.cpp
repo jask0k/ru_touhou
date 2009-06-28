@@ -150,11 +150,11 @@ void CEngine::think(){
     hero->sprite->set_alpha_speed(0.005f);
   }
   if (c_state.attack){
-    int i = smanager -> create_sprite("bullets.png", (GLint)0);
+    int i = smanager -> create_sprite("bullets.png", (GLuint)0);
     CSprite* bull_sprite = smanager -> get_sprite(i);
     bull_sprite -> set_position(hero -> x, hero -> y);
     //    bull_sprite -> set_decay(100);
-    bull_sprite -> set_speed(0.f,10.f);
+    bull_sprite -> set_speed(0.f,5.f);
   }
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
@@ -267,9 +267,10 @@ void CEngine::draw_game(){
   glEnable2D();
 
   //рисуем спрайты
-  smanager -> draw();
 
   hero -> draw();
+
+  smanager -> draw();
   
   text -> draw();
 

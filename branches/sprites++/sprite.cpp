@@ -298,6 +298,9 @@ CSpriteManager::CSpriteManager(CSpriteSheetManager* ssmanager):
   ssmanager(ssmanager),free_handle(0){}
 
 GLuint CSpriteManager::create_sprite(std::string spritesheet, GLint frame_no){
+#ifdef DEBUG
+  std::cerr<<"creating handle "<< free_handle << "!"<<std::endl;
+#endif
   CSprite* sprite = new CSprite(ssmanager->dispatch(spritesheet), frame_no);
   GLuint result = free_handle;
   collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
@@ -307,6 +310,9 @@ GLuint CSpriteManager::create_sprite(std::string spritesheet, GLint frame_no){
 }
 
 GLuint CSpriteManager::create_sprite(std::string spritesheet, GLuint animation){
+#ifdef DEBUG
+  std::cerr<<"creating handle "<< free_handle << "!"<<std::endl;
+#endif
   CSprite* sprite = new CSprite(ssmanager->dispatch(spritesheet), animation);
   GLuint result = free_handle;
   collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
@@ -338,6 +344,9 @@ void CSpriteManager::think(){
 }
 
 GLuint CSpriteManager::destroy_sprite(GLuint handle){
+#ifdef DEBUG
+  std::cerr<<"destroing handle "<< handle << "!"<<std::endl;
+#endif
   if (collection.count(handle) == 0)
     return 0;
   collection.erase(handle);
