@@ -5,7 +5,7 @@ void CBack::init(const char* filename, GLfloat vy){
   this->vy = vy;
   this->vx = 0.0f;
   this->rx = -45.f;
-  this->vrx = 0.0f;
+  this->vrx = 0.f;
   this->ry = this->vry = 0.0f;
   this->rz = this->vrz = 0.0f;
 
@@ -15,6 +15,7 @@ void CBack::init(const char* filename, GLfloat vy){
   this->fog_colour[3] = 1.0;
 
   this->fog_density = 0.09;
+  this->vfog=0.f;
   this->ground_texture = LoadTexture_simple(filename);
   glTexParameteri(ground_texture,GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(ground_texture,GL_TEXTURE_WRAP_T, GL_REPEAT);
