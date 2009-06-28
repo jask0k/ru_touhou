@@ -78,6 +78,7 @@ CEngine::CEngine(){
 
   ssmanager = new CSpriteSheetManager;
   controller = new CController;
+  smanager = new CSpriteManager(ssmanager);
   text = new CText(ssmanager);
   ssmanager -> load("fontg.png");
   text -> font_load (std::string("fontg.png"));
@@ -87,6 +88,7 @@ CEngine::CEngine(){
   hero = new CHero("aya_2.png", ssmanager);
   ui_background = LoadTexture_simple("th_ru/ui.png");
   background = new CBack;
+  ssmanager -> load("bullets.png");
 }
 
 CEngine::~CEngine(){
@@ -95,6 +97,7 @@ CEngine::~CEngine(){
   delete fps_manager;
   delete controller;
   delete background;
+  delete smanager;
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif
@@ -135,18 +138,30 @@ void CEngine::new_game(){
   frames = 0;
   background -> init("th_ru/grnd03.jpg");
   hero -> set_position(GAME_FIELD_WIDTH/2, 100);
-  //это для дебагаVVVV
-  background -> set_fog_density(0.09f, -0.0001f);
 }
 
 void CEngine::think(){
   controller_state c_state = controller -> get_state();
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
+  if (c_state.focus)
+    hero->sprite->set_alpha_speed(-.005f);
+  else{
+    hero->sprite->set_alpha_speed(0.005f);
+  }
+  if (c_state.attack){
+    int i = smanager -> create_sprite("bullets.png", (GLuint)0);
+    CSprite* bull_sprite = smanager -> get_sprite(i);
+    bull_sprite -> set_position(hero -> x, hero -> y);
+    //    bull_sprite -> set_decay(100);
+    bull_sprite -> set_speed(0.f,20.f);
+  }
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
+  hero ->sprite->think();
   text ->think();
   background -> think();
+  smanager -> think();
 }
 
 void CEngine::handle_events(){
@@ -252,7 +267,10 @@ void CEngine::draw_game(){
   glEnable2D();
 
   //рисуем спрайты
+
   hero -> draw();
+
+  smanager -> draw();
   
   text -> draw();
 

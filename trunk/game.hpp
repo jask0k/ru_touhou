@@ -54,6 +54,7 @@ private:
   CHero* hero;//ГГ
   CSpriteSheetManager* ssmanager;
   CFrameManager* fps_manager;
+  CSpriteManager* smanager;
   CController* controller;
   CText* text;
   CBack* background;
