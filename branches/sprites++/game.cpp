@@ -154,7 +154,7 @@ void CEngine::think(){
     CSprite* bull_sprite = smanager -> get_sprite(i);
     bull_sprite -> set_position(hero -> x, hero -> y);
     //    bull_sprite -> set_decay(100);
-    bull_sprite -> set_speed(0.f,5.f);
+    bull_sprite -> set_speed(0.f,20.f);
   }
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();

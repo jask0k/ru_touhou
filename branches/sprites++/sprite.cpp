@@ -203,14 +203,16 @@ CSprite::CSprite(CSpriteSheet* ssheet, GLint frame_no):
   rotation(0),ssheet(ssheet),frame(frame_no),
   alpha(1.f),tint_r(1.f),tint_g(1.f),tint_b(1.f),
   animation_active(false),decay_active(false),
-  v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f){}
+  v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f),
+  scale(1.f){}
 
 CSprite::CSprite(CSpriteSheet* ssheet, GLuint anim_no):
   rotation(0),ssheet(ssheet),animation(anim_no),
   alpha(1.f),tint_r(1.f),tint_g(1.f),tint_b(1.f),
   state(0),animation_active(true),decay_active(false),
   v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f),
-  animation_timer(ssheet->get_pause(anim_no,0)){}
+  animation_timer(ssheet->get_pause(anim_no,0)),
+  scale(1.f){}
 
 void CSprite::draw(){
   glPushAttrib (GL_CURRENT_BIT);
