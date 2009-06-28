@@ -268,10 +268,8 @@ void CEngine::draw_game(){
 
   //рисуем спрайты
 
-  hero -> draw();
-
   smanager -> draw();
-  
+  hero -> draw();
   text -> draw();
 
   glDisable2D();
