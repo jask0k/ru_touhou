@@ -150,11 +150,20 @@ void CEngine::think(){
     hero->sprite->set_alpha_speed(0.005f);
   }
   if (c_state.attack){
-    int i = smanager -> create_sprite("bullets.png", (GLuint)0);
-    CSprite* bull_sprite = smanager -> get_sprite(i);
-    bull_sprite -> set_position(hero -> x, hero -> y);
-    //    bull_sprite -> set_decay(100);
-    bull_sprite -> set_speed(0.f,20.f);
+    if (frames%2 == 0){
+      int i = smanager -> create_sprite("bullets.png", (GLint)4);
+      CSprite* bull_sprite = smanager -> get_sprite(i);
+      bull_sprite -> set_position(hero -> x-8, hero -> y);
+      bull_sprite -> set_speed(0.f,20.f);
+      bull_sprite -> set_alpha(.2f);
+      bull_sprite -> set_scale(2.f);
+      i = smanager -> create_sprite("bullets.png", (GLint)4);
+      bull_sprite = smanager -> get_sprite(i);
+      bull_sprite -> set_position(hero -> x+8, hero -> y);
+      bull_sprite -> set_speed(0.f,20.f);
+      bull_sprite -> set_alpha(.2f);
+      bull_sprite -> set_scale(2.f);
+    }
   }
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
@@ -175,7 +184,7 @@ void CEngine::handle_events(){
       switch (event -> key.keysym.sym){
         case SDLK_ESCAPE:
           state.main_state = ENGINE_STATE_QUIT;
-		  break;
+	  break;
         case SDLK_RETURN:
           if (SDL_WM_ToggleFullScreen(screen)==0)
             std::cerr << "Failure!" << std::endl;
@@ -204,7 +213,7 @@ void CEngine::handle_events(){
 #ifdef DEBUG
 	       std::cerr << "minimizing!" << std::endl;
 #endif
-		}
+	    }
       break;
       
     default:
