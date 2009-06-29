@@ -76,6 +76,9 @@ int CController::button(SDLKey key, bool key_state){
   case SDLK_LCTRL:
     control = B_SKIP;
     break;
+  //case SDLK_PRINT:
+  //engine -> state.screenshot=true;
+  //  return 1;
   default:
     return 0;
   }
