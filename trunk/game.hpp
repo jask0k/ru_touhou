@@ -11,6 +11,7 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include <ctime>
 
 //состояния движка
 enum EngineMainState{
@@ -68,7 +69,7 @@ public:
   void loop();//основной цикл игры
   void draw();//рендеринг картинки, менюшек
   void draw_game();//рисование гуя и игры(нужно для красивого заблюривания во время паузы)
-  void save_screenshot();
+  int save_screenshot();
   
 };
 #endif
