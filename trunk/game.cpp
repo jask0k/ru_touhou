@@ -309,35 +309,28 @@ void CEngine::draw(){
 }
 
 int CEngine::save_screenshot(){
-  SDL_Surface *screen = SDL_CreateRGBSurface(SDL_SWSURFACE, DEFAULT_X, DEFAULT_Y, DEFAULT_COLOUR, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
   // Create two arrays of unsigned bytes (chars). 4 bytes per pixel (RGBA)
-  unsigned char *pixels = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
+   unsigned char *pixels = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
   unsigned char *pixelsbuf = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
 
-	// Read the front buffer
-	glReadPixels(0, 0, DEFAULT_X, DEFAULT_Y, GL_RGBA, GL_UNSIGNED_BYTE, pixelsbuf);
+  // Read the front buffer
+  glReadPixels(0, 0, DEFAULT_X, DEFAULT_Y, GL_RGBA, GL_UNSIGNED_BYTE, pixelsbuf);
 
   // Copy lines of pixels from pixelsbuf to pixels, flipping the image at the same time.
-  for(int i=0; i < DEFAULT_X; ++i)
-    memcpy(pixels+(DEFAULT_X-i-1)*DEFAULT_Y*4, pixelsbuf+i*DEFAULT_X*4, DEFAULT_X*4);
+  for(int i=0; i < DEFAULT_Y; ++i)
+   memcpy(pixels+(DEFAULT_Y-i-1)*DEFAULT_X*4, pixelsbuf+i*DEFAULT_X*4, DEFAULT_X*4);
 
-	screen->pixels = pixels;
+  SDL_Surface *screenshot = SDL_CreateRGBSurfaceFrom(pixels, DEFAULT_X, DEFAULT_Y, DEFAULT_COLOUR, DEFAULT_X*4, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
 
-  char filename[256];
-  time_t tp;
-  time(&tp);
-  tm *t = localtime(&tp);
-  strcpy_s(filename,asctime(t));
-  strcat_s(filename,".bmp");
-	SDL_SaveBMP(screen, filename);
-	SDL_FreeSurface(screen);
-	screen = 0;
-
-	delete pixels;
-	delete pixelsbuf;
-
-	pixels = 0;
-	pixelsbuf = 0;
-
-	return 0;
+  std::ostringstream filename_buff;
+  time_t tp = time(NULL);
+  
+  filename_buff << tp << ".bmp";
+  std::string filename = filename_buff.str();
+  SDL_SaveBMP(screenshot, filename.c_str());
+  std::cerr<<filename;
+  SDL_FreeSurface(screenshot);
+  delete pixels;
+  delete pixelsbuf;
+  return 0;
 }
