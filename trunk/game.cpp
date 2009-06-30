@@ -326,9 +326,7 @@ int CEngine::save_screenshot(){
   time_t tp = time(NULL);
   
   filename_buff << tp << ".bmp";
-  std::string filename = filename_buff.str();
-  SDL_SaveBMP(screenshot, filename.c_str());
-  std::cerr<<filename;
+  SDL_SaveBMP(screenshot, filename_buff.str().c_str());
   SDL_FreeSurface(screenshot);
   delete pixels;
   delete pixelsbuf;
