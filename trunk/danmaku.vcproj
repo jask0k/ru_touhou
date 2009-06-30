@@ -66,6 +66,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
 				ManifestFile="$(SolutionDir)$(TargetFileName).intermediate.manifest"
+				IgnoreDefaultLibraryNames="msvcrt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(SolutionDir)$(ProjectName)_d.pdb"
 				SubSystem="1"

@@ -14,7 +14,7 @@ void CBack::init(const char* filename, GLfloat vy){
   this->fog_colour[2] = 0.5;
   this->fog_colour[3] = 1.0;
 
-  this->fog_density = 0.09;
+  this->fog_density = 0.09f;
   this->vfog=0.f;
   this->ground_texture = LoadTexture_simple(filename);
   glTexParameteri(ground_texture,GL_TEXTURE_WRAP_S, GL_REPEAT);

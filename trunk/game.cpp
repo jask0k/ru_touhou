@@ -18,7 +18,7 @@ void CFrameManager::end_frame(){
   if (delay>0)
     SDL_Delay(delay);
   ++frames;
-  FPS = 1000/(SDL_GetTicks()-begin_time);
+  FPS = 1000/(float)(SDL_GetTicks()-begin_time);
   averageFPS += (FPS-averageFPS)/frames;
   fps_label -> change_text(FPS);
 }
@@ -32,6 +32,7 @@ GLfloat CFrameManager::get_aFPS(){
 }
 
 CEngine::CEngine(){
+  state.screenshot = false;
   read_config();
 #ifdef DEBUG
   std::cerr << "Initializing video.";

@@ -135,18 +135,18 @@ void CSpriteSheet::draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation, GLf
   glBindTexture(GL_TEXTURE_2D ,texture_handle);
   glBegin( GL_QUADS );{//фигурные скобки добавлены чтоб были отступы
     glTexCoord2f( (GLfloat)frame_dimensions.x/kx, (frame_dimensions.y+frame_dimensions.h)/ky );
-    glVertex2f( -rectangle.w/2*invertk,-rectangle.h/2 );
+    glVertex2f( (GLfloat)-rectangle.w/2*invertk,(GLfloat)-rectangle.h/2 );
     glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, (frame_dimensions.y+frame_dimensions.h)/ky );	
-    glVertex2f( rectangle.w/2*invertk, -rectangle.h/2 );
+    glVertex2f( (GLfloat)rectangle.w/2*invertk, (GLfloat)-rectangle.h/2 );
     glTexCoord2f( (frame_dimensions.x+frame_dimensions.w)/kx, frame_dimensions.y/ky );	
-    glVertex2f( rectangle.w/2*invertk, rectangle.h/2 );
+    glVertex2f( (GLfloat)rectangle.w/2*invertk, (GLfloat)rectangle.h/2 );
     glTexCoord2f( frame_dimensions.x/kx, frame_dimensions.y/ky );		
-    glVertex2f( -rectangle.w/2*invertk, rectangle.h/2 );}
+    glVertex2f( (GLfloat)-rectangle.w/2*invertk, (GLfloat)rectangle.h/2 );}
   glEnd();
   glPopMatrix();
 }
 void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
-  if (frame >= rectangle.x * rectangle.y){
+  if (frame >= (GLuint)rectangle.x * rectangle.y){
     std::cerr << "incorrect frame!" << std::endl;
     SDL_Quit();
   }
@@ -291,8 +291,8 @@ void CSprite::set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r){
 
 void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> v_r = 0.f;
-  this -> v_x = cos(M_PI*angle/180)*v;
-  this -> v_y = sin(M_PI*angle/180)*v;
+  this -> v_x = cos((float)M_PI*angle/180)*v;
+  this -> v_y = sin((float)M_PI*angle/180)*v;
   this -> rotation = angle;
 }
 
