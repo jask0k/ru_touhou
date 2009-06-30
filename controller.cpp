@@ -114,7 +114,7 @@ int CController::jbutton(Uint8 key, bool key_state){
 int CController::axismove(){
   Sint16 vx, vy;
   //Вместо того, чтобы полагаться на значения полученные во время события,
-  //будем каждый получать их самостоятельно для обоих осей.
+  //будем каждый раз получать их самостоятельно для обоих осей.
   //Так не понадобится запоминать их значения между вызовами.
   vx = SDL_JoystickGetAxis(stick, JOY_AXIS_LR);
   vy = SDL_JoystickGetAxis(stick, JOY_AXIS_UD);
@@ -155,7 +155,7 @@ void CController::analog_sync(){
     analog_state.pow = 1;
     angle = atan2((float)vy,(float)vx);}
     if (angle < 0)
-      angle += 2*M_PI;
+      angle += 2*(float)M_PI;
   analog_state.dir = angle;
   //#ifdef DEBUG
   //std::cerr << "angle:" << angle << std::endl;
@@ -167,9 +167,9 @@ struct controller_state CController::get_state(){
   controller_state result;
   result.direction = analog_state.dir;
   result.strength = analog_state.pow;
-  result.focus = (bool)state -> count(B_FOCUS);
-  result.attack = (bool)state -> count(B_ATTACK);
-  result.skip = (bool)state -> count(B_SKIP);
+  result.focus = (state -> count(B_FOCUS))!=0;
+  result.attack = (state -> count(B_ATTACK))!=0;
+  result.skip = (state -> count(B_SKIP))!=0;
   return result;
 }
 
