@@ -14,11 +14,11 @@ void CFrameManager::begin_frame(){
 }
 
 void CFrameManager::end_frame(){
-  int delay = 1000/60-(SDL_GetTicks()-begin_time);
+  int delay = lrint(1000.f/60.0f-(SDL_GetTicks()-begin_time));
   if (delay>0)
     SDL_Delay(delay);
   ++frames;
-  FPS = 1000/(float)(SDL_GetTicks()-begin_time);
+  FPS = 1000.f/(float)(SDL_GetTicks()-begin_time);
   averageFPS += (FPS-averageFPS)/frames;
   fps_label -> change_text(FPS);
 }
@@ -80,8 +80,9 @@ CEngine::CEngine(){
   ssmanager = new CSpriteSheetManager;
   controller = new CController;
   smanager = new CSpriteManager(ssmanager);
-  text = new CText(ssmanager);
   ssmanager -> load("fontg.png");
+  text = new CText(ssmanager);
+  script = new CScript(this);
   text -> font_load (std::string("fontg.png"));
   text -> text_add(9, 18, std::string("fps:"), 0);
   fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
@@ -152,18 +153,26 @@ void CEngine::think(){
   }
   if (c_state.attack){
     if (frames%2 == 0){
-      int i = smanager -> create_sprite("bullets.png", (GLint)4);
-      CSprite* bull_sprite = smanager -> get_sprite(i);
+      int i,j;
+      CSprite* bull_sprite;
+      for (i= 90.f;i<=270.f;i+=5.f){
+      j = smanager -> create_sprite("bullets.png", (GLint)4);
+      bull_sprite = smanager -> get_sprite(j);
       bull_sprite -> set_position(hero -> x-8, hero -> y);
-      bull_sprite -> set_speed(0.f,20.f);
+      bull_sprite -> set_angle(20.f,i);
+	//      bull_sprite -> set_speed(0.f,20.f);
       bull_sprite -> set_alpha(.2f);
       bull_sprite -> set_scale(2.f);
-      i = smanager -> create_sprite("bullets.png", (GLint)4);
-      bull_sprite = smanager -> get_sprite(i);
+      }
+      for (i= 90.f;i>=-90.f;i-=5.f){
+      j = smanager -> create_sprite("bullets.png", (GLint)4);
+      bull_sprite = smanager -> get_sprite(j);
       bull_sprite -> set_position(hero -> x+8, hero -> y);
-      bull_sprite -> set_speed(0.f,20.f);
+      //      bull_sprite -> set_speed(0.f,20.f);
+      bull_sprite -> set_angle(20.f,i);
       bull_sprite -> set_alpha(.2f);
       bull_sprite -> set_scale(2.f);
+      }
     }
   }
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);

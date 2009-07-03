@@ -1,6 +1,8 @@
 #ifndef _GAME_HPP
 #define _GAME_HPP
 
+class CScript;
+
 #include "config.hpp"
 #include "hero.hpp"
 #include "sprite.hpp"
@@ -8,10 +10,12 @@
 #include "controller.hpp"
 #include "text.hpp"
 #include "back.hpp"
+#include "script.hpp"
 
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include <ctime>
+#include <unistd.h>
 
 //состояния движка
 enum EngineMainState{
@@ -42,6 +46,7 @@ public:
   void end_frame();//конец кадра -- ждём время, обновляем FPS
 };
 
+
 class CEngine{
 private:
   void think();//то, что будет выполнятся каждый кадр(кроме рисования), математика и всё такое
@@ -51,7 +56,7 @@ private:
   int write_config();//запись конфига
   void handle_events();
   EngineState state; //состояние движка
-  unsigned long frames; //количество кадров от начала игры
+  unsigned long int frames; //количество кадров от начала игры
   CHero* hero;//ГГ
   CSpriteSheetManager* ssmanager;
   CFrameManager* fps_manager;
@@ -59,6 +64,8 @@ private:
   CController* controller;
   CText* text;
   CBack* background;
+  CScript* script;
+  friend class CScript;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах
