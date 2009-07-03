@@ -1,4 +1,4 @@
-PROJNAME = danmaku
+	PROJNAME = danmaku
 
 CC = g++
 
@@ -6,12 +6,12 @@ CFLAGS = -Wall -Wextra -DDEBUG `sdl-config --cflags` -ggdb3
 
 COMPILE = $(CC) $(CFLAGS) -c
 
-LINK = $(CC) $(CFLAGS) `sdl-config --libs` -lSDL_image -lGL -lGLU -o 
+LINK = $(CC) $(CFLAGS) `sdl-config --libs` -lSDL_image -lGL -lGLU -llua -ldl -o 
 
-LINK-STATIC = $(CC) $(CFLAGS) -static `sdl-config --static-libs` -lSDL_image -lGL -lGLU -o 
+#LINK-STATIC = $(CC) $(CFLAGS) -static `sdl-config --static-libs` -lSDL_image -lGL -lGLU -o 
 
 
-OBJFILES := controller.o copypasta.o game.o hero.o main.o sprite.o text.o back.o
+OBJFILES := controller.o copypasta.o game.o hero.o main.o sprite.o text.o back.o script.o
 
 HEADERS := $(wildcard *.hpp)
 
@@ -25,9 +25,9 @@ $(PROJNAME): $(OBJFILES)
 
 	 $(LINK) $@ $(OBJFILES)
 
-$(PROJNAME)-static: $(OBJFILES)
-
-	$(LINK-STATIC) $@ $(OBJFILES)
+#$(PROJNAME)-static: $(OBJFILES)
+#
+#	$(LINK-STATIC) $@ $(OBJFILES)
 
 controller.o: controller.cpp controller.hpp config.hpp
 
@@ -37,7 +37,7 @@ copypasta.o: copypasta.cpp copypasta.hpp config.hpp
 
 	$(COMPILE) -o $@ copypasta.cpp
 
-game.o: game.cpp game.hpp sprite.o back.o copypasta.o controller.o hero.o text.o config.hpp
+game.o: game.cpp game.hpp sprite.o back.o copypasta.o controller.o hero.o text.o script.o config.hpp
 
 	$(COMPILE) -o $@ game.cpp
 
@@ -49,7 +49,11 @@ main.o: game.o main.cpp main.hpp
 
 	$(COMPILE) -o $@ main.cpp
 
-sprite.o: copypasta.o sprite.cpp sprite.hpp
+script.o: copypasta.o script.cpp script.hpp config.hpp
+
+	$(COMPILE) -o $@ script.cpp
+
+sprite.o: copypasta.o sprite.cpp sprite.hpp config.hpp
 
 	$(COMPILE) -o $@ sprite.cpp
 

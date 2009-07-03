@@ -291,9 +291,9 @@ void CSprite::set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r){
 
 void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> v_r = 0.f;
-  this -> v_x = cos((float)M_PI*angle/180)*v;
-  this -> v_y = sin((float)M_PI*angle/180)*v;
-  this -> rotation = angle;
+  this -> v_x = cosf((float)M_PI*angle/180)*v;
+  this -> v_y = sinf((float)M_PI*angle/180)*v;
+  this -> rotation = angle+90.f;
 }
 
 CSpriteManager::CSpriteManager(CSpriteSheetManager* ssmanager):
