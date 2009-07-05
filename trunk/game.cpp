@@ -83,7 +83,6 @@ CEngine::CEngine(){
   controller = new CController;
   game::ssmanager -> load("fontg.png");
   text = new CText();
-  script = new CScript();
   text -> font_load (std::string("fontg.png"));
   text -> text_add(9, 18, std::string("fps:"), 0);
   fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
@@ -139,6 +138,7 @@ void CEngine::new_game(){
   frames = 0;
   background -> init("th_ru/grnd03.jpg");
   hero -> set_position(GAME_FIELD_WIDTH/2, 100);
+  game::script->init_level(1);
 }
 
 void CEngine::think(){
@@ -175,6 +175,7 @@ void CEngine::think(){
       }
     }
   }
+  game::script -> think();
   hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   hero ->think();
   hero ->sprite->think();
