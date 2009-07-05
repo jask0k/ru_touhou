@@ -13,7 +13,7 @@ public:
   GLfloat x,y;//координаты героя
   GLfloat max_speed;
   CSprite* sprite;//спрайт персонажа
-  CHero(char*, CSpriteSheetManager*);
+  CHero(char*);
   ~CHero();
   void think();//движение
   void draw();

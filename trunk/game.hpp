@@ -17,6 +17,10 @@ class CScript;
 #include <ctime>
 #include <unistd.h>
 
+namespace game{
+  extern CEngine* engine;
+}
+
 //состояния движка
 enum EngineMainState{
   ENGINE_STATE_MAIN_MENU,
@@ -58,9 +62,7 @@ private:
   EngineState state; //состояние движка
   unsigned long int frames; //количество кадров от начала игры
   CHero* hero;//ГГ
-  CSpriteSheetManager* ssmanager;
   CFrameManager* fps_manager;
-  CSpriteManager* smanager;
   CController* controller;
   CText* text;
   CBack* background;

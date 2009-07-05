@@ -37,7 +37,6 @@ private:
 
 class CText{
 public:
-  CText(CSpriteSheetManager* manager);
   ~CText();
   void draw();
   void think();
@@ -46,7 +45,6 @@ public:
 private:
   std::vector<CLabel*> labels;
   std::vector<CSpriteSheet*> fonts;
-  CSpriteSheetManager* ssmanager;
 };
  
   
