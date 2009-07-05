@@ -20,19 +20,16 @@ private:
   } state;
 
   int do_binds();
-  //бинды
-  int sprite_create (lua_State* L);
-  int sprite_set_position(lua_State* L);
-  int sprite_set_speed(lua_State* L);
-  int sprite_set_angle(lua_State* L);
 public:
-  int wait(lua_State* L);
   int load_script(std::string scriptname);
   int think();
   int init_level(int level);
+  int set_timer(GLuint timer);
   CScript();
   ~CScript();
 };
 
-
+namespace game{
+  extern CScript* script;
+}
 #endif

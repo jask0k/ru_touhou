@@ -66,8 +66,6 @@ private:
   CController* controller;
   CText* text;
   CBack* background;
-  CScript* script;
-  friend class CScript;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах
