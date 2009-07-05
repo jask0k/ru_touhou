@@ -42,6 +42,7 @@ public:
   GLuint get_width(){return rectangle.w;}//ширина спрайта
   GLuint get_height(){return rectangle.h;}//высота спрайта
   GLuint get_count(){return rectangle.x*rectangle.y;}//количество спрайтов
+  GLuint get_animations(){return animations -> size();};
   GLuint get_frames(GLuint animation);
   GLuint get_pause(GLuint animation, GLuint state);
 };
@@ -57,7 +58,6 @@ public:
 class CSprite{
 public:
   CSprite(CSpriteSheet* ssheet, GLint frame_no);
-  CSprite(CSpriteSheet* ssheet, GLuint anim_no);
   void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);//установка положения
   void set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r=0.f);//установка скорости
   void set_angle(GLfloat v, GLfloat angle);//установка вектора скорости по углу
@@ -67,6 +67,8 @@ public:
   void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
   void set_scale(GLfloat scale);//установка увеличения/уменьшения спрайта
   void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
+  int start_animation(GLint animation, GLint next_animation=-1);
+  
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
   
@@ -81,8 +83,11 @@ private:
   GLfloat v_x,v_y,v_r;//скорость движения и вращения спрайта
 
   GLint frame;//номер кадра
-  GLuint animation,state;//номер анимации и фрейма
-  GLuint animation_timer;//таймер переключения анимации
+
+  GLint animation,state;//номер анимации и фрейма
+  GLint animation_timer;//таймер переключения анимации
+  GLint next_animation;//следующая анимация
+  //TODO: надо бы всё это забабахать в структуру
   
   GLuint decay_timer;//таймер исчезновения
 
@@ -94,18 +99,21 @@ private:
 
 class CSpriteManager{
 public:
-  CSpriteManager(CSpriteSheetManager* ssmanager);
+  CSpriteManager();
   void think();
   void draw();
   GLuint create_sprite(std::string spritesheet, GLint frame_no);
-  GLuint create_sprite(std::string spritesheet, GLuint animation);
   
   GLuint destroy_sprite(GLuint handle);
   CSprite* get_sprite(GLuint handle);
 private:
-  CSpriteSheetManager* ssmanager;
   std::map<GLuint,CSprite*> collection;
   GLuint free_handle;//минимальный свободный псевдоуказатель
 };
+
+namespace game{
+  extern CSpriteManager* smanager;
+  extern CSpriteSheetManager* ssmanager;
+}
 
 #endif

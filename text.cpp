@@ -42,8 +42,6 @@ void CLabel::draw(){
   }
 }
 
-CText::CText(CSpriteSheetManager* manager): ssmanager(manager){}
-
 CText::~CText(){
   if (labels.size()>0){
     std::vector<CLabel*>::iterator i;
@@ -80,7 +78,7 @@ void CText::think(){
 }
 
 int CText::font_load(std::string fontname){
-  CSpriteSheet* font_sheet = ssmanager -> dispatch(fontname);
+  CSpriteSheet* font_sheet = game::ssmanager -> dispatch(fontname);
   fonts.push_back(font_sheet);
   return 0;
 }

@@ -1,5 +1,9 @@
 #include "sprite.hpp"
 
+namespace game{
+  CSpriteSheetManager* ssmanager=new CSpriteSheetManager;
+  CSpriteManager* smanager=new CSpriteManager;
+}
 
 CSpriteSheet::CSpriteSheet(char* filename){
   std::string full_filename = "th_ru/";
@@ -206,14 +210,6 @@ CSprite::CSprite(CSpriteSheet* ssheet, GLint frame_no):
   v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f),
   scale(1.f){}
 
-CSprite::CSprite(CSpriteSheet* ssheet, GLuint anim_no):
-  rotation(0),ssheet(ssheet),animation(anim_no),
-  alpha(1.f),tint_r(1.f),tint_g(1.f),tint_b(1.f),
-  state(0),animation_active(true),decay_active(false),
-  v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f),
-  animation_timer(ssheet->get_pause(anim_no,0)),
-  scale(1.f){}
-
 void CSprite::draw(){
   glPushAttrib (GL_CURRENT_BIT);
   glColor4f(tint_r, tint_g, tint_b, alpha);
@@ -222,6 +218,19 @@ void CSprite::draw(){
   else
     ssheet -> draw (frame, x, y, rotation, scale);
   glPopAttrib ();
+}
+
+int CSprite::start_animation(GLint animation, GLint next_animation){
+  if (animation > ssheet -> get_animations()||next_animation > ssheet -> get_animations())
+    return -1;
+  this -> animation = animation;
+  this -> state = 0;
+  this -> animation_timer = ssheet -> get_pause(animation,state);
+  if (next_animation >= 0)
+    this -> next_animation = next_animation;
+  else
+    this -> next_animation = animation;
+  return 0;
 }
 
 void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
@@ -262,8 +271,10 @@ decay_state CSprite::think(){
 
   if (animation_active)
     if (--animation_timer == 0){
-      if (++state == ssheet -> get_frames(animation))
+      if (++state == ssheet -> get_frames(animation)){
+	animation=next_animation;
 	state = 0;
+      }
       animation_timer = ssheet -> get_pause(animation,state);
     }
   if (decay_active)
@@ -296,20 +307,10 @@ void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> rotation = angle+90.f;
 }
 
-CSpriteManager::CSpriteManager(CSpriteSheetManager* ssmanager):
-  ssmanager(ssmanager),free_handle(0){}
+CSpriteManager::CSpriteManager():free_handle(0){}
 
 GLuint CSpriteManager::create_sprite(std::string spritesheet, GLint frame_no){
-  CSprite* sprite = new CSprite(ssmanager->dispatch(spritesheet), frame_no);
-  GLuint result = free_handle;
-  collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
-  while(collection.count(free_handle))
-    ++free_handle;
-  return result;
-}
-
-GLuint CSpriteManager::create_sprite(std::string spritesheet, GLuint animation){
-  CSprite* sprite = new CSprite(ssmanager->dispatch(spritesheet), animation);
+  CSprite* sprite = new CSprite(game::ssmanager->dispatch(spritesheet), frame_no);
   GLuint result = free_handle;
   collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
   while(collection.count(free_handle))
