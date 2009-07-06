@@ -17,7 +17,7 @@ HEADERS := $(wildcard *.hpp)
 
 
 
-all: $(PROJNAME)
+all: $(PROJNAME) th_ru/level1.luc
 
 
 
@@ -28,6 +28,9 @@ $(PROJNAME): $(OBJFILES)
 #$(PROJNAME)-static: $(OBJFILES)
 #
 #	$(LINK-STATIC) $@ $(OBJFILES)
+
+level1.luc: th_ru/level1.lua
+	luac -o th_ru/level1.luc th_ru/level1.lua
 
 controller.o: controller.cpp controller.hpp config.hpp
 
