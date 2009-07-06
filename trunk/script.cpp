@@ -24,7 +24,7 @@ CScript::~CScript(){
 
 int CScript::load_script(std::string scriptname){
   //пока это так, но попозже здесь будет чтение из дата
-  return luaL_loadfile(level_state,(std::string("th_ru/")+scriptname+std::string(".lua")).c_str());
+  return luaL_loadfile(level_state,(std::string("th_ru/")+scriptname+std::string(".luc")).c_str());
 }
 
 int CScript::do_binds(){

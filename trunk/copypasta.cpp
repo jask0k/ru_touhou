@@ -41,10 +41,14 @@ GLuint LoadTexture(const char* filename, GLuint& texture, SDL_Surface*& surface)
  
     // Bind the texture object
     glBindTexture(GL_TEXTURE_2D, texture);
+
+    //gluBuild2DMipmaps(texture, texture_format, surface->w, surface->h, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, 1 );
+
  
     // Set the texture's stretching properties
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
  
     // Edit the texture object's image data using the information SDL_Surface gives us
     glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
