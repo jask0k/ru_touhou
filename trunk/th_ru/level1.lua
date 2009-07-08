@@ -1,9 +1,11 @@
-for j = 0, 100, 5 do
+for j = 0, 100 do
    for i= 0,360-45,45 do
-      sprite = sprite_create("bullets.png",1);
-      sprite_set_position(sprite,10,100);
+	for k = 10, 310, 100 do
+      sprite = sprite_create("bullets.png",20);
+      sprite_set_position(sprite,k,300);
       sprite_set_angle(sprite,5,i);
+      end
    end
-   wait(1)
+   wait(12)
 end
 

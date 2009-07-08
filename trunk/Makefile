@@ -29,7 +29,7 @@ $(PROJNAME): $(OBJFILES)
 #
 #	$(LINK-STATIC) $@ $(OBJFILES)
 
-level1.luc: th_ru/level1.lua
+th_ru/level1.luc: th_ru/level1.lua
 	luac -o th_ru/level1.luc th_ru/level1.lua
 
 controller.o: controller.cpp controller.hpp config.hpp
