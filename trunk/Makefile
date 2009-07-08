@@ -2,11 +2,11 @@
 
 CC = g++
 
-CFLAGS = -Wall -Wextra -DDEBUG `sdl-config --cflags` -ggdb3
+CFLAGS = -Wall -Wextra -DDEBUG `pkg-config --cflags lua sdl gl glu` -ggdb3
 
 COMPILE = $(CC) $(CFLAGS) -c
 
-LINK = $(CC) $(CFLAGS) `sdl-config --libs` -lSDL_image -lGL -lGLU -llua -ldl -o 
+LINK = $(CC) $(CFLAGS) -lSDL_image `pkg-config --libs lua sdl gl glu` -o 
 
 #LINK-STATIC = $(CC) $(CFLAGS) -static `sdl-config --static-libs` -lSDL_image -lGL -lGLU -o 
 
