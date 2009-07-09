@@ -15,7 +15,9 @@ class CScript;
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include <ctime>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 namespace game{
   extern CEngine* engine;
