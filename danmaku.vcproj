@@ -28,6 +28,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="lcc.bat&#x0D;&#x0A;"
+				Outputs="$(IntDir)\lcc.log"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -41,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;DEBUG;_CONSOLE;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;DEBUG;_CONSOLE;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;TRILINEAR_FILTERING"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -61,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib SDL_image.lib OpenGL32.Lib GlU32.Lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib SDL_image.lib OpenGL32.Lib GlU32.Lib lua5.1.lib"
 				OutputFile="$(SolutionDir)$(ProjectName)_d.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
@@ -107,6 +109,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="lcc.bat&#x0D;&#x0A;"
+				Outputs="$(IntDir)\lcc.log"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -121,7 +125,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="WIN32;NDEBUG;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;TRILINEAR_FILTERING"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="true"
 				EnableFunctionLevelLinking="true"
@@ -140,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib SDL_image.lib OpenGL32.Lib GlU32.Lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib SDL_image.lib OpenGL32.Lib GlU32.Lib lua5.1.lib"
 				OutputFile="$(SolutionDir)$(ProjectName).exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
@@ -208,6 +212,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\script.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\sprite.cpp"
 				>
 			</File>
@@ -247,6 +255,10 @@
 			</File>
 			<File
 				RelativePath=".\main.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\script.hpp"
 				>
 			</File>
 			<File

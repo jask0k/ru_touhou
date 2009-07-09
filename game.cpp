@@ -17,7 +17,7 @@ void CFrameManager::begin_frame(){
 }
 
 void CFrameManager::end_frame(){
-  int delay = lrint(1000.f/60.0f-(SDL_GetTicks()-begin_time));
+  int delay = int(1000.f/60.0f-(SDL_GetTicks()-begin_time));
   if (delay>0)
     SDL_Delay(delay);
   ++frames;
