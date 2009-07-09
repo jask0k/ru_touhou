@@ -196,7 +196,7 @@ CSpriteSheet* CSpriteSheetManager::load(char* filename){
   CSpriteSheet* spritesheet = new CSpriteSheet(filename);
   std::string sheetname(filename);
   collection[sheetname] = spritesheet;
-  collection.insert(std::pair<std::string,CSpriteSheet*>(sheetname,spritesheet))
+  collection.insert(std::pair<std::string,CSpriteSheet*>(sheetname,spritesheet));
   return spritesheet;
 }
 
