@@ -1,6 +1,8 @@
-	PROJNAME = danmaku
+PROJNAME = danmaku
 
 CC = g++
+
+OBJFILES := controller.o copypasta.o game.o hero.o main.o sprite.o text.o back.o script.o
 
 CFLAGS = -Wall -Wextra -DDEBUG `pkg-config --cflags lua sdl gl glu` -ggdb3
 
@@ -8,12 +10,8 @@ COMPILE = $(CC) $(CFLAGS) -c
 
 LINK = $(CC) $(CFLAGS) -lSDL_image `pkg-config --libs lua sdl gl glu` -o 
 
-#LINK-STATIC = $(CC) $(CFLAGS) -static `sdl-config --static-libs` -lSDL_image -lGL -lGLU -o 
+LINK-STATIC = $(CC) $(OBJFILES) -Wl,-Bstatic -Wl,-L/usr/lib `pkg-config --libs --static lua sdl` -lSDL_image -Wl,-Bdynamic `pkg-config --libs glu gl` -o 
 
-
-OBJFILES := controller.o copypasta.o game.o hero.o main.o sprite.o text.o back.o script.o
-
-HEADERS := $(wildcard *.hpp)
 
 
 
@@ -25,9 +23,9 @@ $(PROJNAME): $(OBJFILES)
 
 	 $(LINK) $@ $(OBJFILES)
 
-#$(PROJNAME)-static: $(OBJFILES)
-#
-#	$(LINK-STATIC) $@ $(OBJFILES)
+$(PROJNAME)-static: $(OBJFILES)
+
+	$(LINK-STATIC) $@
 
 th_ru/level1.luc: th_ru/level1.lua
 	luac -o th_ru/level1.luc th_ru/level1.lua
