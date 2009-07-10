@@ -28,7 +28,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="lcc.bat&#x0D;&#x0A;"
+				CommandLine="lcc.bat"
 				Outputs="$(IntDir)\lcc.log"
 			/>
 			<Tool
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="lcc.bat&#x0D;&#x0A;"
+				CommandLine="lcc.bat"
 				Outputs="$(IntDir)\lcc.log"
 			/>
 			<Tool
