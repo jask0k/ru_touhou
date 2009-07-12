@@ -7,6 +7,7 @@ namespace game{
 namespace bind{
 //бинды
   int wait(lua_State* L);
+  int spritesheet_load(lua_State* L);
   int sprite_create (lua_State* L);
   int sprite_set_position(lua_State* L);
   int sprite_set_speed(lua_State* L);
@@ -15,6 +16,7 @@ namespace bind{
 
 CScript::CScript():level_state(lua_open()){
   luaL_openlibs(level_state);
+  do_globals();
   do_binds();
 }
 
@@ -27,8 +29,35 @@ int CScript::load_script(std::string scriptname){
   return luaL_loadfile(level_state,(std::string("th_ru/")+scriptname+std::string(".luc")).c_str());
 }
 
+int CScript::run_script(std::string scriptname){
+  load_script(scriptname);
+  lua_call(level_state,0,0);
+  return 0;
+}
+
+int CScript::do_globals(){
+  lua_pushnumber(level_state, GAME_FIELD_WIDTH);
+  lua_setglobal(level_state, "GAME_FIELD_WIDTH");
+  lua_pushnumber(level_state, GAME_FIELD_HEIGHT);
+  lua_setglobal(level_state, "GAME_FIELD_HEIGHT");
+  lua_pushnumber(level_state, LAYER_BACKGROUND);
+  lua_setglobal(level_state, "LAYER_BACKGROUND");
+  lua_pushnumber(level_state, LAYER_ENEMY_BULLET);
+  lua_setglobal(level_state, "LAYER_ENEMY_BULLET");
+  lua_pushnumber(level_state, LAYER_ENEMY);
+  lua_setglobal(level_state, "LAYER_ENEMY");
+  lua_pushnumber(level_state, LAYER_HERO_BULLET);
+  lua_setglobal(level_state, "LAYER_HERO_BULLET");
+  lua_pushnumber(level_state, LAYER_HERO);
+  lua_setglobal(level_state, "LAYER_HERO");
+  lua_pushnumber(level_state, LAYER_EMBLEM);
+  lua_setglobal(level_state, "LAYER_EMBLEM");
+  return 0;
+}
+
 int CScript::do_binds(){
   lua_register(level_state, "wait", bind::wait);
+  lua_register(level_state, "spritesheet_load", bind::spritesheet_load);
   lua_register(level_state, "sprite_create", bind::sprite_create);
   lua_register(level_state, "sprite_set_position", bind::sprite_set_position);
   lua_register(level_state, "sprite_set_angle", bind::sprite_set_angle);
@@ -78,17 +107,28 @@ int bind::wait(lua_State* L){
   return 0;
 }
 
+int bind::spritesheet_load(lua_State* L){
+  int narg = lua_gettop(L);
+  std::string ssname;
+  if (narg > 0){
+    ssname.append(lua_tolstring(L,1,NULL));
+  }
+  
+  game::ssmanager->load((char*)ssname.c_str());
+  return 0;
+};
+
 int bind::sprite_create(lua_State* L){
   int narg = lua_gettop(L);
   std::string ssname("aya.png");
-  int frame = 0;
+  Layer layer = LAYER_EMBLEM;
   if (narg > 0){
     ssname = lua_tolstring(L,1,NULL);
     if (narg > 1)
-      frame = lua_tointeger(L,2);
+      layer = (Layer)lua_tointeger(L,2);
   }
   
-  GLuint sprite_handle = game::smanager->create_sprite(ssname, frame);
+  GLuint sprite_handle = game::smanager->create_sprite(ssname, layer);
   lua_pushinteger(L,sprite_handle);
   return 1;
 }

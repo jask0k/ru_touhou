@@ -47,6 +47,15 @@ public:
   GLuint get_pause(GLuint animation, GLuint state);
 };
 
+enum Layer{
+  LAYER_BACKGROUND=0,
+  LAYER_ENEMY_BULLET,
+  LAYER_ENEMY,
+  LAYER_HERO_BULLET,
+  LAYER_HERO,
+  LAYER_EMBLEM
+};
+
 class CSpriteSheetManager{
 private:
   std::map<std::string,CSpriteSheet*> collection;
@@ -57,7 +66,7 @@ public:
 
 class CSprite{
 public:
-  CSprite(CSpriteSheet* ssheet, GLint frame_no);
+  CSprite(CSpriteSheet* ssheet, Layer layer=LAYER_EMBLEM);
   void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);//установка положения
   void set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r=0.f);//установка скорости
   void set_angle(GLfloat v, GLfloat angle);//установка вектора скорости по углу
@@ -67,17 +76,19 @@ public:
   void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
   void set_scale(GLfloat scale);//установка увеличения/уменьшения спрайта
   void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
+  void set_layer(Layer layer){this->layer=layer;};
   int start_animation(GLint animation, GLint next_animation=-1);
+  int set_frame(GLint frame){this->frame=frame;animation_active = false; return 0;};
   
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
   
 private:
+  CSpriteSheet* ssheet;//указатель на спрайтовый лист
   GLfloat x,y;//координаты центра спрайта
   GLfloat rotation;//поворот относительно центра
   GLfloat alpha;//коэффициент альфа-канала спрайта
   GLfloat tint_r,tint_g,tint_b;//окрашивание спрайта
-  CSpriteSheet* ssheet;//указатель на спрайтовый лист
 
   GLfloat v_alpha;//скорость изменения альфаканала
   GLfloat v_x,v_y,v_r;//скорость движения и вращения спрайта
@@ -94,15 +105,17 @@ private:
   GLboolean animation_active;//флаг активности анимации
   GLboolean decay_active;//флаг активности таймера полного исчезновения
   GLfloat scale;
-
+  
+  Layer layer;
+  friend class CSpriteManager;
 };
 
 class CSpriteManager{
 public:
   CSpriteManager();
   void think();
-  void draw();
-  GLuint create_sprite(std::string spritesheet, GLint frame_no);
+  void draw(Layer layer);
+  GLuint create_sprite(std::string spritesheet, Layer layer=LAYER_EMBLEM);
   
   GLuint destroy_sprite(GLuint handle);
   CSprite* get_sprite(GLuint handle);

@@ -204,12 +204,14 @@ CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
   return collection[sheetname];
 }
 
-CSprite::CSprite(CSpriteSheet* ssheet, GLint frame_no):
-  rotation(0),ssheet(ssheet),frame(frame_no),
-  alpha(1.f),tint_r(1.f),tint_g(1.f),tint_b(1.f),
+CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
+  ssheet(ssheet),x(0),y(0),rotation(0),alpha(1.f),
+  tint_r(1.f),tint_g(1.f),tint_b(1.f),v_alpha(0.f),
+  v_x(0.f),v_y(0.f),v_r(0.f),frame(0),
+  animation(0),state(0),animation_timer(0),
+  next_animation(0),decay_timer(0),
   animation_active(false),decay_active(false),
-  v_x(0.f),v_y(0.f),v_r(0.f),v_alpha(0.f),
-  scale(1.f){}
+  scale(1.f),layer(layer){}
 
 void CSprite::draw(){
   glPushAttrib (GL_CURRENT_BIT);
@@ -305,13 +307,13 @@ void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> v_r = 0.f;
   this -> v_x = cosf((float)M_PI*angle/180)*v;
   this -> v_y = sinf((float)M_PI*angle/180)*v;
-  this -> rotation = angle+90.f;
+  this -> rotation = angle-90.f;
 }
 
 CSpriteManager::CSpriteManager():free_handle(0){}
 
-GLuint CSpriteManager::create_sprite(std::string spritesheet, GLint frame_no){
-  CSprite* sprite = new CSprite(game::ssmanager->dispatch(spritesheet), frame_no);
+GLuint CSpriteManager::create_sprite(std::string spritesheet, Layer layer){
+  CSprite* sprite = new CSprite(game::ssmanager->dispatch(spritesheet), layer);
   GLuint result = free_handle;
   collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
   while(collection.count(free_handle))
@@ -323,10 +325,11 @@ CSprite* CSpriteManager::get_sprite(GLuint handle){
   return collection[handle];
 }
 
-void  CSpriteManager::draw(){
+void  CSpriteManager::draw(Layer layer){
   std::map<GLuint,CSprite*>::iterator i;
   for (i = collection.begin(); i != collection.end(); ++i)
-    i -> second -> draw();
+    if (i->second->layer == layer)
+      i -> second -> draw();
 }
 
 void CSpriteManager::think(){

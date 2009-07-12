@@ -9,9 +9,9 @@ void CBack::init(const char* filename, GLfloat vy){
   this->ry = this->vry = 0.0f;
   this->rz = this->vrz = 0.0f;
 
-  this->fog_colour[0] = 0.5;
-  this->fog_colour[1] = 0.5;
-  this->fog_colour[2] = 0.5;
+  this->fog_colour[0] = 0.3867;
+  this->fog_colour[1] = 0.3867;
+  this->fog_colour[2] = 0.2578;
   this->fog_colour[3] = 1.0;
 
   this->fog_density = 0.10f;
@@ -34,16 +34,16 @@ void CBack::draw(){
     glFogi (GL_FOG_MODE, GL_EXP2);
     glFogfv (GL_FOG_COLOR, fog_colour);
     glFogf (GL_FOG_DENSITY, fog_density);
-    glTranslatef(0.0f,-4.0f,-5.0f);
+    glTranslatef(0.0f,-3.0f,-8.0f);
     glRotatef(rx,1.0f,0.0f,0.0f);
     glRotatef(ry,0.0f,1.0f,0.0f);
     glRotatef(rz,0.0f,0.0f,1.0f);
     glBindTexture(GL_TEXTURE_2D, ground_texture);
     glBegin(GL_QUADS);{
-      glTexCoord2f(flightX+0,flightY+0); glVertex3f(-10,0,-1);
-      glTexCoord2f(flightX+5,flightY+0); glVertex3f(10,0,-1);
-      glTexCoord2f(flightX+5,flightY+5); glVertex3f(10,20,-1);
-      glTexCoord2f(flightX+0,flightY+5); glVertex3f(-10,20,-1);
+      glTexCoord2f(flightX+0,flightY+0); glVertex3f(-15,0,-1);
+      glTexCoord2f(flightX+5,flightY+0); glVertex3f(15,0,-1);
+      glTexCoord2f(flightX+5,flightY+5); glVertex3f(15,20,-1);
+      glTexCoord2f(flightX+0,flightY+5); glVertex3f(-15,20,-1);
     }
     glEnd();
     glDisable (GL_FOG);
