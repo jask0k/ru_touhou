@@ -3,10 +3,10 @@
 #include "SDL_image.h"
 
 CHero::CHero(char* texture_file):
-  vx(0),vy(0),x(GAME_FIELD_WIDTH/2),max_speed(8),
-  sprite(new CSprite(game::ssmanager->dispatch(texture_file),(GLint)0)){
-  sprite->set_position(100,100);
-  sprite -> set_scale(0.0625f);
+  vx(0),vy(0),x(GAME_FIELD_WIDTH/2),y(100),max_speed(8),
+  sprite(game::smanager->get_sprite(game::smanager->create_sprite(texture_file, LAYER_HERO))){
+  sprite->set_position(x,y);
+  sprite->set_scale(0.0625f);
 }
 
 CHero::~CHero(){

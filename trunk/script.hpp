@@ -20,8 +20,10 @@ private:
   } state;
 
   int do_binds();
+  int do_globals();
 public:
   int load_script(std::string scriptname);
+  int run_script(std::string scriptname);
   int think();
   int init_level(int level);
   int set_timer(GLuint timer);

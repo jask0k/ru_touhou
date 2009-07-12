@@ -17,7 +17,7 @@ HEADERS := $(wildcard *.hpp)
 
 
 
-all: $(PROJNAME) th_ru/level1.luc
+all: $(PROJNAME) th_ru/level1.luc th_ru/init.luc
 
 
 
@@ -31,6 +31,9 @@ $(PROJNAME): $(OBJFILES)
 
 th_ru/level1.luc: th_ru/level1.lua
 	luac -o th_ru/level1.luc th_ru/level1.lua
+
+th_ru/init.luc: th_ru/init.lua
+	luac -o th_ru/init.luc th_ru/init.lua
 
 controller.o: controller.cpp controller.hpp config.hpp
 
@@ -52,7 +55,7 @@ main.o: game.o main.cpp main.hpp
 
 	$(COMPILE) -o $@ main.cpp
 
-script.o: copypasta.o script.cpp script.hpp config.hpp
+script.o: copypasta.o sprite.o script.cpp script.hpp config.hpp
 
 	$(COMPILE) -o $@ script.cpp
 

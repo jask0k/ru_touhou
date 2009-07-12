@@ -19,7 +19,7 @@ private:
   GLfloat vfog;//скорость изменения плотности тумана
   
 public:
-  void init(const char* filename, GLfloat vy=0.05f);
+  void init(const char* filename, GLfloat vy=0.01f);
   void draw();
   void think();
   void set_speed(GLfloat vy, GLfloat vx=0.0f);

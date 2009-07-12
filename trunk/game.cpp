@@ -81,16 +81,17 @@ CEngine::CEngine(){
 #endif
 
   controller = new CController;
-  game::ssmanager -> load("fontg.png");
+  //  game::ssmanager -> load("fontg.png");
   text = new CText();
+  game::script -> run_script("init");
   text -> font_load (std::string("fontg.png"));
   text -> text_add(9, 18, std::string("fps:"), 0);
   fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
-  game::ssmanager -> load("aya_2.png");
+  //  game::ssmanager -> load("aya_2.png");
   hero = new CHero("aya_2.png");
   ui_background = LoadTexture_simple("th_ru/ui.png");
   background = new CBack;
-  game::ssmanager -> load("bullets.png");
+  //  game::ssmanager -> load("bullets.png");
 }
 
 CEngine::~CEngine(){
@@ -156,22 +157,24 @@ void CEngine::think(){
       int j;
       CSprite* bull_sprite;
       for (i= 90.f;i<=270.f;i+=5.f){
-	j = game::smanager -> create_sprite("bullets.png", (GLint)4);
+	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
 	bull_sprite = game::smanager -> get_sprite(j);
 	bull_sprite -> set_position(hero -> x-8, hero -> y);
-	bull_sprite -> set_angle(20.f,i);
+	bull_sprite -> set_frame(8);
+	bull_sprite -> set_angle(15.f,i);
 	//      bull_sprite -> set_speed(0.f,20.f);
 	bull_sprite -> set_alpha(.2f);
 	bull_sprite -> set_scale(2.f);
       }
       for (i= 90.f;i>=-90.f;i-=5.f){
-	j = game::smanager -> create_sprite("bullets.png", (GLint)4);
+	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
 	bull_sprite = game::smanager -> get_sprite(j);
 	bull_sprite -> set_position(hero -> x+8, hero -> y);
 	//      bull_sprite -> set_speed(0.f,20.f);
-	bull_sprite -> set_angle(20.f,i);
+	bull_sprite -> set_angle(15.f,i);
 	bull_sprite -> set_alpha(.2f);
 	bull_sprite -> set_scale(2.f);
+	bull_sprite -> set_frame(8);
       }
     }
   }
@@ -285,11 +288,17 @@ void CEngine::draw_game(){
   background -> draw();
 
   glEnable2D();
+  game::smanager -> draw(LAYER_BACKGROUND);
+  game::smanager -> draw(LAYER_ENEMY_BULLET);
+  game::smanager -> draw(LAYER_ENEMY);
+
+
 
   //рисуем спрайты
 
-  game::smanager -> draw();
-  hero -> draw();
+  game::smanager -> draw(LAYER_HERO_BULLET);
+  game::smanager -> draw(LAYER_HERO);
+  game::smanager -> draw(LAYER_EMBLEM);
   text -> draw();
 
   glDisable2D();
