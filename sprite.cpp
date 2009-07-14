@@ -1,10 +1,5 @@
 #include "sprite.hpp"
 
-namespace game{
-  CSpriteSheetManager* ssmanager=new CSpriteSheetManager;
-  CSpriteManager* smanager=new CSpriteManager;
-}
-
 CSpriteSheet::CSpriteSheet(char* filename){
   std::string full_filename = "th_ru/";
   full_filename += filename;
@@ -207,19 +202,29 @@ CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
 CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
   ssheet(ssheet),x(0),y(0),rotation(0),alpha(1.f),
   tint_r(1.f),tint_g(1.f),tint_b(1.f),v_alpha(0.f),
-  v_x(0.f),v_y(0.f),v_r(0.f),frame(0),
+  v_x(0.f),v_y(0.f),v_r(0.f),v_scale(0.f),frame(0),
   animation(0),state(0),animation_timer(0),
   next_animation(0),decay_timer(0),
   animation_active(false),decay_active(false),
-  scale(1.f),layer(layer){}
+  scale(1.f),blur(false),layer(layer){}
 
 void CSprite::draw(){
   glPushAttrib (GL_CURRENT_BIT);
   glColor4f(tint_r, tint_g, tint_b, alpha);
-  if (animation_active)
-    ssheet -> draw (animation, state, x, y, rotation, scale);
-  else
-    ssheet -> draw (frame, x, y, rotation, scale);
+  if (animation_active){
+      ssheet -> draw (animation, state, x, y, rotation, scale);
+    if (blur){
+      glColor4f(tint_r,tint_g,tint_b,.40);
+      ssheet -> draw (animation, state, x, y, rotation, scale*1.15f);
+    }
+  }
+  else{
+      ssheet -> draw (frame, x, y, rotation, scale);
+    if (blur){
+      glColor4f(tint_r,tint_g,tint_b,.40);
+      ssheet -> draw (frame, x, y, rotation, scale*1.15f);
+    }
+  }
   glPopAttrib ();
 }
 
@@ -242,8 +247,10 @@ void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
   rotation = new_rotation;
 }
 
-void CSprite::set_scale(GLfloat scale){
-  this -> scale = scale;
+void CSprite::set_scale(GLfloat scale, GLfloat v_scale){
+  if (scale>0)
+    this -> scale = scale;
+  this -> v_scale = v_scale;
 }
 
 void CSprite::set_tint(GLfloat red, GLfloat green, GLfloat blue){
@@ -265,6 +272,9 @@ decay_state CSprite::think(){
     alpha = 1.f;
   else if (alpha < 0.f)
     alpha = 0.f;
+  scale += v_scale;
+  if (scale <= 0.f)
+    return DECOMPOSED;
   x += v_x;
   if (x < -GAME_FIELD_WIDTH || x > 2 * GAME_FIELD_WIDTH)
     return DECOMPOSED;

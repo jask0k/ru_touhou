@@ -6,9 +6,6 @@
 #include <cmath>
 #include <iostream>
 
-namespace game{
-  CEngine* engine = new CEngine();
-}
 
 CFrameManager::CFrameManager(CLabel* label): FPS(0),averageFPS(0),frames(0),fps_label(label){}
 
@@ -81,17 +78,14 @@ CEngine::CEngine(){
 #endif
 
   controller = new CController;
-  //  game::ssmanager -> load("fontg.png");
-  text = new CText();
+  text = new CText;
   game::script -> run_script("init");
   text -> font_load (std::string("fontg.png"));
   text -> text_add(9, 18, std::string("fps:"), 0);
   fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
-  //  game::ssmanager -> load("aya_2.png");
   hero = new CHero("aya_2.png");
   ui_background = LoadTexture_simple("th_ru/ui.png");
   background = new CBack;
-  //  game::ssmanager -> load("bullets.png");
 }
 
 CEngine::~CEngine(){
@@ -147,9 +141,9 @@ void CEngine::think(){
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
   if (c_state.focus)
-    hero->sprite->set_alpha_speed(-.005f);
+    hero->sprite->set_blur(false);
   else{
-    hero->sprite->set_alpha_speed(0.005f);
+    hero->sprite->set_blur(true);
   }
   if (c_state.attack){
     if (frames%2 == 0){
@@ -288,6 +282,7 @@ void CEngine::draw_game(){
   background -> draw();
 
   glEnable2D();
+  
   game::smanager -> draw(LAYER_BACKGROUND);
   game::smanager -> draw(LAYER_ENEMY_BULLET);
   game::smanager -> draw(LAYER_ENEMY);

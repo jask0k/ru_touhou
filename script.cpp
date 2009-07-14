@@ -1,9 +1,5 @@
 #include "script.hpp"
 
-namespace game{
-  CScript* script = new CScript;
-}
-
 namespace bind{
 //бинды
   int wait(lua_State* L);
