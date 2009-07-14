@@ -42,12 +42,12 @@ private:
   GLuint begin_time;
   GLfloat FPS;
   GLfloat averageFPS;
-  unsigned long frames;
+  unsigned long frames;//количество кадров от начала игры
   CLabel* fps_label;
 public:
   CFrameManager(CLabel* label);
-  GLfloat get_FPS();
-  GLfloat get_aFPS();
+  GLfloat get_FPS();//извлечение FPS
+  GLfloat get_aFPS();//извлечение среднего показателя FPS
   void begin_frame();//начало кадра -- сохраняем время начала кадра
   void end_frame();//конец кадра -- ждём время, обновляем FPS
 };
@@ -57,10 +57,10 @@ class CEngine{
 private:
   void think();//то, что будет выполнятся каждый кадр(кроме рисования), математика и всё такое
   SDL_Surface* screen;//поверхность экрана
-  GLuint ui_background;
+  GLuint ui_background;//текстура панели
   int read_config();//чтение конфига
   int write_config();//запись конфига
-  void handle_events();
+  void handle_events();//обработка событий
   EngineState state; //состояние движка
   unsigned long int frames; //количество кадров от начала игры
   CHero* hero;//ГГ
