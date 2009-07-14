@@ -214,14 +214,22 @@ void CSprite::draw(){
   if (animation_active){
       ssheet -> draw (animation, state, x, y, rotation, scale);
     if (blur){
-      glColor4f(tint_r,tint_g,tint_b,.40);
-      ssheet -> draw (animation, state, x, y, rotation, scale*1.15f);
+      glColor4f(tint_r,tint_g,tint_b,.50);
+      ssheet -> draw (animation, state, x, y, rotation, scale*1.05f);
+      glColor4f(tint_r,tint_g,tint_b,.30);
+      ssheet -> draw (animation, state, x, y, rotation, scale*1.10f);
+      glColor4f(tint_r,tint_g,tint_b,.20);
+      ssheet -> draw (animation, state, x, y, rotation, scale*1.25f);
     }
   }
   else{
       ssheet -> draw (frame, x, y, rotation, scale);
     if (blur){
-      glColor4f(tint_r,tint_g,tint_b,.40);
+      glColor4f(tint_r,tint_g,tint_b,.50);
+      ssheet -> draw (frame, x, y, rotation, scale*1.05f);
+      glColor4f(tint_r,tint_g,tint_b,.30);
+      ssheet -> draw (frame, x, y, rotation, scale*1.10f);
+      glColor4f(tint_r,tint_g,tint_b,.20);
       ssheet -> draw (frame, x, y, rotation, scale*1.15f);
     }
   }
