@@ -74,9 +74,10 @@ public:
   void clear_tint();
   void set_alpha(GLfloat amount);//установка альфоты
   void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
-  void set_scale(GLfloat scale);//установка увеличения/уменьшения спрайта
+  void set_scale(GLfloat scale, GLfloat v_scale=0.0f);//установка увеличения/уменьшения спрайта
   void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
   void set_layer(Layer layer){this->layer=layer;};
+  void set_blur(GLboolean blur=true){this->blur=blur;};
   int start_animation(GLint animation, GLint next_animation=-1);
   int set_frame(GLint frame){this->frame=frame;animation_active = false; return 0;};
   
@@ -92,6 +93,7 @@ private:
 
   GLfloat v_alpha;//скорость изменения альфаканала
   GLfloat v_x,v_y,v_r;//скорость движения и вращения спрайта
+  GLfloat v_scale;//скорость изменения размера спрайта
 
   GLint frame;//номер кадра
 
@@ -106,6 +108,8 @@ private:
   GLboolean decay_active;//флаг активности таймера полного исчезновения
   GLfloat scale;
   
+  GLboolean blur;
+
   Layer layer;
   friend class CSpriteManager;
 };
