@@ -19,3 +19,4 @@ set (danmaku_LIBS ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${LUA_LIBRARIES}
 set (danmaku_SRCS back.cpp  controller.cpp  copypasta.cpp  game.cpp  hero.cpp  main.cpp  script.cpp  sprite.cpp  text.cpp)
 add_executable (danmaku ${danmaku_SRCS})
 target_link_libraries(danmaku ${danmaku_LIBS})
+add_subdirectory(th_ru)
