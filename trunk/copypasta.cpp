@@ -3,8 +3,10 @@
 GLuint LoadTexture(const char* filename, GLuint& texture, SDL_Surface*& surface){
   GLenum texture_format;
   GLint  nOfColors;
+  SDL_RWops* fileops = SDL_RWFromZZIP(filename, "r");
   
-  if ( (surface = IMG_Load(filename)) ) { 
+  
+  if ( (surface = IMG_Load_RW(fileops, 1)) ) { 
  
     // Check that the image's width is a power of 2
     if ( (surface->w & (surface->w - 1)) != 0 ) {
@@ -75,8 +77,9 @@ GLuint LoadTexture_simple(const char* filename){
   GLint  nOfColors;
   SDL_Surface* surface;
   GLuint* texture = new GLuint;
+  SDL_RWops* fileops = SDL_RWFromZZIP(filename, "r");
   
-  if ( (surface = IMG_Load(filename)) ) { 
+  if ( (surface = IMG_Load_RW(fileops,1)) ) { 
  
     // Check that the image's width is a power of 2
     if ( (surface->w & (surface->w - 1)) != 0 ) {
