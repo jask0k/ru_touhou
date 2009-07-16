@@ -14,3 +14,24 @@ foreach (COMPILED_SCRIPT ${LUA_B})
     MAIN_DEPENDENCY ${SCRIPTNAME})
 endforeach(COMPILED_SCRIPT)
 
+find_program(ZIP_PACKER
+  NAMES pkzip zip)
+
+set (DATA_FILE th_ru.dat)
+set (PICTURES ui.png grnd03.jpg)
+set (SPRITESHEETS aya.png aya_2.png bullets.png)
+
+foreach (SP_SHEET ${SPRITESHEETS})
+	list (APPEND ANIMATIONS ${SP_SHEET}.spr)
+endforeach()
+
+add_custom_target (datafile ALL DEPENDS ${DATA_FILE})
+
+add_custom_command(
+	OUTPUT ${DATA_FILE}
+	COMMAND ${ZIP_PACKER} ${DATA_FILE} 
+	${LUA_B} ${PICTURES}
+	${SPRITESHEETS} ${ANIMATIONS}
+	DEPENDS ${LUA_B} ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS}
+)
+
