@@ -3,6 +3,7 @@
 
 #include "SDL_opengl.h"
 #include "SDL.h"
+#include "SDL_rwops.h"
 
 #include <cstdlib>
 #include <vector>
@@ -14,6 +15,7 @@
 
 #include "copypasta.hpp"
 #include "config.hpp"
+#include "SDL_rwops_zzip.h"
 
 typedef std::vector<int> vint;
 typedef std::vector<std::vector<int> > vvint;
