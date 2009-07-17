@@ -98,6 +98,7 @@ const char* bind::reader(lua_State* L, void* filename, size_t* size){
   char* buf = (char*)calloc(1024*1024,sizeof(char));
   rwops=SDL_RWFromZZIP((char*)filename,"r");
   *size = SDL_RWread(rwops, buf, sizeof(char), 1024*1024);
+  buf = (char*)realloc(buf,*size);
   return buf;
 }
 
