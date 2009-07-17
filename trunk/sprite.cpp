@@ -20,15 +20,14 @@ CSpriteSheet::CSpriteSheet(char* filename){
 vvint* CSpriteSheet::parse_props(char* filename){
   vvint* result = new vvint;
   vvint::iterator current_animation = result->begin();
-  //vint::iterator current_frame;
-  std::ifstream props_file(filename);
+  SDL_RWops* props_file=SDL_RWFromZZIP(filename, "r");
   std::istringstream parse_numbers;
 #ifdef DEBUG
   std::cerr << "Parsing " << filename << ".";
 #endif
   std::string element;
   char symbol;
-  while ((symbol = props_file.get())!='\n'){
+  while (SDL_RWread(props_file,&symbol,sizeof(char),1), symbol!='\n'){
     if (symbol >= '0' && symbol <= '9')
       element.push_back(symbol);
     else if (symbol == 'x' && !element.empty()){
@@ -51,8 +50,8 @@ vvint* CSpriteSheet::parse_props(char* filename){
   rectangle.x = (sdl_texture -> w) / rectangle.w;
   rectangle.y = (sdl_texture -> h) / rectangle.h;
   bool comment = false;
-  while (!props_file.eof()){
-    symbol = props_file.get();
+  while (SDL_RWread(props_file,&symbol,sizeof(char),1)==1){
+    //    symbol = props_file.get();
     if (!comment){
       if (symbol == '#') {
 	//начало строчного комментария
@@ -96,6 +95,7 @@ vvint* CSpriteSheet::parse_props(char* filename){
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
+  SDL_RWclose(props_file);
   return result;
 }
 
