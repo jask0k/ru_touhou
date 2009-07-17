@@ -5,6 +5,7 @@ class CEngine;
 
 #include "game.hpp"
 #include <lua.hpp>
+#include "SDL_rwops_zzip.h"
 
 
 class CScript{

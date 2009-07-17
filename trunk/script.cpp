@@ -1,6 +1,7 @@
 #include "script.hpp"
 
 namespace bind{
+  const char* reader(lua_State* L, void* filename, size_t* size);
 //бинды
   int wait(lua_State* L);
   int spritesheet_load(lua_State* L);
@@ -21,8 +22,11 @@ CScript::~CScript(){
 }
 
 int CScript::load_script(std::string scriptname){
-  //пока это так, но попозже здесь будет чтение из дата
-  return luaL_loadfile(level_state,(std::string("th_ru/")+scriptname+std::string(".luc")).c_str());
+  ////пока это так, но попозже здесь будет чтение из дата
+  //  return luaL_loadfile(level_state,(std::string("th_ru/")+scriptname+std::string(".luc")).c_str());
+  return lua_load(level_state,bind::reader, 
+		  (void*)(std::string("th_ru/")+scriptname+std::string(".luc")).c_str(), 
+		  scriptname.c_str());
 }
 
 int CScript::run_script(std::string scriptname){
@@ -87,6 +91,14 @@ int CScript::set_timer(GLuint timer){
   this -> timer = timer;
   this -> timer_active = true;
   return 0;
+}
+
+const char* bind::reader(lua_State* L, void* filename, size_t* size){
+  SDL_RWops* rwops;
+  char* buf = (char*)calloc(1024*1024,sizeof(char));
+  rwops=SDL_RWFromZZIP((char*)filename,"r");
+  *size = SDL_RWread(rwops, buf, sizeof(char), 1024*1024);
+  return buf;
 }
 
 int bind::wait(lua_State* L){
