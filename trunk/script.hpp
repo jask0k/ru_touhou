@@ -25,6 +25,7 @@ private:
 public:
   int load_script(std::string scriptname);
   int run_script(std::string scriptname);
+  int run_function(std::string funcname);
   int think();
   int init_level(int level);
   int set_timer(GLuint timer);
