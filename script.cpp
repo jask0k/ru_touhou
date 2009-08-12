@@ -1,14 +1,25 @@
 #include "script.hpp"
 
+#include <cstdarg>
+
+#define declare_number(name) lua_pushnumber(level_state, name);lua_setglobal(level_state, #name)
+#define declare_function(name) int name(lua_State* L)
+#define bind_function(name) lua_register(level_state, #name, bind::name)
+
+
+namespace script{
+  const char* reader(lua_State* L, void* filename, size_t* size);//функция чтения скриптов из dat
+  int parameters_parse(lua_State* L, std::string format, ...);//формат вида "ns", где каждый символ - тип переменной
+}
+
 namespace bind{
-  const char* reader(lua_State* L, void* filename, size_t* size);
 //бинды
-  int wait(lua_State* L);
-  int spritesheet_load(lua_State* L);
-  int sprite_create (lua_State* L);
-  int sprite_set_position(lua_State* L);
-  int sprite_set_speed(lua_State* L);
-  int sprite_set_angle(lua_State* L);
+  declare_function(wait);//Пауза на несколько кадров
+  declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
+  declare_function(sprite_create);//создание спрайтов
+  declare_function(sprite_set_position);//установка координат спрайта
+  declare_function(sprite_set_speed);
+  declare_function(sprite_set_angle);
 }
 
 CScript::CScript():level_state(lua_open()){
@@ -22,11 +33,8 @@ CScript::~CScript(){
 }
 
 int CScript::load_script(std::string scriptname){
-  ////пока это так, но попозже здесь будет чтение из дата
-  //  return luaL_loadfile(level_state,(std::string("th_ru/")+scriptname+std::string(".luc")).c_str());
-  return lua_load(level_state,bind::reader, 
-		  (void*)(std::string("th_ru/")+scriptname+std::string(".luc")).c_str(), 
-		  scriptname.c_str());
+  std::string full_path=std::string("th_ru/")+scriptname+std::string(".luc");
+  return lua_load(level_state,script::reader, (void*)full_path.c_str(), scriptname.c_str());
 }
 
 int CScript::run_script(std::string scriptname){
@@ -35,32 +43,40 @@ int CScript::run_script(std::string scriptname){
   return 0;
 }
 
+int CScript::run_function(std::string funcname){
+  lua_State* L=lua_newthread(level_state);
+  lua_getfield(L, LUA_GLOBALSINDEX, funcname.c_str());
+  if (!lua_pcall(L,0,0,0)){
+    free(L);
+    return 0;
+  } else {
+#ifdef DEBUG
+    std::string err_message(luaL_checklstring(L,1,NULL));
+    std::cerr << err_message;
+#endif
+    free(L);
+    return 1;
+  }
+}
+
 int CScript::do_globals(){
-  lua_pushnumber(level_state, GAME_FIELD_WIDTH);
-  lua_setglobal(level_state, "GAME_FIELD_WIDTH");
-  lua_pushnumber(level_state, GAME_FIELD_HEIGHT);
-  lua_setglobal(level_state, "GAME_FIELD_HEIGHT");
-  lua_pushnumber(level_state, LAYER_BACKGROUND);
-  lua_setglobal(level_state, "LAYER_BACKGROUND");
-  lua_pushnumber(level_state, LAYER_ENEMY_BULLET);
-  lua_setglobal(level_state, "LAYER_ENEMY_BULLET");
-  lua_pushnumber(level_state, LAYER_ENEMY);
-  lua_setglobal(level_state, "LAYER_ENEMY");
-  lua_pushnumber(level_state, LAYER_HERO_BULLET);
-  lua_setglobal(level_state, "LAYER_HERO_BULLET");
-  lua_pushnumber(level_state, LAYER_HERO);
-  lua_setglobal(level_state, "LAYER_HERO");
-  lua_pushnumber(level_state, LAYER_EMBLEM);
-  lua_setglobal(level_state, "LAYER_EMBLEM");
+  declare_number(GAME_FIELD_WIDTH);
+  declare_number(GAME_FIELD_HEIGHT);
+  declare_number(LAYER_BACKGROUND);
+  declare_number(LAYER_ENEMY_BULLET);
+  declare_number(LAYER_ENEMY);
+  declare_number(LAYER_HERO_BULLET);
+  declare_number(LAYER_HERO);
+  declare_number(LAYER_EMBLEM);
   return 0;
 }
 
 int CScript::do_binds(){
-  lua_register(level_state, "wait", bind::wait);
-  lua_register(level_state, "spritesheet_load", bind::spritesheet_load);
-  lua_register(level_state, "sprite_create", bind::sprite_create);
-  lua_register(level_state, "sprite_set_position", bind::sprite_set_position);
-  lua_register(level_state, "sprite_set_angle", bind::sprite_set_angle);
+  bind_function(wait);
+  bind_function(spritesheet_load);
+  bind_function(sprite_create);
+  bind_function(sprite_set_position);
+  bind_function(sprite_set_angle);
   return 0;
 }
 
@@ -93,7 +109,7 @@ int CScript::set_timer(GLuint timer){
   return 0;
 }
 
-const char* bind::reader(lua_State* L, void* filename, size_t* size){
+const char* script::reader(lua_State* L, void* filename, size_t* size){
   SDL_RWops* rwops;
   char* buf = (char*)calloc(1024*1024,sizeof(char));
   rwops=SDL_RWFromZZIP((char*)filename,"r");
@@ -102,73 +118,84 @@ const char* bind::reader(lua_State* L, void* filename, size_t* size){
   return buf;
 }
 
-int bind::wait(lua_State* L){
-  int narg = lua_gettop(L);
-  if (narg !=1){
-    lua_pushstring(L, "wait: wrong number of arguments");
+int script::parameters_parse(lua_State* L, std::string format, ...){
+  enum {
+    //    TYPE_VOID = ' ',
+    TYPE_INTEGER = 'i',
+    TYPE_FLOAT = 'f',
+    TYPE_STRING = 's'
+  };
+  GLuint stack_size = lua_gettop(L);
+  if (stack_size != format.size()){
+    lua_pushstring(L,"Wrong arguments number!");
     lua_error(L);
   }
-  else{
-    int timer = lua_tointeger(L,1);
-    game::script->set_timer(timer);
-    return lua_yield(L, 0);
+  va_list vl;
+  va_start(vl,format);
+  std::string::iterator it;
+  unsigned int cur_var;
+  for (cur_var=1,it=format.begin();it!=format.end();++it,++cur_var){
+    switch(*it){
+    case TYPE_INTEGER:{
+      int* var = va_arg(vl,int*);
+      *var = luaL_checkint(L,cur_var);
+    }
+      break;
+    case TYPE_FLOAT:{
+      float* var = va_arg(vl,float*);
+      *var = (float)luaL_checknumber(L,cur_var);
+    }
+      break;
+    case TYPE_STRING:{
+      char** var = va_arg(vl,char**);
+      *var = const_cast<char*>(luaL_checklstring(L,cur_var,NULL));
+    }
+      break;
+    }
   }
-  return 0;
+  va_end(vl);
+  return stack_size;
+}
+
+int bind::wait(lua_State* L){
+  int timer;
+  script::parameters_parse(L,"i",&timer);
+  game::script->set_timer(timer);
+  return lua_yield(L, 0);
 }
 
 int bind::spritesheet_load(lua_State* L){
-  int narg = lua_gettop(L);
-  std::string ssname;
-  if (narg > 0){
-    ssname.append(lua_tolstring(L,1,NULL));
-  }
-  
-  game::ssmanager->load((char*)ssname.c_str());
+  char* ssname;
+  script::parameters_parse(L,"s",&ssname);
+
+  game::ssmanager->load(ssname);
   return 0;
 };
 
 int bind::sprite_create(lua_State* L){
-  int narg = lua_gettop(L);
-  std::string ssname("aya.png");
-  Layer layer = LAYER_EMBLEM;
-  if (narg > 0){
-    ssname = lua_tolstring(L,1,NULL);
-    if (narg > 1)
-      layer = (Layer)lua_tointeger(L,2);
-  }
+  char* ssname;
+  Layer layer;
+  script::parameters_parse(L,"si",&ssname,&layer);
   
-  GLuint sprite_handle = game::smanager->create_sprite(ssname, layer);
+  GLuint sprite_handle = game::smanager->create_sprite(std::string(ssname), layer);
   lua_pushinteger(L,sprite_handle);
   return 1;
 }
 
 int bind::sprite_set_position(lua_State* L){
-  int narg = lua_gettop(L);
-  GLfloat x=0.f;
-  GLfloat y=0.f;
-  GLuint sprite = 0;
-  if (narg>0)
-    sprite = lua_tointeger(L,1);
-  if (narg>2){
-    x = (GLfloat)lua_tonumber(L,2);
-    y = (GLfloat)lua_tonumber(L,3);
-  }
+  GLfloat x,y;
+  GLuint sprite;
+  script::parameters_parse(L,"iff",&sprite,&x,&y);
+
   CSprite* sp = game::smanager -> get_sprite(sprite);
   sp -> set_position(x,y);
   return 0;
 }
 
 int bind::sprite_set_angle(lua_State* L){
-  int narg = lua_gettop(L);
-  GLfloat r=0.f;
-  GLfloat a=0.f;
-  GLuint sprite = 0;
-  if (narg>0)
-    sprite = lua_tointeger(L,1);
-  if (narg>2){
-    r = (GLfloat)lua_tonumber(L,2);
-    a = (GLfloat)lua_tonumber(L,3);
-  }
+  GLfloat r,a;
+  GLuint sprite;
+  script::parameters_parse(L,"iff",&sprite,&r,&a);
   CSprite* sp = game::smanager -> get_sprite(sprite);
   sp -> set_angle(r,a);
   return 0;
