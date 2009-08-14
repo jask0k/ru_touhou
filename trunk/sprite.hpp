@@ -77,6 +77,7 @@ public:
   void set_alpha(GLfloat amount);//установка альфоты
   void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
   void set_scale(GLfloat scale, GLfloat v_scale=0.0f);//установка увеличения/уменьшения спрайта
+  void set_scale_speed(GLfloat v_scale){this->v_scale=v_scale;};
   void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
   void set_layer(Layer layer){this->layer=layer;};
   void set_blur(GLboolean blur=true){this->blur=blur;};
