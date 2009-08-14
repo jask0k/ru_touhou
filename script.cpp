@@ -5,6 +5,7 @@
 #define declare_number(name) lua_pushnumber(level_state, name);lua_setglobal(level_state, #name)
 #define declare_function(name) int name(lua_State* L)
 #define bind_function(name) lua_register(level_state, #name, bind::name)
+#define get_sprite(name) (game::smanager -> get_sprite(name))
 
 
 namespace script{
@@ -14,12 +15,22 @@ namespace script{
 
 namespace bind{
 //бинды
+  declare_function(log);
   declare_function(wait);//Пауза на несколько кадров
   declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
   declare_function(sprite_create);//создание спрайтов
   declare_function(sprite_set_position);//установка координат спрайта
   declare_function(sprite_set_speed);
   declare_function(sprite_set_angle);
+  declare_function(sprite_set_tint);
+  declare_function(sprite_set_alpha);
+  declare_function(sprite_set_alpha_speed);
+  declare_function(sprite_set_scale);
+  declare_function(sprite_set_scale_speed);
+  declare_function(sprite_set_decay);
+  declare_function(sprite_set_blur);
+  declare_function(sprite_set_frame);
+  declare_function(sprite_start_animation);
 }
 
 CScript::CScript():level_state(lua_open()){
@@ -39,8 +50,15 @@ int CScript::load_script(std::string scriptname){
 
 int CScript::run_script(std::string scriptname){
   load_script(scriptname);
-  lua_call(level_state,0,0);
-  return 0;
+  if (!lua_pcall(level_state,0,0,0)){
+    return 0;
+  } else {
+#ifdef DEBUG
+    std::string err_message(luaL_checklstring(level_state,1,NULL));
+    std::cerr << err_message;
+#endif
+    return 1;
+  }
 }
 
 int CScript::run_function(std::string funcname){
@@ -73,10 +91,21 @@ int CScript::do_globals(){
 
 int CScript::do_binds(){
   bind_function(wait);
+  bind_function(log);
   bind_function(spritesheet_load);
   bind_function(sprite_create);
   bind_function(sprite_set_position);
+  bind_function(sprite_set_speed);
   bind_function(sprite_set_angle);
+  bind_function(sprite_set_tint);
+  bind_function(sprite_set_alpha);
+  bind_function(sprite_set_alpha_speed);
+  bind_function(sprite_set_scale);
+  bind_function(sprite_set_scale_speed);
+  bind_function(sprite_set_decay);
+  bind_function(sprite_set_blur);
+  bind_function(sprite_set_frame);
+  bind_function(sprite_start_animation);
   return 0;
 }
 
@@ -127,6 +156,9 @@ int script::parameters_parse(lua_State* L, std::string format, ...){
   };
   GLuint stack_size = lua_gettop(L);
   if (stack_size != format.size()){
+#ifdef DEBUG
+    std::cerr << "FFFFFFFFFUUUUU-" << std::endl;
+#endif
     lua_pushstring(L,"Wrong arguments number!");
     lua_error(L);
   }
@@ -164,6 +196,15 @@ int bind::wait(lua_State* L){
   return lua_yield(L, 0);
 }
 
+int bind::log(lua_State* L){
+  char* message;
+  script::parameters_parse(L,"s",&message);
+#ifdef DEBUG
+  std::cerr << "Script says:" << message << std::endl;
+#endif
+  return 0;
+}
+
 int bind::spritesheet_load(lua_State* L){
   char* ssname;
   script::parameters_parse(L,"s",&ssname);
@@ -183,12 +224,11 @@ int bind::sprite_create(lua_State* L){
 }
 
 int bind::sprite_set_position(lua_State* L){
-  GLfloat x,y;
+  GLfloat x,y,rot;
   GLuint sprite;
-  script::parameters_parse(L,"iff",&sprite,&x,&y);
+  script::parameters_parse(L,"ifff",&sprite,&x,&y,&rot);
 
-  CSprite* sp = game::smanager -> get_sprite(sprite);
-  sp -> set_position(x,y);
+  get_sprite(sprite) -> set_position(x,y,rot);
   return 0;
 }
 
@@ -196,7 +236,77 @@ int bind::sprite_set_angle(lua_State* L){
   GLfloat r,a;
   GLuint sprite;
   script::parameters_parse(L,"iff",&sprite,&r,&a);
-  CSprite* sp = game::smanager -> get_sprite(sprite);
-  sp -> set_angle(r,a);
+  get_sprite(sprite) -> set_angle(r,a);
+  return 0;
+}
+
+int bind::sprite_set_speed(lua_State* L){
+  GLfloat vx,vy,rot;
+  GLuint sprite;
+  script::parameters_parse(L,"ifff",&sprite,&vx,&vy,&rot);
+  get_sprite(sprite) -> set_speed(vx,vy,rot);
+  return 0;
+}
+int bind::sprite_set_tint(lua_State* L){
+  GLfloat red,green,blue;
+  GLuint sprite;
+  script::parameters_parse(L,"ifff",&sprite,&red,&green,&blue);
+  get_sprite(sprite) -> set_tint(red,green,blue);
+  return 0;
+}
+int bind::sprite_set_alpha(lua_State* L){
+  GLfloat amount;
+  GLuint sprite;
+  script::parameters_parse(L,"if",&sprite,&amount);
+  get_sprite(sprite) -> set_alpha(amount);
+  return 0;
+}
+int bind::sprite_set_alpha_speed(lua_State* L){
+  GLfloat amount;
+  GLuint sprite;
+  script::parameters_parse(L,"if",&sprite,&amount);
+  get_sprite(sprite) -> set_alpha_speed(amount);
+  return 0;
+}
+int bind::sprite_set_scale(lua_State* L){
+  GLfloat scale;
+  GLuint sprite;
+  script::parameters_parse(L,"if",&sprite,&scale);
+  get_sprite(sprite) -> set_scale(scale);
+  return 0;
+}
+int bind::sprite_set_scale_speed(lua_State* L){
+  GLfloat v_scale;
+  GLuint sprite;
+  script::parameters_parse(L,"ifff",&v_scale);
+  get_sprite(sprite) -> set_scale_speed(v_scale);
+  return 0;
+}
+int bind::sprite_set_decay(lua_State* L){
+  GLint time;
+  GLuint sprite;
+  script::parameters_parse(L,"ii",&sprite,&time);
+  get_sprite(sprite) -> set_decay(time);
+  return 0;
+}
+int bind::sprite_set_blur(lua_State* L){
+  GLint blur;
+  GLuint sprite;
+  script::parameters_parse(L,"ii",&sprite,&blur);
+  get_sprite(sprite) -> set_blur( blur!=0 );
+  return 0;
+}
+int bind::sprite_set_frame(lua_State* L){
+  GLint frame;
+  GLuint sprite;
+  script::parameters_parse(L,"ii",&sprite,&frame);
+  get_sprite(sprite) -> set_frame(frame);
+  return 0;
+}
+int bind::sprite_start_animation(lua_State* L){
+  GLint animation,next_animation;
+  GLuint sprite;
+  script::parameters_parse(L,"iii",&sprite,&animation,&next_animation);
+  get_sprite(sprite) -> start_animation(animation,next_animation);
   return 0;
 }

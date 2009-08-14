@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 find_program(LUA_COMPILER 
   NAMES luac luac5.1)
 
-set (LUA_B init.luc level1.luc)
+set (LUA_B init.luc level1.luc hero.luc)
 
 add_custom_target (scripts ALL DEPENDS ${LUA_B})
 
@@ -19,7 +19,8 @@ find_program(ZIP_PACKER
 
 set (DATA_FILE th_ru.dat)
 set (PICTURES ui.png grnd03.jpg)
-set (SPRITESHEETS aya.png aya_2.png bullets.png fontg.png effects.png)
+set (SPRITESHEETS aya.png aya_2.png bullets.png fontg.png effects.png
+	level1.png)
 
 foreach (SP_SHEET ${SPRITESHEETS})
 	list (APPEND ANIMATIONS ${SP_SHEET}.spr)
@@ -29,7 +30,7 @@ add_custom_target (datafile ALL DEPENDS ../${DATA_FILE})
 
 add_custom_command(
 	OUTPUT ../${DATA_FILE}
-	COMMAND ${ZIP_PACKER} ../${DATA_FILE} 
+	COMMAND ${ZIP_PACKER} -u ../${DATA_FILE} 
 	${LUA_B} ${PICTURES}
 	${SPRITESHEETS} ${ANIMATIONS}
 	DEPENDS ${LUA_B} ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS}
