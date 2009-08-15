@@ -1,9 +1,14 @@
 spritesheet_load("level1.png");
 log("Starting first level!");
 logo = sprite_create("level1.png",LAYER_EMBLEM);
-sprite_set_position(logo,0,300,0);
-sprite_set_speed(logo,0.5,0,0);
-wait(20);
+sprite_set_scale(logo,.5);
+sprite_set_position(logo,GAME_FIELD_WIDTH/2-10,GAME_FIELD_HEIGHT/2,0);
+sprite_set_speed(logo,0.1,0,0);
+sprite_set_alpha(logo,0.01);
+sprite_set_alpha_speed(logo,0.01);
+wait(100);
+sprite_set_alpha_speed(logo,-0.01);
+wait(130);
 for j = 0, 100 do
    for i= 0,360-45,45 do
 	for k = 10, 310, 100 do

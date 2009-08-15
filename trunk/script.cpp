@@ -17,7 +17,9 @@ namespace bind{
 //бинды
   declare_function(log);
   declare_function(wait);//Пауза на несколько кадров
+
   declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
+
   declare_function(sprite_create);//создание спрайтов
   declare_function(sprite_set_position);//установка координат спрайта
   declare_function(sprite_set_speed);
@@ -31,6 +33,40 @@ namespace bind{
   declare_function(sprite_set_blur);
   declare_function(sprite_set_frame);
   declare_function(sprite_start_animation);
+}
+
+int CScript::do_binds(){
+  bind_function(wait);
+  bind_function(log);
+
+  bind_function(spritesheet_load);
+
+  bind_function(sprite_create);
+  bind_function(sprite_set_position);
+  bind_function(sprite_set_speed);
+  bind_function(sprite_set_angle);
+  bind_function(sprite_set_tint);
+  bind_function(sprite_set_alpha);
+  bind_function(sprite_set_alpha_speed);
+  bind_function(sprite_set_scale);
+  bind_function(sprite_set_scale_speed);
+  bind_function(sprite_set_decay);
+  bind_function(sprite_set_blur);
+  bind_function(sprite_set_frame);
+  bind_function(sprite_start_animation);
+  return 0;
+}
+
+int CScript::do_globals(){
+  declare_number(GAME_FIELD_WIDTH);
+  declare_number(GAME_FIELD_HEIGHT);
+  declare_number(LAYER_BACKGROUND);
+  declare_number(LAYER_ENEMY_BULLET);
+  declare_number(LAYER_ENEMY);
+  declare_number(LAYER_HERO_BULLET);
+  declare_number(LAYER_HERO);
+  declare_number(LAYER_EMBLEM);
+  return 0;
 }
 
 CScript::CScript():level_state(lua_open()){
@@ -77,37 +113,7 @@ int CScript::run_function(std::string funcname){
   }
 }
 
-int CScript::do_globals(){
-  declare_number(GAME_FIELD_WIDTH);
-  declare_number(GAME_FIELD_HEIGHT);
-  declare_number(LAYER_BACKGROUND);
-  declare_number(LAYER_ENEMY_BULLET);
-  declare_number(LAYER_ENEMY);
-  declare_number(LAYER_HERO_BULLET);
-  declare_number(LAYER_HERO);
-  declare_number(LAYER_EMBLEM);
-  return 0;
-}
 
-int CScript::do_binds(){
-  bind_function(wait);
-  bind_function(log);
-  bind_function(spritesheet_load);
-  bind_function(sprite_create);
-  bind_function(sprite_set_position);
-  bind_function(sprite_set_speed);
-  bind_function(sprite_set_angle);
-  bind_function(sprite_set_tint);
-  bind_function(sprite_set_alpha);
-  bind_function(sprite_set_alpha_speed);
-  bind_function(sprite_set_scale);
-  bind_function(sprite_set_scale_speed);
-  bind_function(sprite_set_decay);
-  bind_function(sprite_set_blur);
-  bind_function(sprite_set_frame);
-  bind_function(sprite_start_animation);
-  return 0;
-}
 
 int CScript::think(){
   if (state.resume){
@@ -278,7 +284,7 @@ int bind::sprite_set_scale(lua_State* L){
 int bind::sprite_set_scale_speed(lua_State* L){
   GLfloat v_scale;
   GLuint sprite;
-  script::parameters_parse(L,"ifff",&v_scale);
+  script::parameters_parse(L,"if",&v_scale);
   get_sprite(sprite) -> set_scale_speed(v_scale);
   return 0;
 }
