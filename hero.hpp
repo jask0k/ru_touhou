@@ -7,6 +7,7 @@
 #include <cmath>
 #include "config.hpp"
 
+
 class CHero{
 public:
   GLfloat vx,vy;//скорость
@@ -21,4 +22,8 @@ public:
   void set_speed(GLfloat vx0, GLfloat vy0);
   void set_speed_angle(GLfloat velocity, GLfloat direction);
 };
+
+namespace game{
+  extern CHero* hero;
+}
 #endif

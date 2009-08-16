@@ -5,6 +5,7 @@ namespace game{
   CSpriteManager* smanager=new CSpriteManager;
   CScript* script=new CScript;
   CEngine* engine=new CEngine;
+  CHero* hero;
 }
 
 int main(int argc, char* argv[]){
