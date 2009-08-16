@@ -18,6 +18,11 @@ namespace bind{
   declare_function(log);
   declare_function(wait);//Пауза на несколько кадров
 
+  declare_function(engine_get_frame);
+
+  declare_function(hero_x);
+  declare_function(hero_y);
+
   declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
 
   declare_function(sprite_create);//создание спрайтов
@@ -39,7 +44,12 @@ int CScript::do_binds(){
   bind_function(wait);
   bind_function(log);
 
+  bind_function(engine_get_frame);
+
   bind_function(spritesheet_load);
+
+  bind_function(hero_x);
+  bind_function(hero_y);
 
   bind_function(sprite_create);
   bind_function(sprite_set_position);
@@ -98,19 +108,16 @@ int CScript::run_script(std::string scriptname){
 }
 
 int CScript::run_function(std::string funcname){
-  lua_State* L=lua_newthread(level_state);
-  lua_getfield(L, LUA_GLOBALSINDEX, funcname.c_str());
-  if (!lua_pcall(L,0,0,0)){
-    free(L);
-    return 0;
-  } else {
+  lua_getfield(level_state, LUA_GLOBALSINDEX, funcname.c_str());
+  if (lua_pcall(level_state,0,0,0)){
 #ifdef DEBUG
-    std::string err_message(luaL_checklstring(L,1,NULL));
+    std::string err_message(luaL_checklstring(level_state,1,NULL));
     std::cerr << err_message;
 #endif
-    free(L);
     return 1;
   }
+  return 0;
+
 }
 
 
@@ -209,6 +216,23 @@ int bind::log(lua_State* L){
   std::cerr << "Script says:" << message << std::endl;
 #endif
   return 0;
+}
+
+int bind::engine_get_frame(lua_State* L){
+  lua_Integer frame = game::engine->get_frame();
+  lua_pushinteger(L,frame);
+  return 1;
+}
+int bind::hero_x(lua_State* L){
+  lua_Number x = game::hero->x;
+  lua_pushnumber(L,x);
+  return 1;
+}
+
+int bind::hero_y(lua_State* L){
+  lua_Integer y = game::hero->y;
+  lua_pushnumber(L,y);
+  return 1;
 }
 
 int bind::spritesheet_load(lua_State* L){

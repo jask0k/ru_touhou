@@ -80,16 +80,16 @@ CEngine::CEngine(){
   controller = new CController;
   text = new CText;
   game::script -> run_script("init");
+  game::script -> run_script("hero");
   text -> font_load (std::string("fontg.png"));
   text -> text_add(9, 18, std::string("fps:"), 0);
   fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
-  hero = new CHero("aya_2.png");
   ui_background = LoadTexture_simple("th_ru/ui.png");
   background = new CBack;
 }
 
 CEngine::~CEngine(){
-  delete hero;
+  delete game::hero;
   delete fps_manager;
   delete controller;
   delete background;
@@ -128,11 +128,12 @@ int CEngine::write_config(){
 }
 
 void CEngine::new_game(){
+  game::hero = new CHero("aya_2.png");
   state.main_state = ENGINE_STATE_GAME;
   state.active = true;
   frames = 0;
   background -> init("th_ru/grnd03.jpg");
-  hero -> set_position(GAME_FIELD_WIDTH/2, 100);
+  game::hero -> set_position(GAME_FIELD_WIDTH/2, 100);
   game::script->init_level(1);
 }
 
@@ -141,41 +142,42 @@ void CEngine::think(){
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
   if (c_state.focus)
-    hero->sprite->set_blur(false);
+    game::hero->sprite->set_blur(false);
   else{
-    hero->sprite->set_blur(true);
+    game::hero->sprite->set_blur(true);
   }
   if (c_state.attack){
-    if (frames%2 == 0){
-      GLfloat i;
-      int j;
-      CSprite* bull_sprite;
-      for (i= 90.f;i<=270.f;i+=5.f){
-	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
-	bull_sprite = game::smanager -> get_sprite(j);
-	bull_sprite -> set_position(hero -> x-8, hero -> y);
-	bull_sprite -> set_frame(8);
-	bull_sprite -> set_angle(15.f,i);
-	//      bull_sprite -> set_speed(0.f,20.f);
-	bull_sprite -> set_alpha(.2f);
-	bull_sprite -> set_scale(2.f);
-      }
-      for (i= 90.f;i>=-90.f;i-=5.f){
-	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
-	bull_sprite = game::smanager -> get_sprite(j);
-	bull_sprite -> set_position(hero -> x+8, hero -> y);
-	//      bull_sprite -> set_speed(0.f,20.f);
-	bull_sprite -> set_angle(15.f,i);
-	bull_sprite -> set_alpha(.2f);
-	bull_sprite -> set_scale(2.f);
-	bull_sprite -> set_frame(8);
-      }
-    }
+//     if (frames%2 == 0){
+//       GLfloat i;
+//       int j;
+//       CSprite* bull_sprite;
+//       for (i= 90.f;i<=270.f;i+=5.f){
+// 	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
+// 	bull_sprite = game::smanager -> get_sprite(j);
+// 	bull_sprite -> set_position(hero -> x-8, hero -> y);
+// 	bull_sprite -> set_frame(8);
+// 	bull_sprite -> set_angle(15.f,i);
+// 	//      bull_sprite -> set_speed(0.f,20.f);
+// 	bull_sprite -> set_alpha(.2f);
+// 	bull_sprite -> set_scale(2.f);
+//       }
+//       for (i= 90.f;i>=-90.f;i-=5.f){
+// 	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
+// 	bull_sprite = game::smanager -> get_sprite(j);
+// 	bull_sprite -> set_position(hero -> x+8, hero -> y);
+// 	//      bull_sprite -> set_speed(0.f,20.f);
+// 	bull_sprite -> set_angle(15.f,i);
+// 	bull_sprite -> set_alpha(.2f);
+// 	bull_sprite -> set_scale(2.f);
+// 	bull_sprite -> set_frame(8);
+//       }
+//    }
+    game::script -> run_function(std::string("hero_fire"));
   }
   game::script -> think();
-  hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
-  hero ->think();
-  hero ->sprite->think();
+  game::hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
+  game::hero ->think();
+  game::hero ->sprite->think();
   text ->think();
   background -> think();
   game::smanager -> think();
@@ -213,15 +215,16 @@ void CEngine::handle_events(){
       break;
       
     case SDL_ACTIVEEVENT: //обработка сворачивания/разворачивания окна
-      if (event -> active.state == SDL_APPACTIVE)
-	    if (event -> active.gain)
-           state.active = true;
-	    else{
-           state.active = false;	
+      if (event -> active.state == SDL_APPACTIVE){
+	if (event -> active.gain)
+	  state.active = true;
+	else{
+	  state.active = false;	
 #ifdef DEBUG
-	       std::cerr << "minimizing!" << std::endl;
+	  std::cerr << "minimizing!" << std::endl;
 #endif
-	    }
+	}
+      }
       break;
       
     default:

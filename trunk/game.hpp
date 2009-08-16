@@ -63,7 +63,7 @@ private:
   void handle_events();//обработка событий
   EngineState state; //состояние движка
   unsigned long int frames; //количество кадров от начала игры
-  CHero* hero;//ГГ
+  //  CHero* hero;//ГГ
   CFrameManager* fps_manager;
   CController* controller;
   CText* text;
@@ -79,6 +79,7 @@ public:
   void draw();//рендеринг картинки, менюшек
   void draw_game();//рисование гуя и игры(нужно для красивого заблюривания во время паузы)
   int save_screenshot();
+  unsigned long int get_frame(){return frames;};
   
 };
 #endif
