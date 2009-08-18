@@ -305,11 +305,13 @@ decay_state CSprite::think(){
   if (scale <= 0.f)
     return DECOMPOSED;
   x += v_x;
-  if (x < -GAME_FIELD_WIDTH || x > 2 * GAME_FIELD_WIDTH)
+  if (x < -get_width() || x > GAME_FIELD_WIDTH+get_width())
     return DECOMPOSED;
+  //std::cerr<<"x:"<<x <<" "<<-get_width()<<";"<<std::endl;
   y += v_y;
-  if (y < -GAME_FIELD_HEIGHT || y > 2 * GAME_FIELD_HEIGHT)
+  if (y < -get_height() || y > GAME_FIELD_HEIGHT+get_height())
     return DECOMPOSED;
+  //std::cerr<<"y:"<<y <<" "<<get_height()<<";"<<std::endl;
 
   if (animation_active)
     if (--animation_timer == 0){

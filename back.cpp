@@ -14,7 +14,7 @@ void CBack::init(const char* filename, GLfloat vy){
   this->fog_colour[2] = 0.2578;
   this->fog_colour[3] = 1.0;
 
-  this->fog_density = 0.10f;
+  this->fog_density = 0.1f;
   this->vfog=0.f;
   this->ground_texture = LoadTexture_simple(filename);
   glTexParameteri(ground_texture,GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -31,7 +31,7 @@ void CBack::draw(){
     glMatrixMode(GL_MODELVIEW); 
     glLoadIdentity();
     glEnable (GL_FOG);
-    glFogi (GL_FOG_MODE, GL_EXP2);
+    glFogi (GL_FOG_MODE, GL_EXP);
     glFogfv (GL_FOG_COLOR, fog_colour);
     glFogf (GL_FOG_DENSITY, fog_density);
     glTranslatef(0.0f,-3.0f,-8.0f);
