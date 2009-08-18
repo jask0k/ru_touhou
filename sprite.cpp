@@ -280,18 +280,28 @@ void CSprite::clear_tint(){
 }
 
 decay_state CSprite::think(){
-  rotation += v_r;
-  alpha += v_alpha;
-  if (alpha > max_alpha)
+  if (v_r !=0)
+    rotation += v_r;
+  if (v_alpha !=0)
+    alpha += v_alpha;
+  if (alpha > max_alpha){
+    v_alpha = 0;
     alpha = max_alpha;
-  else if (alpha < min_alpha)
+  }
+  else if (alpha < min_alpha){
+    v_alpha = 0;
     alpha = min_alpha;
+  }
   if (v_scale != 0)
     scale += v_scale;
-  if (scale > max_scale)
+  if (scale > max_scale){
+    v_scale = 0;
     scale = max_scale;
-  else if (alpha < min_scale)
+  }
+  else if (alpha < min_scale){
+    v_scale = 0;
     scale = min_scale;
+  }
   if (scale <= 0.f)
     return DECOMPOSED;
   x += v_x;
@@ -376,8 +386,8 @@ void CSpriteManager::think(){
       ++i;
   for (i = collection.begin();i != collection.end();++i)
     if (i -> second -> follow > 0){
-      CSprite* master_sprite;
-      if (master_sprite = get_sprite(i -> second -> follow)){
+      CSprite* master_sprite = get_sprite(i -> second -> follow);
+      if (master_sprite != NULL){
 	(get_sprite(i -> first)) -> set_position(master_sprite -> x, master_sprite -> y, 
 						 (get_sprite(i->first)) -> rotation);
       }

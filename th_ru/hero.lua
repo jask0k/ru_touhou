@@ -27,7 +27,7 @@ function hero_focus_begin()
    sprite_set_alpha(focus,0);
    sprite_set_alpha_speed(focus,0.05);
    sprite_set_alpha_limit(focus,0,.5);
-   sprite_set_scale(focus,1.0);
+   sprite_set_scale(focus,.01);
    sprite_set_scale_limit(focus,0,1.5);
    sprite_set_speed(focus,0,0,1);
    sprite_set_follow(focus,hero_sprite());
