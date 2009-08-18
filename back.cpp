@@ -38,6 +38,15 @@ void CBack::draw(){
     glRotatef(rx,1.0f,0.0f,0.0f);
     glRotatef(ry,0.0f,1.0f,0.0f);
     glRotatef(rz,0.0f,0.0f,1.0f);
+    GLfloat LightAmbient[]= { 0.5f, 0.5f, 0.5f, 1.0f };
+    GLfloat LightDiffuse[]= { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat LightPosition[]= { 0.0f ,10.0f , 2.0f, 1.0f };
+    glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);	
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);		
+    glLightfv(GL_LIGHT1, GL_POSITION,LightPosition);
+    glEnable(GL_LIGHT1);
+
+
     glBindTexture(GL_TEXTURE_2D, ground_texture);
     glBegin(GL_QUADS);{
       glTexCoord2f(flightX+0,flightY+0); glVertex3f(-15,0,-1);
