@@ -36,11 +36,17 @@ enum EButton{
 #define JOY_AXIS_LR             0
 #define JOY_AXIS_UD             1
 
+#define JUST_UP -1
+#define LONG_UP 0
+#define LONG_DOWN 1
+#define JUST_DOWN 2
+
+
 struct controller_state{
   GLfloat direction;//угол наклона вектора действия
   GLfloat strength;//0..1 процент действия
-  bool focus;
-  bool attack;
+  GLint focus;//
+  GLint attack;//
   bool skip;
 };
 class CController{
@@ -61,6 +67,8 @@ public:
   EButton get_confirm();//смотрит, нажата ли кнопка атаки или бомбы и 
   //очищает их состояние, нужно для меню
   int get_pause();
+  bool get_bomb();
+  int save_old();
   
 private:
   SDL_Joystick *stick;//джойстик
@@ -70,5 +78,7 @@ private:
     GLfloat dir;
     GLfloat pow;
   } analog_state;
+  bool old_attack;
+  bool old_focus;
 };
 #endif
