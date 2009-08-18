@@ -1,7 +1,7 @@
 spritesheet_load("effects.png");
 
 function hero_fire_begin()
-   log("otake!")
+--   log("otake!")
 end
 
 function hero_fire()
@@ -19,21 +19,27 @@ function hero_fire()
 end
 
 function hero_fire_end()
-   log("konec otake!");
+--   log("konec otake!");
 end
 
 function hero_focus_begin()
    focus = sprite_create("effects.png", LAYER_BACKGROUND);
-   sprite_set_alpha(focus,.6);
-   sprite_set_scale(focus,1.5);
+   sprite_set_alpha(focus,0);
+   sprite_set_alpha_speed(focus,0.05);
+   sprite_set_alpha_limit(focus,0,.5);
+   sprite_set_scale(focus,1.0);
+   sprite_set_scale_limit(focus,0,1.5);
    sprite_set_speed(focus,0,0,1);
+   sprite_set_follow(focus,hero_sprite());
+   sprite_set_scale_speed(focus,0.1);
 end
 
 function hero_focus()
-   sprite_set_position(focus,hero_x(),hero_y(),0);
+--   sprite_set_position(focus,hero_x(),hero_y(),0);
 end
 
 function hero_focus_end()
-   sprite_set_decay(focus,10);
---   sprite_set_scale_speed(focus,-0.01);
+   sprite_set_decay(focus,30);
+   sprite_set_alpha_speed(focus,-.05);
+   sprite_set_scale_speed(focus,-0.1);
 end

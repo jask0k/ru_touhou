@@ -202,13 +202,19 @@ CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
 CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
   ssheet(ssheet),x(0),y(0),rotation(0),alpha(1.f),
   tint_r(1.f),tint_g(1.f),tint_b(1.f),v_alpha(0.f),
-  v_x(0.f),v_y(0.f),v_r(0.f),v_scale(0.f),frame(0),
+  min_alpha(0.f),max_alpha(1.f),
+  v_x(0.f),v_y(0.f),v_r(0.f),v_scale(0.f),
+  min_scale(0.f),max_scale(1000.f),frame(0),
   animation(0),state(0),animation_timer(0),
   next_animation(0),decay_timer(0),
   animation_active(false),decay_active(false),
-  scale(1.f),blur(false),layer(layer){}
+  scale(1.f),blur(false),layer(layer),follow(0){}
 
 void CSprite::draw(){
+#ifdef DEBUG
+  if (scale<=0)
+    std::cerr << "DIVISION BY ZERO!" << std::endl;
+#endif
   glPushAttrib (GL_CURRENT_BIT);
   glColor4f(tint_r, tint_g, tint_b, alpha);
   if (animation_active){
@@ -276,11 +282,16 @@ void CSprite::clear_tint(){
 decay_state CSprite::think(){
   rotation += v_r;
   alpha += v_alpha;
-  if (alpha > 1.f)
-    alpha = 1.f;
-  else if (alpha < 0.f)
-    alpha = 0.f;
-  scale += v_scale;
+  if (alpha > max_alpha)
+    alpha = max_alpha;
+  else if (alpha < min_alpha)
+    alpha = min_alpha;
+  if (v_scale != 0)
+    scale += v_scale;
+  if (scale > max_scale)
+    scale = max_scale;
+  else if (alpha < min_scale)
+    scale = min_scale;
   if (scale <= 0.f)
     return DECOMPOSED;
   x += v_x;
@@ -328,7 +339,7 @@ void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> rotation = angle-90.f;
 }
 
-CSpriteManager::CSpriteManager():free_handle(0){}
+CSpriteManager::CSpriteManager():free_handle(1){}
 
 GLuint CSpriteManager::create_sprite(std::string spritesheet, Layer layer){
   CSprite* sprite = new CSprite(game::ssmanager->dispatch(spritesheet), layer);
@@ -340,7 +351,10 @@ GLuint CSpriteManager::create_sprite(std::string spritesheet, Layer layer){
 }
 
 CSprite* CSpriteManager::get_sprite(GLuint handle){
-  return collection[handle];
+  if (collection.count(handle) == 1)
+    return collection[handle];
+  else
+    return NULL;
 }
 
 void  CSpriteManager::draw(Layer layer){
@@ -360,6 +374,16 @@ void CSpriteManager::think(){
     }
     else
       ++i;
+  for (i = collection.begin();i != collection.end();++i)
+    if (i -> second -> follow > 0){
+      CSprite* master_sprite;
+      if (master_sprite = get_sprite(i -> second -> follow)){
+	(get_sprite(i -> first)) -> set_position(master_sprite -> x, master_sprite -> y, 
+						 (get_sprite(i->first)) -> rotation);
+      }
+      else
+	i -> second -> follow = 0;
+    }
 }
 
 GLuint CSpriteManager::destroy_sprite(GLuint handle){

@@ -170,7 +170,6 @@ void CEngine::think(){
   }
   game::hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   game::hero -> think();
-  game::hero -> sprite -> think();
   game::script -> think();
   text ->think();
   background -> think();
