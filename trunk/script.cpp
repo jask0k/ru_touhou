@@ -22,6 +22,7 @@ namespace bind{
 
   declare_function(hero_x);
   declare_function(hero_y);
+  declare_function(hero_sprite);
 
   declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
 
@@ -32,11 +33,14 @@ namespace bind{
   declare_function(sprite_set_tint);
   declare_function(sprite_set_alpha);
   declare_function(sprite_set_alpha_speed);
+  declare_function(sprite_set_alpha_limit);
   declare_function(sprite_set_scale);
   declare_function(sprite_set_scale_speed);
+  declare_function(sprite_set_scale_limit);
   declare_function(sprite_set_decay);
   declare_function(sprite_set_blur);
   declare_function(sprite_set_frame);
+  declare_function(sprite_set_follow);
   declare_function(sprite_start_animation);
 }
 
@@ -50,6 +54,7 @@ int CScript::do_binds(){
 
   bind_function(hero_x);
   bind_function(hero_y);
+  bind_function(hero_sprite);
 
   bind_function(sprite_create);
   bind_function(sprite_set_position);
@@ -58,11 +63,14 @@ int CScript::do_binds(){
   bind_function(sprite_set_tint);
   bind_function(sprite_set_alpha);
   bind_function(sprite_set_alpha_speed);
+  bind_function(sprite_set_alpha_limit);
   bind_function(sprite_set_scale);
   bind_function(sprite_set_scale_speed);
+  bind_function(sprite_set_scale_limit);
   bind_function(sprite_set_decay);
   bind_function(sprite_set_blur);
   bind_function(sprite_set_frame);
+  bind_function(sprite_set_follow);
   bind_function(sprite_start_animation);
   return 0;
 }
@@ -223,6 +231,7 @@ int bind::engine_get_frame(lua_State* L){
   lua_pushinteger(L,frame);
   return 1;
 }
+
 int bind::hero_x(lua_State* L){
   lua_Number x = game::hero->x;
   lua_pushnumber(L,x);
@@ -232,6 +241,12 @@ int bind::hero_x(lua_State* L){
 int bind::hero_y(lua_State* L){
   lua_Integer y = game::hero->y;
   lua_pushnumber(L,y);
+  return 1;
+}
+
+int bind::hero_sprite(lua_State* L){
+  lua_Number sprite = game::hero->sprite_no;
+  lua_pushnumber(L,sprite);
   return 1;
 }
 
@@ -277,6 +292,7 @@ int bind::sprite_set_speed(lua_State* L){
   get_sprite(sprite) -> set_speed(vx,vy,rot);
   return 0;
 }
+
 int bind::sprite_set_tint(lua_State* L){
   GLfloat red,green,blue;
   GLuint sprite;
@@ -284,6 +300,7 @@ int bind::sprite_set_tint(lua_State* L){
   get_sprite(sprite) -> set_tint(red,green,blue);
   return 0;
 }
+
 int bind::sprite_set_alpha(lua_State* L){
   GLfloat amount;
   GLuint sprite;
@@ -291,6 +308,7 @@ int bind::sprite_set_alpha(lua_State* L){
   get_sprite(sprite) -> set_alpha(amount);
   return 0;
 }
+
 int bind::sprite_set_alpha_speed(lua_State* L){
   GLfloat amount;
   GLuint sprite;
@@ -298,6 +316,15 @@ int bind::sprite_set_alpha_speed(lua_State* L){
   get_sprite(sprite) -> set_alpha_speed(amount);
   return 0;
 }
+
+int bind::sprite_set_alpha_limit(lua_State* L){
+  GLfloat min,max;
+  GLuint sprite;
+  script::parameters_parse(L,"iff",&sprite,&min,&max);
+  get_sprite(sprite) -> set_alpha_limit(min,max);
+  return 0;
+}
+
 int bind::sprite_set_scale(lua_State* L){
   GLfloat scale;
   GLuint sprite;
@@ -305,13 +332,23 @@ int bind::sprite_set_scale(lua_State* L){
   get_sprite(sprite) -> set_scale(scale);
   return 0;
 }
+
 int bind::sprite_set_scale_speed(lua_State* L){
   GLfloat v_scale;
   GLuint sprite;
-  script::parameters_parse(L,"if",&v_scale);
+  script::parameters_parse(L,"if",&sprite,&v_scale);
   get_sprite(sprite) -> set_scale_speed(v_scale);
   return 0;
 }
+
+int bind::sprite_set_scale_limit(lua_State* L){
+  GLfloat min,max;
+  GLuint sprite;
+  script::parameters_parse(L,"iff",&sprite,&min,&max);
+  get_sprite(sprite) -> set_scale_limit(min,max);
+  return 0;
+}
+
 int bind::sprite_set_decay(lua_State* L){
   GLint time;
   GLuint sprite;
@@ -326,6 +363,7 @@ int bind::sprite_set_blur(lua_State* L){
   get_sprite(sprite) -> set_blur( blur!=0 );
   return 0;
 }
+
 int bind::sprite_set_frame(lua_State* L){
   GLint frame;
   GLuint sprite;
@@ -338,5 +376,13 @@ int bind::sprite_start_animation(lua_State* L){
   GLuint sprite;
   script::parameters_parse(L,"iii",&sprite,&animation,&next_animation);
   get_sprite(sprite) -> start_animation(animation,next_animation);
+  return 0;
+}
+
+int bind::sprite_set_follow(lua_State* L){
+  GLuint follow;
+  GLuint sprite;
+  script::parameters_parse(L,"ii",&sprite,&follow);
+  get_sprite(sprite) -> set_follow(follow);
   return 0;
 }

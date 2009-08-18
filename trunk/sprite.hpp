@@ -81,11 +81,15 @@ public:
   void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
   void set_layer(Layer layer){this->layer=layer;};
   void set_blur(GLboolean blur=true){this->blur=blur;};
+  void set_alpha_limit(GLfloat min_alpha, GLfloat max_alpha){this->min_alpha = min_alpha;this -> max_alpha = max_alpha;};
+  void set_scale_limit(GLfloat min_scale, GLfloat max_scale){this->min_scale = min_scale;this -> max_scale = max_scale;};
   int start_animation(GLint animation, GLint next_animation=-1);
   int set_frame(GLint frame){this->frame=frame;animation_active = false; return 0;};
+  void set_follow(GLuint follow){this -> follow = follow;};
   
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
+  
   
 private:
   CSpriteSheet* ssheet;//указатель на спрайтовый лист
@@ -95,8 +99,10 @@ private:
   GLfloat tint_r,tint_g,tint_b;//окрашивание спрайта
 
   GLfloat v_alpha;//скорость изменения альфаканала
+  GLfloat min_alpha,max_alpha;
   GLfloat v_x,v_y,v_r;//скорость движения и вращения спрайта
   GLfloat v_scale;//скорость изменения размера спрайта
+  GLfloat min_scale,max_scale;
 
   GLint frame;//номер кадра
 
@@ -114,6 +120,8 @@ private:
   GLboolean blur;
 
   Layer layer;
+
+  GLuint follow;
   friend class CSpriteManager;
 };
 

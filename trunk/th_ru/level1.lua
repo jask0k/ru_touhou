@@ -19,4 +19,3 @@ for j = 0, 100 do
    end
    wait(12);
 end
-
