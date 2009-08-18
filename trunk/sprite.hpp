@@ -86,6 +86,8 @@ public:
   int start_animation(GLint animation, GLint next_animation=-1);
   int set_frame(GLint frame){this->frame=frame;animation_active = false; return 0;};
   void set_follow(GLuint follow){this -> follow = follow;};
+  GLfloat get_width(){return (GLfloat)(ssheet->get_width())*scale;};
+  GLfloat get_height(){return (GLfloat)(ssheet->get_height())*scale;};
   
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
