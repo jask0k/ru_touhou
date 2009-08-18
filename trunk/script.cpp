@@ -109,15 +109,15 @@ int CScript::run_script(std::string scriptname){
 
 int CScript::run_function(std::string funcname){
   lua_getfield(level_state, LUA_GLOBALSINDEX, funcname.c_str());
-  if (lua_pcall(level_state,0,0,0)){
+  if (lua_isfunction(level_state,-1))
+    if (lua_pcall(level_state,0,0,0)){
 #ifdef DEBUG
-    std::string err_message(luaL_checklstring(level_state,1,NULL));
-    std::cerr << err_message;
+      std::string err_message(luaL_checklstring(level_state,1,NULL));
+      std::cerr << err_message;
 #endif
-    return 1;
-  }
+      return 1;
+    }
   return 0;
-
 }
 
 

@@ -30,6 +30,12 @@ CController::~CController(){
   delete state;
 }
 
+int CController::save_old(){
+  old_focus = ((state -> count(B_FOCUS))!=0);
+  old_attack = ((state -> count(B_ATTACK))!=0);
+  return 0;
+}
+
 int CController::handle_event(SDL_Event* event){
   switch (event -> type){
   case SDL_KEYDOWN: //нажата кнопка на клаве
@@ -167,8 +173,31 @@ struct controller_state CController::get_state(){
   controller_state result;
   result.direction = analog_state.dir;
   result.strength = analog_state.pow;
-  result.focus = (state -> count(B_FOCUS))!=0;
-  result.attack = (state -> count(B_ATTACK))!=0;
+  if (old_focus){
+    if ((state -> count(B_FOCUS))!=0)
+      result.focus = LONG_DOWN;
+    else
+      result.focus = JUST_UP;
+  }
+  else{
+    if ((state -> count(B_FOCUS))!=0)
+      result.focus = JUST_DOWN;
+    else
+      result.focus = LONG_UP;
+  }
+
+  if (old_attack){
+    if ((state -> count(B_ATTACK))!=0)
+      result.attack = LONG_DOWN;
+    else
+      result.attack = JUST_UP;
+  }
+  else{
+    if ((state -> count(B_ATTACK))!=0)
+      result.attack = JUST_DOWN;
+    else
+      result.attack = LONG_UP;
+  }
   result.skip = (state -> count(B_SKIP))!=0;
   return result;
 }

@@ -141,43 +141,37 @@ void CEngine::think(){
   controller_state c_state = controller -> get_state();
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
-  if (c_state.focus)
-    game::hero->sprite->set_blur(false);
-  else{
-    game::hero->sprite->set_blur(true);
+
+  switch (c_state.focus){
+  case JUST_DOWN:
+    game::script -> run_function(std::string("hero_focus_begin"));
+  case LONG_DOWN:
+    game::script -> run_function(std::string("hero_focus"));
+    break;
+  case JUST_UP:
+    game::script -> run_function(std::string("hero_focus_end"));
+    break;
+  case LONG_UP:
+  default:
+    break;
   }
-  if (c_state.attack){
-//     if (frames%2 == 0){
-//       GLfloat i;
-//       int j;
-//       CSprite* bull_sprite;
-//       for (i= 90.f;i<=270.f;i+=5.f){
-// 	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
-// 	bull_sprite = game::smanager -> get_sprite(j);
-// 	bull_sprite -> set_position(hero -> x-8, hero -> y);
-// 	bull_sprite -> set_frame(8);
-// 	bull_sprite -> set_angle(15.f,i);
-// 	//      bull_sprite -> set_speed(0.f,20.f);
-// 	bull_sprite -> set_alpha(.2f);
-// 	bull_sprite -> set_scale(2.f);
-//       }
-//       for (i= 90.f;i>=-90.f;i-=5.f){
-// 	j = game::smanager -> create_sprite("bullets.png", LAYER_HERO_BULLET);
-// 	bull_sprite = game::smanager -> get_sprite(j);
-// 	bull_sprite -> set_position(hero -> x+8, hero -> y);
-// 	//      bull_sprite -> set_speed(0.f,20.f);
-// 	bull_sprite -> set_angle(15.f,i);
-// 	bull_sprite -> set_alpha(.2f);
-// 	bull_sprite -> set_scale(2.f);
-// 	bull_sprite -> set_frame(8);
-//       }
-//    }
+  switch (c_state.attack){
+  case JUST_DOWN:
+    game::script -> run_function(std::string("hero_fire_begin"));
+  case LONG_DOWN:
     game::script -> run_function(std::string("hero_fire"));
+    break;
+  case JUST_UP:
+    game::script -> run_function(std::string("hero_fire_end"));
+    break;
+  case LONG_UP:
+  default:
+    break;
   }
-  game::script -> think();
   game::hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
-  game::hero ->think();
-  game::hero ->sprite->think();
+  game::hero -> think();
+  game::hero -> sprite -> think();
+  game::script -> think();
   text ->think();
   background -> think();
   game::smanager -> think();
@@ -185,6 +179,7 @@ void CEngine::think(){
 
 void CEngine::handle_events(){
   SDL_Event *event = new SDL_Event;
+  controller -> save_old();
   while (SDL_PollEvent(event)){
     if (controller -> handle_event(event))
       continue;
@@ -248,7 +243,6 @@ void CEngine::loop(){
     }
     draw();
     fps_manager -> end_frame();
-    //std::cerr << (fps_manager -> get_aFPS()) << "fps" <<std::endl;
   }
  
   write_config();
