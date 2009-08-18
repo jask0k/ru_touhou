@@ -39,17 +39,17 @@ struct EngineState{
   
 class CFrameManager{
 private:
-  GLuint begin_time;
   GLfloat FPS;
-  GLfloat averageFPS;
   unsigned long frames;//количество кадров от начала игры
   CLabel* fps_label;
+  GLfloat fps_ticks;
+  GLuint last_ticks;
 public:
   CFrameManager(CLabel* label);
   GLfloat get_FPS();//извлечение FPS
-  GLfloat get_aFPS();//извлечение среднего показателя FPS
-  void begin_frame();//начало кадра -- сохраняем время начала кадра
-  void end_frame();//конец кадра -- ждём время, обновляем FPS
+  // GLfloat get_aFPS();//извлечение среднего показателя FPS
+  //  void begin_frame();//начало кадра -- сохраняем время начала кадра
+  void wait();//конец кадра -- ждём время, обновляем FPS
 };
 
 

@@ -7,19 +7,32 @@
 #include <iostream>
 
 
-CFrameManager::CFrameManager(CLabel* label): FPS(0),averageFPS(0),frames(0),fps_label(label){}
-
-void CFrameManager::begin_frame(){
-  begin_time = SDL_GetTicks();  
+CFrameManager::CFrameManager(CLabel* label): FPS(0),frames(0),fps_label(label),
+					     fps_ticks(1000.0/60.0),last_ticks(SDL_GetTicks()){
 }
 
-void CFrameManager::end_frame(){
-  int delay = int(1000.f/60.0f-(SDL_GetTicks()-begin_time));
-  if (delay>0)
-    SDL_Delay(delay);
+//void CFrameManager::begin_frame(){
+//  begin_time = SDL_GetTicks();  
+//}
+
+void CFrameManager::wait(){
+  Uint32 current_ticks;
+  Uint32 target_ticks;
+  Uint32 the_delay;
+  
   ++frames;
-  FPS = 1000.f/(float)(SDL_GetTicks()-begin_time);
-  averageFPS += (FPS-averageFPS)/frames;
+
+  current_ticks = SDL_GetTicks();
+  target_ticks = last_ticks + (Uint32) ((float)frames * fps_ticks);
+
+  if (current_ticks <= target_ticks) {
+    the_delay = target_ticks - current_ticks;
+    SDL_Delay(the_delay);
+  } else {
+    frames = 0;
+    last_ticks = SDL_GetTicks();
+  }
+  FPS = 1000.f/((float)(SDL_GetTicks()-last_ticks)/(frames+1));
   fps_label -> change_text(FPS);
 }
 
@@ -27,9 +40,9 @@ GLfloat CFrameManager::get_FPS(){
   return FPS;
 }
 
-GLfloat CFrameManager::get_aFPS(){
-  return averageFPS;
-}
+//GLfloat CFrameManager::get_aFPS(){
+//  return averageFPS;
+//}
 
 CEngine::CEngine(){
   state.screenshot = false;
@@ -71,6 +84,9 @@ CEngine::CEngine(){
   //  glEnable(GL_TEXTURE_RECTANGLE_ARB);
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_ARB_texture_non_power_of_two);
+  glEnable( GL_DEPTH_TEST );
+  glDepthFunc(GL_LEQUAL);	
+  glEnable( GL_LIGHTING );
   
   SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
 #ifdef DEBUG
@@ -234,14 +250,14 @@ void CEngine::loop(){
 
   new_game();
   while (state.main_state != ENGINE_STATE_QUIT){
-    fps_manager -> begin_frame();
+    //    fps_manager -> begin_frame();
     handle_events();
     if (state.main_state == ENGINE_STATE_GAME){
       frames++;
       think(); //а что тут думать, тут писать надо!
     }
     draw();
-    fps_manager -> end_frame();
+    fps_manager -> wait();
   }
  
   write_config();
@@ -273,7 +289,7 @@ void CEngine::draw_game(){
   glLoadIdentity();
 
   glEnable(GL_SCISSOR_TEST);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
   background -> draw();
 
