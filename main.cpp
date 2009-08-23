@@ -6,6 +6,7 @@ namespace game{
   CScript* script=new CScript;
   CEngine* engine=new CEngine;
   CHero* hero;
+  CEnemyBulletManager* ebmanager=new CEnemyBulletManager(std::string("bullets.png"));
 }
 
 int main(int argc, char* argv[]){

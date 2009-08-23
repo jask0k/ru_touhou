@@ -2,7 +2,14 @@
 #include <iostream>
 #include "SDL_image.h"
 
-CHero::CHero(char* texture_file):
+CHero::CHero(const char* texture_file):
+  vx(0),vy(0),x(GAME_FIELD_WIDTH/2),y(100),max_speed(8),
+  sprite_no(game::smanager->create_sprite(texture_file, LAYER_HERO)){
+  (game::smanager->get_sprite(sprite_no))->set_position(x,y);
+  (game::smanager->get_sprite(sprite_no))->set_scale(0.0625f);
+}
+
+CHero::CHero(std::string texture_file):
   vx(0),vy(0),x(GAME_FIELD_WIDTH/2),y(100),max_speed(8),
   sprite_no(game::smanager->create_sprite(texture_file, LAYER_HERO)){
   (game::smanager->get_sprite(sprite_no))->set_position(x,y);
@@ -31,6 +38,11 @@ void CHero::set_speed(GLfloat vx0, GLfloat vy0){
 void CHero::set_speed_angle(GLfloat velocity, GLfloat direction){
   vx = cos(direction)*velocity*max_speed;
   vy = sin(direction)*velocity*max_speed;
+}
+
+GLfloat CHero::get_height(){
+  CSprite* sprite = game::smanager -> get_sprite(sprite_no);
+  return sprite -> get_width();
 }
 
 void CHero::think(){

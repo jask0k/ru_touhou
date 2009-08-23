@@ -6,6 +6,7 @@
 #define declare_function(name) int name(lua_State* L)
 #define bind_function(name) lua_register(level_state, #name, bind::name)
 #define get_sprite(name) (game::smanager -> get_sprite(name))
+#define get_bullet(name) (game::ebmanager -> get_bullet(name))
 
 
 namespace script{
@@ -26,7 +27,21 @@ namespace bind{
 
   declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
 
+  declare_function(enbullet_create);
+  declare_function(enbullet_create_target);
+  declare_function(enbullet_create_hero);
+  declare_function(enbullet_destroy);
+  declare_function(enbullet_lock_on);
+  declare_function(enbullet_lock_on_hero);
+  declare_function(enbullet_stray);
+  declare_function(enbullet_stop);
+
   declare_function(sprite_create);//создание спрайтов
+  declare_function(sprite_destroy);
+  declare_function(sprite_get_position);
+  declare_function(sprite_get_vector);
+  declare_function(sprite_get_angle);
+  
   declare_function(sprite_set_position);//установка координат спрайта
   declare_function(sprite_set_speed);
   declare_function(sprite_set_angle);
@@ -56,7 +71,21 @@ int CScript::do_binds(){
   bind_function(hero_y);
   bind_function(hero_sprite);
 
+  bind_function(enbullet_create);
+  bind_function(enbullet_create_target);
+  bind_function(enbullet_create_hero);
+  bind_function(enbullet_destroy);
+  bind_function(enbullet_lock_on);
+  bind_function(enbullet_lock_on_hero);
+  bind_function(enbullet_stray);
+  bind_function(enbullet_stop);
+
   bind_function(sprite_create);
+  bind_function(sprite_destroy);
+  bind_function(sprite_get_position);
+  bind_function(sprite_get_vector);
+  bind_function(sprite_get_angle);
+  
   bind_function(sprite_set_position);
   bind_function(sprite_set_speed);
   bind_function(sprite_set_angle);
@@ -128,6 +157,70 @@ int CScript::run_function(std::string funcname){
   return 0;
 }
 
+GLint CScript::get_integer(std::string var_name){
+  lua_getglobal(level_state, var_name.c_str());
+  return luaL_checkint(level_state,-1);
+}
+GLint CScript::get_integer(const char* var_name){
+  lua_getglobal(level_state, var_name);
+  return luaL_checkint(level_state,-1);
+}
+GLfloat CScript::get_number(std::string var_name){
+  lua_getglobal(level_state, var_name.c_str());
+  return luaL_checknumber(level_state,-1);
+}
+GLfloat CScript::get_number(const char* var_name){
+  lua_getglobal(level_state, var_name);
+  return luaL_checknumber(level_state,-1);
+}
+std::string CScript::get_string(std::string var_name){
+  const char* value;
+  lua_getglobal(level_state, var_name.c_str());
+  value = luaL_checklstring(level_state,-1,NULL);
+  return std::string(value);
+}
+std::string CScript::get_string(const char* var_name){
+  const char* value;
+  lua_getglobal(level_state, var_name);
+  value = luaL_checklstring(level_state,-1,NULL);
+  return std::string(value);
+}
+
+GLint CScript::set_integer(std::string var_name, GLint value){
+  lua_pushinteger(level_state,value);
+  lua_setglobal(level_state,var_name.c_str());
+  return value;
+}
+
+GLint CScript::set_integer(const char* var_name, GLint value){
+  lua_pushinteger(level_state,value);
+  lua_setglobal(level_state,var_name);
+  return value;
+}
+
+GLfloat CScript::set_number(std::string var_name, GLfloat value){
+  lua_pushnumber(level_state,value);
+  lua_setglobal(level_state,var_name.c_str());
+  return value;
+}
+
+GLfloat CScript::set_number(const char* var_name, GLfloat value){
+  lua_pushnumber(level_state,value);
+  lua_setglobal(level_state,var_name);
+  return value;
+}
+
+std::string CScript::set_string(std::string var_name, std::string value){
+  lua_pushlstring(level_state, value.c_str(), value.size());
+  lua_setglobal(level_state, var_name.c_str());
+  return value;
+}
+
+std::string CScript::set_string(const char* var_name, std::string value){
+  lua_pushlstring(level_state, value.c_str(), value.size());
+  lua_setglobal(level_state, var_name);
+  return value;
+}
 
 
 int CScript::think(){
@@ -160,6 +253,7 @@ int CScript::set_timer(GLuint timer){
 }
 
 const char* script::reader(lua_State* L, void* filename, size_t* size){
+  (void)L;//чтоб не было варнинга
   SDL_RWops* rwops;
   char* buf = (char*)calloc(1024*1024,sizeof(char));
   rwops=SDL_RWFromZZIP((char*)filename,"r");
@@ -200,8 +294,8 @@ int script::parameters_parse(lua_State* L, std::string format, ...){
     }
       break;
     case TYPE_STRING:{
-      char** var = va_arg(vl,char**);
-      *var = const_cast<char*>(luaL_checklstring(L,cur_var,NULL));
+      const char** var = va_arg(vl,const char**);
+      *var = (luaL_checklstring(L,cur_var,NULL));
     }
       break;
     }
@@ -258,6 +352,82 @@ int bind::spritesheet_load(lua_State* L){
   return 0;
 };
 
+int bind::enbullet_create(lua_State* L){
+  GLint frame;
+  GLfloat xpos, ypos;
+  GLfloat speed, angle;
+  
+  script::parameters_parse(L,"iffff", &frame, &xpos, &ypos, &speed, &angle);
+  GLuint handle = game::ebmanager->create_bullet(frame,xpos,ypos,speed,angle);
+  lua_pushinteger(L,handle);
+  return 1;
+}
+
+int bind::enbullet_create_target(lua_State* L){
+  GLint frame;
+  GLfloat xpos, ypos;
+  GLfloat speed, xtarget, ytarget;
+  GLfloat stray;
+  
+  script::parameters_parse(L,"iffffff", &frame, &xpos, &ypos, &speed, &xtarget, &ytarget, &stray);
+  GLuint handle = game::ebmanager->create_bullet_aimed(frame,xpos,ypos,speed,
+						       xtarget,ytarget,stray);
+  lua_pushinteger(L,handle);
+  return 1;
+}
+
+int bind::enbullet_create_hero(lua_State* L){
+  GLint frame;
+  GLfloat xpos, ypos;
+  GLfloat speed;
+  GLfloat stray;
+  
+  script::parameters_parse(L,"iffff", &frame, &xpos, &ypos, &speed, &stray);
+  GLuint handle = game::ebmanager->create_bullet_aimed_hero(frame,xpos,ypos,speed,stray);
+  lua_pushinteger(L,handle);
+  return 1;
+}
+
+int bind::enbullet_destroy(lua_State* L){
+  GLuint handle;
+
+  script::parameters_parse(L, "i", &handle);
+  game::ebmanager -> destroy_bullet(handle);
+  return 0;
+}
+
+int bind::enbullet_lock_on(lua_State* L){
+  GLuint handle;
+  GLfloat posx, posy;
+  GLfloat stray, speed;
+  script::parameters_parse(L, "iffff", &handle, &posx, &posy, &stray, &speed);
+  get_bullet(handle) -> lock_on(posx,posy,stray,speed);
+  return 0;
+}
+
+int bind::enbullet_lock_on_hero(lua_State* L){
+  GLuint handle;
+  GLfloat stray, speed;
+  script::parameters_parse(L, "iff", &handle, &stray, &speed);
+  get_bullet(handle) -> lock_on_hero(stray,speed);
+  return 0;
+}
+
+int bind::enbullet_stray(lua_State* L){
+  GLuint handle;
+  GLfloat angle;
+  script::parameters_parse(L, "if", &handle, &angle);
+  get_bullet(handle) -> stray(angle);
+  return 0;
+}
+
+int bind::enbullet_stop(lua_State* L){
+  GLuint handle;
+  script::parameters_parse(L, "i", &handle);
+  get_bullet(handle) -> stop();
+  return 0;
+}
+
 int bind::sprite_create(lua_State* L){
   char* ssname;
   Layer layer;
@@ -266,6 +436,39 @@ int bind::sprite_create(lua_State* L){
   GLuint sprite_handle = game::smanager->create_sprite(std::string(ssname), layer);
   lua_pushinteger(L,sprite_handle);
   return 1;
+}
+
+int bind::sprite_destroy(lua_State* L){
+  GLuint sprite;
+  script::parameters_parse(L,"i",&sprite);
+  game::smanager -> destroy_sprite(sprite);
+  return 0;
+}
+
+int bind::sprite_get_position(lua_State* L){
+  GLuint sprite;
+  script::parameters_parse(L,"i",&sprite);
+  GLfloat pos_x = get_sprite(sprite) -> get_xpos();
+  lua_pushnumber(L,pos_x);
+  GLfloat pos_y = get_sprite(sprite) -> get_ypos();
+  lua_pushnumber(L,pos_y);
+  return 2;
+}
+
+int bind::sprite_get_vector(lua_State* L){
+  GLuint sprite;
+  script::parameters_parse(L,"i",&sprite);
+  return 0;//ДОПИСАТ!
+}
+
+int bind::sprite_get_angle(lua_State* L){
+  GLuint sprite;
+  script::parameters_parse(L,"i",&sprite);
+  GLfloat dir = get_sprite(sprite) -> get_direction();
+  GLfloat speed = get_sprite(sprite) -> get_speed();
+  lua_pushnumber(L,dir);
+  lua_pushnumber(L,speed);
+  return 2;
 }
 
 int bind::sprite_set_position(lua_State* L){

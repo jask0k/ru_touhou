@@ -28,11 +28,15 @@ void CFrameManager::wait(){
   if (current_ticks <= target_ticks) {
     the_delay = target_ticks - current_ticks;
     SDL_Delay(the_delay);
+    FPS = 1000.f/((float)(SDL_GetTicks()-last_ticks)/(frames+1));
   } else {
     frames = 0;
     last_ticks = SDL_GetTicks();
+    FPS = 0;
+#ifdef DEBUG
+    std::cerr << "LAG!"<<std::endl;
+#endif
   }
-  FPS = 1000.f/((float)(SDL_GetTicks()-last_ticks)/(frames+1));
   fps_label -> change_text(FPS);
 }
 
@@ -144,9 +148,11 @@ int CEngine::write_config(){
 }
 
 void CEngine::new_game(){
-  game::hero = new CHero("aya_2.png");
+  game::hero = new CHero(std::string("aya_2.png"));
   state.main_state = ENGINE_STATE_GAME;
   state.active = true;
+  game::script -> set_integer("graze",0);
+  game::script -> set_integer("lives",3);
   frames = 0;
   background -> init("th_ru/grnd03.jpg");
   game::hero -> set_position(GAME_FIELD_WIDTH/2, 100);
@@ -190,6 +196,7 @@ void CEngine::think(){
   text ->think();
   background -> think();
   game::smanager -> think();
+  game::ebmanager -> think();
 }
 
 void CEngine::handle_events(){

@@ -100,7 +100,7 @@ vvint* CSpriteSheet::parse_props(char* filename){
 }
 
 void CSpriteSheet::draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation, GLfloat scale){
-  draw((*animations)[animation][state*2],x,y,rotation,scale);
+  draw((*animations)[animation-1][state*2],x,y,rotation,scale);
 }
 
 void CSpriteSheet::draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation, GLfloat scale){
@@ -171,16 +171,16 @@ void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
 }
 
 GLuint CSpriteSheet::get_frames(GLuint animation){
-  if (animation < animations -> size())
-    return (GLuint)((*animations)[animation].size()/2);
+  if (animation <= animations -> size())
+    return (GLuint)((*animations)[animation-1].size()/2);
   else
     return 0;
 }
 
 GLuint CSpriteSheet::get_pause(GLuint animation, GLuint state){
-  if (animation < animations -> size())
-    if (state < ((*animations)[animation].size()/2))
-      return (*animations)[animation][state*2+1];
+  if (animation <= animations -> size())
+    if (state < ((*animations)[animation-1].size()/2))
+      return (*animations)[animation-1][state*2+1];
     else
       return 0;
   else
@@ -196,6 +196,11 @@ CSpriteSheet* CSpriteSheetManager::load(char* filename){
 }
 
 CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
+  if (collection.count(sheetname) == 0){
+    std::cerr << "could not find " << sheetname << "! Did you load it properly?" << std::endl;
+    SDL_Quit();
+    exit(1);
+  }
   return collection[sheetname];
 }
 
@@ -242,13 +247,14 @@ void CSprite::draw(){
   glPopAttrib ();
 }
 
-int CSprite::start_animation(GLint animation, GLint next_animation){
-  if (animation > ssheet -> get_animations()||next_animation > ssheet -> get_animations())
+int CSprite::start_animation(GLuint animation, GLuint next_animation){
+  if (animation > ssheet -> get_animations()||animation == 0 ||
+      next_animation > ssheet -> get_animations())
     return -1;
   this -> animation = animation;
   this -> state = 0;
   this -> animation_timer = ssheet -> get_pause(animation,state);
-  if (next_animation >= 0)
+  if (next_animation > 0)
     this -> next_animation = next_animation;
   else
     this -> next_animation = animation;
