@@ -11,6 +11,7 @@ class CScript;
 #include "text.hpp"
 #include "back.hpp"
 #include "script.hpp"
+#include "enemy_bullet.hpp"
 
 #include "SDL.h"
 #include "SDL_opengl.h"

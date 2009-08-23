@@ -83,11 +83,16 @@ public:
   void set_blur(GLboolean blur=true){this->blur=blur;};
   void set_alpha_limit(GLfloat min_alpha, GLfloat max_alpha){this->min_alpha = min_alpha;this -> max_alpha = max_alpha;};
   void set_scale_limit(GLfloat min_scale, GLfloat max_scale){this->min_scale = min_scale;this -> max_scale = max_scale;};
-  int start_animation(GLint animation, GLint next_animation=-1);
+  int start_animation(GLuint animation, GLuint next_animation=0);
   int set_frame(GLint frame){this->frame=frame;animation_active = false; return 0;};
   void set_follow(GLuint follow){this -> follow = follow;};
   GLfloat get_width(){return (GLfloat)(ssheet->get_width())*scale;};
   GLfloat get_height(){return (GLfloat)(ssheet->get_height())*scale;};
+
+  GLfloat get_xpos(){return (this -> x);};
+  GLfloat get_ypos(){return (this -> y);};
+  GLfloat get_direction(){return atan2(v_y,v_x)*180/M_PI;};
+  GLfloat get_speed(){return hypot(v_x,v_y);};
   
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
@@ -108,9 +113,9 @@ private:
 
   GLint frame;//номер кадра
 
-  GLint animation,state;//номер анимации и фрейма
-  GLint animation_timer;//таймер переключения анимации
-  GLint next_animation;//следующая анимация
+  GLuint animation,state;//номер анимации и фрейма
+  GLuint animation_timer;//таймер переключения анимации
+  GLuint next_animation;//следующая анимация
   //TODO: надо бы всё это забабахать в структуру
   
   GLuint decay_timer;//таймер исчезновения

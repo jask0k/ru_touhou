@@ -31,8 +31,9 @@ set (danmaku_LIBS
   ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${LUA_LIBRARIES} 
   ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${SDLMIXER_LIBRARY}
   ${ZZIP_LIBRARY} )
+
 set (danmaku_SRCS 
-  back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp 
+  back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp
   main.cpp script.cpp sprite.cpp text.cpp music.cpp SDL_rwops_zzip.c)
 
 add_executable (danmaku ${danmaku_SRCS})
