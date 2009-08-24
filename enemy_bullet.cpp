@@ -17,13 +17,13 @@ int CEnemyBullet::graze(){
   }
   GLfloat bullet_x = sprite_handle -> get_xpos();
   GLfloat bullet_y = sprite_handle -> get_ypos();
-  GLfloat bullet_hitbox = (sprite_handle -> get_width()) * .6f;
-  GLfloat hero_grazebox = game::hero -> get_height();
+  GLfloat bullet_hitbox = (sprite_handle -> get_width()) * .3f;
+  GLfloat hero_grazebox = (game::hero -> get_height())/2;
   GLfloat length = hypot(bullet_x - hero_x, bullet_y - hero_y);
   
   //  if (game::script -> get_integer("god_mode") == 0){
     
-    if (length <= bullet_hitbox + 1){
+    if (length <= bullet_hitbox + 3){
       return BULLET_KILL;
     } 
     else{
