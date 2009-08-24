@@ -103,7 +103,14 @@ GLuint CEnemyBulletManager::destroy_bullet(GLuint handle){
   if (collection.count(handle) == 0)
     return 0;
    // ЗДЕСЬ ДОЛЖНА БЫТЬ АНИМАЦИЯ ИСЧЕЗНОВЕНИЯ ПУЛИ
-  game::smanager -> destroy_sprite(get_bullet(handle) -> sprite_no);
+  CSprite* sprite = game::smanager -> get_sprite(collection[handle] -> sprite_no);
+  if (sprite != NULL){
+    sprite -> set_speed(0,0);
+    sprite -> set_scale_speed(.2f);
+    sprite -> set_alpha_speed(-.1f);
+    sprite -> set_decay(10);
+  }
+    //  game::smanager -> destroy_sprite(get_bullet(handle) -> sprite_no);
   collection.erase(handle);
   if (free_handle>handle)
     free_handle=handle;
