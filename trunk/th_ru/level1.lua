@@ -17,12 +17,12 @@ wait(100);
 sprite_set_alpha_speed(logo,-0.01);
 wait(130);
 for j = 0, 100 do
-   for i= 0,360-45,45 do
-	for k = 10, 310, 100 do
-      sprite = enbullet_create_hero(1,k,300,2,i);
+   for i= -2,2,2 do
+	for k = 40, 340, 100 do
+      sprite = enbullet_create_hero(69,k,300,3,i);
 --      sprite_set_position(sprite,k,300,0);
 --      sprite_set_angle(sprite,5,i);
       end
    end
-   wait(12);
+   wait(20);
 end

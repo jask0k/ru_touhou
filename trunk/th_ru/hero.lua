@@ -23,6 +23,9 @@ function hero_fire_end()
 end
 
 function hero_focus_begin()
+   hitbox = sprite_create("bullets.png", LAYER_HERO);
+   sprite_set_follow (hitbox, hero_sprite());
+   sprite_set_frame(hitbox,1);
    focus = sprite_create("effects.png", LAYER_BACKGROUND);
    sprite_set_alpha(focus,0);
    sprite_set_alpha_speed(focus,0.05);
@@ -39,6 +42,7 @@ function hero_focus()
 end
 
 function hero_focus_end()
+   sprite_destroy(hitbox);
    sprite_set_decay(focus,30);
    sprite_set_alpha_speed(focus,-.05);
    sprite_set_scale_speed(focus,-0.1);
