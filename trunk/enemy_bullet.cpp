@@ -126,19 +126,21 @@ CEnemyBullet* CEnemyBulletManager::get_bullet(GLuint handle){
 
 void CEnemyBulletManager::think(){
   GLuint bad_handle;
-  GLint graze;
+  //  GLint graze;
   std::map<GLuint,CEnemyBullet*>::iterator i;
   for (i = collection.begin();i != collection.end();)
     switch (i -> second -> graze()){
     case BULLET_KILL:
+      game::script -> run_function("hero_die");
     case BULLET_DESTROYED:
       bad_handle = i -> first;
       ++i;
       destroy_bullet(bad_handle);
       break;
     case BULLET_GRAZE:
-      graze = game::script -> get_integer("graze");
-      game::script -> set_integer("graze",++graze);
+      game::script -> run_function("hero_graze");
+      //graze = game::script -> get_integer("graze");
+      //game::script -> set_integer("graze",++graze);
       ++i;
       break;
     default:
