@@ -20,6 +20,7 @@ int CEnemyBullet::graze(){
   GLfloat bullet_hitbox = (sprite_handle -> get_width()) * .3f;
   GLfloat hero_grazebox = (game::hero -> get_height())/2;
   GLfloat length = hypot(bullet_x - hero_x, bullet_y - hero_y);
+  GLfloat angle = atan2( hero_x - bullet_x, hero_y - bullet_y)*180/M_PI;
   
   //  if (game::script -> get_integer("god_mode") == 0){
     
@@ -28,6 +29,8 @@ int CEnemyBullet::graze(){
     } 
     else{
       if ((length <= bullet_hitbox + hero_grazebox)&& !(this -> grazed)){
+	game::pmanager -> set_colour(1.f,0.f,0.f,1.f);
+	game::pmanager -> create_angle(hero_x, hero_y, 30, angle);
 	this -> grazed = true;
 	return BULLET_GRAZE;
       }

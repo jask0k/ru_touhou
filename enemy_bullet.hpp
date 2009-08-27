@@ -4,6 +4,7 @@
 #include "script.hpp"
 #include "sprite.hpp"
 #include "config.hpp"
+#include "particles.hpp"
 #include <map>
 #include <cmath>
 

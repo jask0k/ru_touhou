@@ -91,6 +91,7 @@ CEngine::CEngine(){
   glEnable( GL_DEPTH_TEST );
   glDepthFunc(GL_LEQUAL);	
   glEnable( GL_LIGHTING );
+  glEnable( GL_POINT_SMOOTH );
   
   SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
 #ifdef DEBUG
@@ -197,6 +198,7 @@ void CEngine::think(){
   background -> think();
   game::smanager -> think();
   game::ebmanager -> think();
+  game::pmanager -> think();
 }
 
 void CEngine::handle_events(){
@@ -303,6 +305,9 @@ void CEngine::draw_game(){
   glEnable2D();
   
   game::smanager -> draw(LAYER_BACKGROUND);
+
+  game::pmanager -> draw();
+
   game::smanager -> draw(LAYER_ENEMY_BULLET);
   game::smanager -> draw(LAYER_ENEMY);
 
@@ -344,7 +349,7 @@ void CEngine::draw(){
 
 int CEngine::save_screenshot(){
   // Create two arrays of unsigned bytes (chars). 4 bytes per pixel (RGBA)
-   unsigned char *pixels = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
+  unsigned char *pixels = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
   unsigned char *pixelsbuf = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
 
   // Read the front buffer
@@ -352,7 +357,9 @@ int CEngine::save_screenshot(){
 
   // Copy lines of pixels from pixelsbuf to pixels, flipping the image at the same time.
   for(int i=0; i < DEFAULT_Y; ++i)
-   memcpy(pixels+(DEFAULT_Y-i-1)*DEFAULT_X*4, pixelsbuf+i*DEFAULT_X*4, DEFAULT_X*4);
+    memcpy(pixels+(DEFAULT_Y-i-1)*DEFAULT_X*4, pixelsbuf+i*DEFAULT_X*4, DEFAULT_X*4);
+
+  delete pixelsbuf;
 
   SDL_Surface *screenshot = SDL_CreateRGBSurfaceFrom(pixels, DEFAULT_X, DEFAULT_Y, DEFAULT_COLOUR, DEFAULT_X*4, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
 
@@ -363,6 +370,5 @@ int CEngine::save_screenshot(){
   SDL_SaveBMP(screenshot, filename_buff.str().c_str());
   SDL_FreeSurface(screenshot);
   delete pixels;
-  delete pixelsbuf;
   return 0;
 }
