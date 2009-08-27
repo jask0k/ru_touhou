@@ -57,6 +57,12 @@ namespace bind{
   declare_function(sprite_set_frame);
   declare_function(sprite_set_follow);
   declare_function(sprite_start_animation);
+
+  declare_function(particle_set_colour);
+  declare_function(particle_create_from);
+  declare_function(particle_create_to);
+  declare_function(particle_create_angle);
+  
 }
 
 int CScript::do_binds(){
@@ -101,6 +107,11 @@ int CScript::do_binds(){
   bind_function(sprite_set_frame);
   bind_function(sprite_set_follow);
   bind_function(sprite_start_animation);
+
+  bind_function(particle_set_colour);
+  bind_function(particle_create_from);
+  bind_function(particle_create_to);
+  bind_function(particle_create_angle);
   return 0;
 }
 
@@ -587,5 +598,36 @@ int bind::sprite_set_follow(lua_State* L){
   GLuint sprite;
   script::parameters_parse(L,"ii",&sprite,&follow);
   get_sprite(sprite) -> set_follow(follow);
+  return 0;
+}
+
+int bind::particle_set_colour(lua_State* L){
+  GLfloat r,g,b,a;
+  script::parameters_parse(L,"ffff",&r,&g,&b,&a);
+  game::pmanager -> set_colour(r,g,b,a);
+  return 0;
+}
+
+int bind::particle_create_from(lua_State* L){
+  GLfloat posx,posy;
+  GLuint decay;
+  script::parameters_parse(L,"ffi",&posx,&posy,&decay);
+  game::pmanager -> create_from(posx,posy,decay);
+  return 0;
+}
+
+int bind::particle_create_to(lua_State* L){
+  GLfloat posx,posy;
+  GLuint decay;
+  script::parameters_parse(L,"ffi",&posx,&posy,&decay);
+  game::pmanager -> create_to(posx,posy,decay);
+  return 0;
+}
+
+int bind::particle_create_angle(lua_State* L){
+  GLfloat posx,posy,angle;
+  GLuint decay;
+  script::parameters_parse(L,"ffif",&posx,&posy,&decay,&angle);
+  game::pmanager -> create_angle(posx,posy,decay,angle);
   return 0;
 }

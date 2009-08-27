@@ -55,7 +55,6 @@ end
 
 function hero_graze() -- эта функция вызывается когда герой получает грейз
    graze=graze+1;
-   log (graze);
 end
 
 function hero_die()
