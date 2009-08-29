@@ -20,8 +20,8 @@ struct RGBAcolour{
 
 class CParticle{
 private:
-  //Размер частицы
-  GLfloat size;
+  //  //Размер частицы
+  //  GLfloat size;
   //Цвет
   struct RGBAcolour colour;
   //Вектор скорости
@@ -36,7 +36,7 @@ public:
   //Перемещение
   int think();
   //Конструктор
-  CParticle(GLfloat size, struct RGBAcolour colour,
+  CParticle(struct RGBAcolour colour,
 	    GLfloat x, GLfloat y, GLfloat vx, GLfloat vy, GLuint time_left);
   friend class CParticleManager;
 };

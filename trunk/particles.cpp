@@ -1,15 +1,15 @@
 #include "particles.hpp"
 
-CParticle::CParticle(GLfloat size, struct RGBAcolour colour,
+CParticle::CParticle(struct RGBAcolour colour,
 		     GLfloat x, GLfloat y, GLfloat vx, GLfloat vy, GLuint time_left):
-  size(size),colour(colour),vx(vx),vy(vy),x(x),y(y),time_left(time_left){}
+  colour(colour),vx(vx),vy(vy),x(x),y(y),time_left(time_left){}
 
 int CParticle::think(){
   x+=vx;
-  if ((x < -size)||(x > GAME_FIELD_WIDTH+size))
+  if ((x < -DEBUG_SIZE)||(x > GAME_FIELD_WIDTH+DEBUG_SIZE))
     return PARTICLE_DESTROYED;
   y+=vy;
-  if ((y < -size)||(y > GAME_FIELD_HEIGHT+size))
+  if ((y < -DEBUG_SIZE)||(y > GAME_FIELD_HEIGHT+DEBUG_SIZE))
     return PARTICLE_DESTROYED;
   if (--time_left == 0 )
     return PARTICLE_DESTROYED;
@@ -17,14 +17,14 @@ int CParticle::think(){
 }
 
 void CParticle::draw(){
-  glPointSize(size);
-  glPushAttrib(GL_CURRENT_BIT);
-  glBegin(GL_POINTS);{
-    glColor4f(colour.r,colour.g,colour.b,colour.a);
-    glVertex2f(x,y);
-  }
-  glEnd();
-  glPopAttrib();
+  //  glPointSize(size);
+  //  glPushAttrib(GL_CURRENT_BIT);
+  //  glBegin(GL_POINTS);{
+  glColor4f(colour.r,colour.g,colour.b,colour.a);
+  glVertex2f(x,y);
+  //  }
+  //  glEnd();
+  //  glPopAttrib();
 }
 
 CParticleManager::CParticleManager(){
@@ -37,8 +37,16 @@ CParticleManager::CParticleManager(){
 
 void CParticleManager::draw(){
   std::vector<CParticle*>::iterator i;
-  for (i = collection.begin(); i != collection.end(); ++i)
-    (*i) -> draw();
+  glPointSize(DEBUG_SIZE);
+  glPushAttrib(GL_CURRENT_BIT);
+  glDisable(GL_LIGHTING);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glBegin(GL_POINTS);{
+    for (i = collection.begin(); i != collection.end(); ++i)
+      (*i) -> draw();
+  }
+  glEnd();
+  glPopAttrib();
 }
 
 void CParticleManager::think(){
@@ -66,34 +74,34 @@ void CParticleManager::set_colour(GLfloat r, GLfloat g, GLfloat b, GLfloat a){
 void CParticleManager::create_from(GLfloat posx, GLfloat posy, GLuint decay){
   GLfloat angle = (GLfloat)(rand() % 360)/180*M_PI;
   GLfloat length = rand() % 30 +30;
-  GLfloat size = (GLfloat)(rand() % 30+1)/10 ;
+  //  GLfloat size = (GLfloat)(rand() % 30+1)/10 ;
   GLfloat frame_path = (length/(GLfloat)decay);
   GLfloat vx = cos(angle)*frame_path;
   GLfloat vy = sin(angle)*frame_path;
-  CParticle* new_part = new CParticle(size, current_colour, posx, posy, vx, vy, decay);
+  CParticle* new_part = new CParticle(current_colour, posx, posy, vx, vy, decay);
   collection.push_back(new_part);
 }
 
 void CParticleManager::create_angle(GLfloat posx, GLfloat posy, GLuint decay, GLfloat angle){
   GLfloat rad_angle = angle/180*M_PI;
   GLfloat length = rand() % 30 +30;
-  GLfloat size = (GLfloat)(rand() % 50+1)/10 ;
+  //  GLfloat size = (GLfloat)(rand() % 50+1)/10 ;
   GLfloat frame_path = (length/(GLfloat)decay);
   GLfloat vx = cos(rad_angle)*frame_path;
   GLfloat vy = sin(rad_angle)*frame_path;
-  CParticle* new_part = new CParticle(size, current_colour, posx, posy, vx, vy, decay);
+  CParticle* new_part = new CParticle(current_colour, posx, posy, vx, vy, decay);
   collection.push_back(new_part);
 }
 
 void CParticleManager::create_to(GLfloat posx, GLfloat posy, GLuint decay){
   GLfloat angle = (GLfloat)(rand() % 360)/180*M_PI;
   GLfloat length = rand() % 30 +30;
-  GLfloat size = (GLfloat)(rand() % 50+1)/10 ;
+  //  GLfloat size = (GLfloat)(rand() % 50+1)/10 ;
   GLfloat frame_path = (length/(GLfloat)decay);
   GLfloat x = posx+cos(angle)*length;
   GLfloat y = posy+sin(angle)*length;
   GLfloat vx = -cos(angle)*frame_path;
   GLfloat vy = -sin(angle)*frame_path;
-  CParticle* new_part = new CParticle(size, current_colour, x, y, vx, vy, decay);
+  CParticle* new_part = new CParticle(current_colour, x, y, vx, vy, decay);
   collection.push_back(new_part);
 }
