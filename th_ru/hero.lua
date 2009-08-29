@@ -37,13 +37,15 @@ function hero_focus_begin() -- эта функция вызывается ког
    sprite_set_alpha_limit(focus,0,.5);
    sprite_set_scale(focus,.01);
    sprite_set_scale_limit(focus,0,1.5);
-   sprite_set_speed(focus,0,0,1);
+   sprite_set_speed(focus,0,0,-1);
    sprite_set_follow(focus,hero_sprite());
    sprite_set_scale_speed(focus,0.1);
+
 end
 
 function hero_focus() -- эта функция вызывается каждый кадр во время фокуса
-
+--   particle_set_colour(1,1,1,1);
+--   particle_create_to(hero_x(),hero_y(),20);
 end
 
 function hero_focus_end() -- эта функция вызывается когда отпускают фокус

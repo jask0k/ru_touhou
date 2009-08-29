@@ -29,8 +29,8 @@ int CEnemyBullet::graze(){
     } 
     else{
       if ((length <= bullet_hitbox + hero_grazebox)&& !(this -> grazed)){
-	game::pmanager -> set_colour(1.f,0.f,0.f,1.f);
-	game::pmanager -> create_angle(hero_x, hero_y, 30, angle);
+	game::pmanager -> set_colour(1.f,0.f,0.f,.5f);
+	game::pmanager -> create_angle(hero_x, hero_y, 25, angle);
 	this -> grazed = true;
 	return BULLET_GRAZE;
       }
