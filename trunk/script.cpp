@@ -20,6 +20,8 @@ namespace bind{
   declare_function(wait);//Пауза на несколько кадров
 
   declare_function(engine_get_frame);
+  declare_function(engine_god_mode);
+  declare_function(engine_weapon_lockdown);
 
   declare_function(hero_x);
   declare_function(hero_y);
@@ -63,6 +65,11 @@ namespace bind{
   declare_function(particle_create_to);
   declare_function(particle_create_angle);
   
+  declare_function(background_set_speed);
+  declare_function(background_set_rotation);
+  declare_function(background_set_rotation_speed);
+  declare_function(background_set_fog_colour);
+  declare_function(background_set_fog_density);
 }
 
 int CScript::do_binds(){
@@ -70,6 +77,8 @@ int CScript::do_binds(){
   bind_function(log);
 
   bind_function(engine_get_frame);
+  bind_function(engine_god_mode);
+  bind_function(engine_weapon_lockdown);
 
   bind_function(spritesheet_load);
 
@@ -112,6 +121,13 @@ int CScript::do_binds(){
   bind_function(particle_create_from);
   bind_function(particle_create_to);
   bind_function(particle_create_angle);
+
+  bind_function(background_set_speed);
+  bind_function(background_set_rotation);
+  bind_function(background_set_rotation_speed);
+  bind_function(background_set_fog_colour);
+  bind_function(background_set_fog_density);
+
   return 0;
 }
 
@@ -335,6 +351,20 @@ int bind::engine_get_frame(lua_State* L){
   lua_Integer frame = game::engine->get_frame();
   lua_pushinteger(L,frame);
   return 1;
+}
+
+int bind::engine_god_mode(lua_State* L){
+  GLuint god_timer;
+  script::parameters_parse(L,"i",&god_timer);
+  game::engine -> state.god_timer = god_timer;
+  return 0;
+}
+
+int bind::engine_weapon_lockdown(lua_State* L){
+  GLuint lockdown;
+  script::parameters_parse(L,"i",&lockdown);
+  game::engine -> state.lockdown = (lockdown != 0);
+  return 0;
 }
 
 int bind::hero_x(lua_State* L){
@@ -629,5 +659,40 @@ int bind::particle_create_angle(lua_State* L){
   GLuint decay;
   script::parameters_parse(L,"ffif",&posx,&posy,&decay,&angle);
   game::pmanager -> create_angle(posx,posy,decay,angle);
+  return 0;
+}
+
+int bind::background_set_speed(lua_State* L){
+  GLfloat vy,vx;
+  script::parameters_parse(L,"ff",&vy,&vx);
+  game::background -> set_speed(vy,vx);
+  return 0;
+}
+
+int bind::background_set_rotation(lua_State* L){
+  GLfloat rx,ry,rz;
+  script::parameters_parse(L,"fff",&rx,&ry,&rz);
+  game::background -> set_rotation(rx,ry,rz);
+  return 0;
+}
+  
+int bind::background_set_rotation_speed(lua_State* L){
+  GLfloat rvx,rvy,rvz;
+  script::parameters_parse(L,"fff",&rvx,&rvy,&rvz);
+  game::background -> set_rotation(rvx,rvy,rvz);
+  return 0;
+}
+
+int bind::background_set_fog_colour(lua_State* L){
+  GLfloat r,g,b,a;
+  script::parameters_parse(L,"ffff",&r,&g,&b,&a);
+  game::background -> set_fog_colour(r,g,b,a);
+  return 0;
+}
+
+int bind::background_set_fog_density(lua_State* L){
+  GLfloat density,vfog;
+  script::parameters_parse(L,"ff",&density,&vfog);
+  game::background -> set_fog_density(density,vfog);
   return 0;
 }

@@ -5,6 +5,7 @@ class CEngine;
 
 #include "game.hpp"
 #include "hero.hpp"
+#include "back.hpp"
 #include <lua.hpp>
 #include "SDL_rwops_zzip.h"
 #include <string>

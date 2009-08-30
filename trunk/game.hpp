@@ -9,7 +9,6 @@ class CScript;
 #include "copypasta.hpp"
 #include "controller.hpp"
 #include "text.hpp"
-#include "back.hpp"
 #include "script.hpp"
 #include "enemy_bullet.hpp"
 #include "particles.hpp"
@@ -29,14 +28,17 @@ namespace game{
 enum EngineMainState{
   ENGINE_STATE_MAIN_MENU,
   ENGINE_STATE_GAME,
-  ENGINE_STATE_QUIT,
-  ENGINE_STATE_PAUSED
+  ENGINE_STATE_QUIT
+  //  ENGINE_STATE_PAUSED
 };
 
 struct EngineState{
   EngineMainState main_state;
   bool active;
   bool screenshot;
+  bool pause;
+  bool lockdown;
+  GLuint god_timer;
 };
   
 class CFrameManager{
@@ -63,17 +65,16 @@ private:
   int read_config();//чтение конфига
   int write_config();//запись конфига
   void handle_events();//обработка событий
-  EngineState state; //состояние движка
   unsigned long int frames; //количество кадров от начала игры
   //  CHero* hero;//ГГ
   CFrameManager* fps_manager;
   CController* controller;
   CText* text;
-  CBack* background;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах
   int fullscreen;
+  EngineState state; //состояние движка
   CEngine();//конструктор, в нём мы инициализируем опенгл
   ~CEngine();
   void new_game();//начало игры
