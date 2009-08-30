@@ -29,4 +29,8 @@ public:
   void set_fog_density(GLfloat density, GLfloat vfog=0.0f);
 };
 
+namespace game{
+  extern CBack* background;
+}
+
 #endif

@@ -106,14 +106,12 @@ CEngine::CEngine(){
   text -> text_add(9, 18, std::string("fps:"), 0);
   fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
   ui_background = LoadTexture_simple("th_ru/ui.png");
-  background = new CBack;
 }
 
 CEngine::~CEngine(){
   delete game::hero;
   delete fps_manager;
   delete controller;
-  delete background;
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif
@@ -152,10 +150,14 @@ void CEngine::new_game(){
   game::hero = new CHero(std::string("aya_2.png"));
   state.main_state = ENGINE_STATE_GAME;
   state.active = true;
+  state.lockdown = false;
+  state.screenshot = false;
+  state.pause = false;
+  state.god_timer = 0;
   game::script -> set_integer("graze",0);
   game::script -> set_integer("lives",3);
   frames = 0;
-  background -> init("th_ru/grnd03.jpg");
+  game::background -> init("th_ru/grnd03.jpg");
   game::hero -> set_position(GAME_FIELD_WIDTH/2, 100);
   game::script->init_level(1);
 }
@@ -178,27 +180,30 @@ void CEngine::think(){
   default:
     break;
   }
-  switch (c_state.attack){
-  case JUST_DOWN:
-    game::script -> run_function(std::string("hero_fire_begin"));
-  case LONG_DOWN:
-    game::script -> run_function(std::string("hero_fire"));
-    break;
-  case JUST_UP:
-    game::script -> run_function(std::string("hero_fire_end"));
-    break;
-  case LONG_UP:
-  default:
-    break;
-  }
+  if (!state.lockdown)
+    switch (c_state.attack){
+    case JUST_DOWN:
+      game::script -> run_function(std::string("hero_fire_begin"));
+    case LONG_DOWN:
+      game::script -> run_function(std::string("hero_fire"));
+      break;
+    case JUST_UP:
+      game::script -> run_function(std::string("hero_fire_end"));
+      break;
+    case LONG_UP:
+    default:
+      break;
+    }
   game::hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   game::hero -> think();
   game::script -> think();
   text ->think();
-  background -> think();
+  game::background -> think();
   game::smanager -> think();
   game::ebmanager -> think();
   game::pmanager -> think();
+  if (state.god_timer > 0)
+    --state.god_timer;
 }
 
 void CEngine::handle_events(){
@@ -220,6 +225,9 @@ void CEngine::handle_events(){
           break;
         case SDLK_PRINT:
           state.screenshot=true;
+          break;
+        case SDLK_PAUSE:
+          state.pause=!state.pause;
           break;
         default:
 #ifdef DEBUG
@@ -262,8 +270,10 @@ void CEngine::loop(){
     //    fps_manager -> begin_frame();
     handle_events();
     if (state.main_state == ENGINE_STATE_GAME){
-      frames++;
-      think(); //а что тут думать, тут писать надо!
+      if (state.active && !state.pause){
+	frames++;
+	think(); //а что тут думать, тут писать надо!
+      }
     }
     draw();
     fps_manager -> wait();
@@ -300,7 +310,7 @@ void CEngine::draw_game(){
   glEnable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-  background -> draw();
+  game::background -> draw();
 
   glEnable2D();
   
@@ -331,9 +341,6 @@ void CEngine::draw(){
     draw_game();
     break;
   case ENGINE_STATE_MAIN_MENU:
-    break;
-  case ENGINE_STATE_PAUSED:
-    draw_game();
     break;
   default:
     break;

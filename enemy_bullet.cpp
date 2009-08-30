@@ -22,7 +22,7 @@ int CEnemyBullet::graze(){
   GLfloat length = hypot(bullet_x - hero_x, bullet_y - hero_y);
   GLfloat angle = atan2( hero_x - bullet_x, hero_y - bullet_y)*180/M_PI;
   
-  //  if (game::script -> get_integer("god_mode") == 0){
+  if ((game::engine -> state.god_timer) == 0){
     
     if (length <= bullet_hitbox + 3){
       return BULLET_KILL;
@@ -30,12 +30,12 @@ int CEnemyBullet::graze(){
     else{
       if ((length <= bullet_hitbox + hero_grazebox)&& !(this -> grazed)){
 	game::pmanager -> set_colour(1.f,0.f,0.f,.5f);
-	game::pmanager -> create_angle(hero_x, hero_y, 25, angle);
+	game::pmanager -> create_angle(hero_x, hero_y, 30, angle);
 	this -> grazed = true;
 	return BULLET_GRAZE;
       }
     }
-    //  }
+  }
   return BULLET_MISS;
 }
 
