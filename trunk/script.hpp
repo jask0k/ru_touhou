@@ -6,15 +6,26 @@ class CEngine;
 #include "game.hpp"
 #include "hero.hpp"
 #include "back.hpp"
+#include "enemy_bullet.hpp"
 #include <lua.hpp>
 #include "SDL_rwops_zzip.h"
 #include <string>
 
+enum control_type{
+  CONTROL_BULLET,
+  CONTROL_SPRITE
+};
+
+struct AI_state{
+  GLuint timer;
+  GLuint handle;
+  control_type type;
+};
 
 class CScript{
 private:
-  CEngine* engine;
   lua_State* level_state;
+  //  CEngine* engine;
   
   GLuint timer;
   GLboolean timer_active;
@@ -23,12 +34,16 @@ private:
     GLboolean resume;
   } state;
 
+  std::map<lua_State*,AI_state> AI_states;
+
   int do_binds();
   int do_globals();
 public:
   int load_script(std::string scriptname);
   int run_script(std::string scriptname);
   int run_function(std::string funcname);
+  lua_State* create_AI_state(lua_State* L);
+  int destroy_AI_state(std::map<lua_State*,AI_state>::iterator position);
   GLint get_integer(std::string var_name);
   GLint get_integer(const char* var_name);
   GLfloat get_number(std::string var_name);
@@ -43,7 +58,7 @@ public:
   std::string set_string(const char* var_name, std::string value);
   int think();
   int init_level(int level);
-  int set_timer(GLuint timer);
+  int set_timer(lua_State* state, GLuint timer);
   CScript();
   ~CScript();
 };
