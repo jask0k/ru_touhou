@@ -10,14 +10,17 @@
 
 
 namespace script{
-  const char* reader(lua_State* L, void* filename, size_t* size);//функция чтения скриптов из dat
-  int parameters_parse(lua_State* L, std::string format, ...);//формат вида "ns", где каждый символ - тип переменной
+  //функция чтения скриптов из dat
+  const char* reader(lua_State* L, void* filename, size_t* size);
+  //формат вида "ifs", где каждый символ - тип переменной
+  int parameters_parse(lua_State* L, std::string format, ...);
 }
 
 namespace bind{
 //бинды
   declare_function(log);
   declare_function(wait);//Пауза на несколько кадров
+  declare_function(bind_AI);
 
   declare_function(engine_get_frame);
   declare_function(engine_god_mode);
@@ -75,6 +78,7 @@ namespace bind{
 int CScript::do_binds(){
   bind_function(wait);
   bind_function(log);
+  bind_function(bind_AI);
 
   bind_function(engine_get_frame);
   bind_function(engine_god_mode);
@@ -140,10 +144,13 @@ int CScript::do_globals(){
   declare_number(LAYER_HERO_BULLET);
   declare_number(LAYER_HERO);
   declare_number(LAYER_EMBLEM);
+
+  declare_number(CONTROL_BULLET);
+  declare_number(CONTROL_SPRITE);
   return 0;
 }
 
-CScript::CScript():level_state(lua_open()){
+CScript::CScript():level_state(luaL_newstate()){
   luaL_openlibs(level_state);
   do_globals();
   do_binds();
@@ -181,6 +188,47 @@ int CScript::run_function(std::string funcname){
 #endif
       return 1;
     }
+  return 0;
+}
+
+lua_State* CScript::create_AI_state(lua_State* L){
+  if (lua_isfunction(L, -1) == 1 && lua_isnumber(L, -2) == 1){
+
+    lua_State* state = lua_newthread(L);
+    /*
+#ifdef DEBUG
+    int i;
+    std::cerr << "stack content 'L'"<<std::endl;
+    for (i=1;i<=lua_gettop(L);++i)
+      std::cerr << lua_typename(L, lua_type(L, i)) << std::endl;
+    std::cerr << "end!"<<std::endl;
+#endif
+    */
+    lua_insert(L,1);
+    lua_xmove(L,state,1);
+    GLuint bind_number = luaL_checkinteger(L,-1);
+    control_type type = (control_type)luaL_checkinteger(L,-2);
+    lua_pushnumber(state,bind_number);
+    AI_state st = {0,bind_number,type};
+    //    lua_xmove(L,state,1);
+    lua_newtable(state);
+    /*
+#ifdef DEBUG
+    std::cerr << "stack content 'state'"<<std::endl;
+    for (i=1;i<=lua_gettop(state);++i)
+      std::cerr << lua_typename(state, lua_type(state, i)) << std::endl;
+    std::cerr << "end!"<<std::endl;
+#endif
+    */
+    AI_states.insert(std::pair<lua_State*,AI_state>(state,st));
+    lua_resume(state,2);
+    return state;
+  }
+  return NULL;
+}
+
+int CScript::destroy_AI_state(std::map<lua_State*,AI_state>::iterator position){
+  AI_states.erase(position);
   return 0;
 }
 
@@ -251,6 +299,55 @@ std::string CScript::set_string(const char* var_name, std::string value){
 
 
 int CScript::think(){
+  std::map<lua_State*,AI_state>::iterator i;
+  std::map<lua_State*,AI_state>::iterator bad_handle;
+  for (i = AI_states.begin(); i != AI_states.end();){
+    bool cleanup=false;
+    if (i -> second.timer > 0)
+      --(i->second.timer);
+    switch(i->second.type){
+    case CONTROL_BULLET:
+      if  (get_bullet(i->second.handle) == NULL)
+	cleanup = true;
+      break;
+    case CONTROL_SPRITE:
+      if  (get_sprite(i->second.handle) == NULL)
+	cleanup = true;
+      break;
+    }
+    if (cleanup){
+      bad_handle = i;
+      ++i;
+      if (destroy_AI_state(bad_handle) == -1){
+#ifdef DEBUG
+	std::cerr << "fixme:Could not destroy AI state!" << std::endl;
+#endif
+      }
+      cleanup = false;
+    }
+    else if (i -> second.timer == 0){
+      int result = lua_resume(i->first,0);
+      if (result!=LUA_YIELD){
+	//завершились с ошибкой или скрипт закончил выполнение
+	bad_handle = i;
+	++i;
+	if (destroy_AI_state(bad_handle) == -1){
+#ifdef DEBUG
+	  std::cerr << "fixme:Could not destroy AI state!" << std::endl;
+#endif
+	}
+#ifdef DEBUG
+	if (result!=0){
+	  const char* err_string = (luaL_checklstring(i->first,-1,NULL));
+	  std::cerr<<err_string;
+	}
+#endif
+	
+      } 
+      else
+	++i;
+    } else ++i;
+  }
   if (state.resume){
     lua_resume(level_state, 0);
     state.resume=false;
@@ -273,9 +370,13 @@ int CScript::init_level(int level){
   return 0;
 }
 
-int CScript::set_timer(GLuint timer){
-  this -> timer = timer;
-  this -> timer_active = true;
+int CScript::set_timer(lua_State* state, GLuint timer){
+  if (state == level_state){
+    this -> timer = timer;
+    this -> timer_active = true;
+  }
+  else
+    AI_states[state].timer = timer; 
   return 0;
 }
 
@@ -334,7 +435,7 @@ int script::parameters_parse(lua_State* L, std::string format, ...){
 int bind::wait(lua_State* L){
   int timer;
   script::parameters_parse(L,"i",&timer);
-  game::script->set_timer(timer);
+  game::script->set_timer(L, timer);
   return lua_yield(L, 0);
 }
 
@@ -345,6 +446,23 @@ int bind::log(lua_State* L){
   std::cerr << "Script says:" << message << std::endl;
 #endif
   return 0;
+}
+//параметры: целое - хендл врага, и функция - функция вида func(handle,table)
+int bind::bind_AI(lua_State* L){
+#ifdef DEBUG
+    std::cerr << "creating AI state .";
+#endif
+  if ((game::script -> create_AI_state(L))!=NULL)
+    return 0;
+  else{
+#ifdef DEBUG
+    std::cerr << "Could not create AI state!" << std::endl;
+#endif
+    return 0;
+  }
+#ifdef DEBUG
+    std::cerr << ".hmm!" << std::endl;
+#endif
 }
 
 int bind::engine_get_frame(lua_State* L){
