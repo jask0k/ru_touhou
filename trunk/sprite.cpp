@@ -252,6 +252,7 @@ int CSprite::start_animation(GLuint animation, GLuint next_animation){
       next_animation > ssheet -> get_animations())
     return -1;
   this -> animation = animation;
+  this -> animation_active = true;
   this -> state = 0;
   this -> animation_timer = ssheet -> get_pause(animation,state);
   if (next_animation > 0)
