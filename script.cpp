@@ -154,6 +154,8 @@ CScript::CScript():level_state(luaL_newstate()){
   luaL_openlibs(level_state);
   do_globals();
   do_binds();
+  lua_newtable(level_state);
+  lua_setglobal(level_state,"AI_table");
 }
 
 CScript::~CScript(){
@@ -167,12 +169,14 @@ int CScript::load_script(std::string scriptname){
 
 int CScript::run_script(std::string scriptname){
   load_script(scriptname);
-  if (!lua_pcall(level_state,0,0,0)){
+  if (lua_pcall(level_state,0,0,0) == 0){
     return 0;
   } else {
 #ifdef DEBUG
     std::string err_message(luaL_checklstring(level_state,1,NULL));
-    std::cerr << err_message;
+    luaL_where(level_state,0);
+    std::string err_pos = lua_tolstring(level_state,-1,NULL);
+    std::cerr <<"lua error: "<< err_pos << err_message << std::endl;
 #endif
     return 1;
   }
@@ -181,10 +185,13 @@ int CScript::run_script(std::string scriptname){
 int CScript::run_function(std::string funcname){
   lua_getfield(level_state, LUA_GLOBALSINDEX, funcname.c_str());
   if (lua_isfunction(level_state,-1))
-    if (lua_pcall(level_state,0,0,0)){
+    if (lua_pcall(level_state,0,0,0) != 0){
 #ifdef DEBUG
       std::string err_message(luaL_checklstring(level_state,1,NULL));
-      std::cerr << err_message;
+      luaL_where(level_state,0);
+      std::string err_pos = lua_tolstring(level_state,-1,NULL);
+
+      std::cerr << "lua error while running function:" << err_pos << err_message << std::endl;
 #endif
       return 1;
     }
@@ -193,41 +200,43 @@ int CScript::run_function(std::string funcname){
 
 lua_State* CScript::create_AI_state(lua_State* L){
   if (lua_isfunction(L, -1) == 1 && lua_isnumber(L, -2) == 1){
-
+    //создаём тред АИ
     lua_State* state = lua_newthread(L);
-    /*
-#ifdef DEBUG
-    int i;
-    std::cerr << "stack content 'L'"<<std::endl;
-    for (i=1;i<=lua_gettop(L);++i)
-      std::cerr << lua_typename(L, lua_type(L, i)) << std::endl;
-    std::cerr << "end!"<<std::endl;
-#endif
-    */
+    //переносим указатель на тред на дно стека, он нам пока не нужен
     lua_insert(L,1);
+    //переносим указатель на функцию в стек треда АИ
     lua_xmove(L,state,1);
+    //достаём индекс элемента одного из менеджеров, к которому будет привязан скрипт АИ
+    //с уничтожением этого элемента прекращается скрипт
     GLuint bind_number = luaL_checkinteger(L,-1);
+    //в каком менеджере искать этот элемент
     control_type type = (control_type)luaL_checkinteger(L,-2);
+    //кладём в стек треда АИ индекс
     lua_pushnumber(state,bind_number);
+    //создаём структуру, содержащую инфу про тред АИ
     AI_state st = {0,bind_number,type};
-    //    lua_xmove(L,state,1);
-    lua_newtable(state);
-    /*
-#ifdef DEBUG
-    std::cerr << "stack content 'state'"<<std::endl;
-    for (i=1;i<=lua_gettop(state);++i)
-      std::cerr << lua_typename(state, lua_type(state, i)) << std::endl;
-    std::cerr << "end!"<<std::endl;
-#endif
-    */
+    //и засовываем её в коллекцию
     AI_states.insert(std::pair<lua_State*,AI_state>(state,st));
-    lua_resume(state,2);
+    lua_pop(L,2);
+    lua_getglobal(L,"AI_table");
+    lua_insert(L,1);
+    std::ostringstream reader;
+    reader << state; 
+    //    std::cerr << state_name << std::endl;
+    lua_setfield(L,1,reader.str().c_str());
+    lua_resume(state,1);
     return state;
   }
   return NULL;
 }
 
 int CScript::destroy_AI_state(std::map<lua_State*,AI_state>::iterator position){
+  std::ostringstream reader;
+  reader << position->first; 
+  lua_getglobal(level_state,"AI_table");
+  lua_pushnil(level_state);
+  lua_setfield(level_state,-2,reader.str().c_str());
+  std::cerr << "destroing " << reader.str() << std::endl;
   AI_states.erase(position);
   return 0;
 }
@@ -326,7 +335,21 @@ int CScript::think(){
       cleanup = false;
     }
     else if (i -> second.timer == 0){
+// #ifdef DEBUG
+//       std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
+//       int it;
+//       for (it=1;it<=lua_gettop(i->first);++it)
+// 	std::cerr << lua_typename(i->first, lua_type(i->first, it)) << std::endl;
+//       std::cerr << "end!"<<std::endl;
+//#endif
       int result = lua_resume(i->first,0);
+// #ifdef DEBUG
+//       std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
+//       //      int it;
+//       for (it=1;it<=lua_gettop(i->first);++it)
+// 	std::cerr << lua_typename(i->first, lua_type(i->first, it)) << std::endl;
+//       std::cerr << "end!"<<std::endl;
+// #endif
       if (result!=LUA_YIELD){
 	//завершились с ошибкой или скрипт закончил выполнение
 	bad_handle = i;
@@ -338,8 +361,16 @@ int CScript::think(){
 	}
 #ifdef DEBUG
 	if (result!=0){
-	  const char* err_string = (luaL_checklstring(i->first,-1,NULL));
-	  std::cerr<<err_string;
+#ifdef DEBUG
+      std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
+            int it;
+      for (it=1;it<=lua_gettop(i->first);++it)
+	std::cerr << lua_typename(i->first, lua_type(i->first, it)) << std::endl;
+      std::cerr << "end!"<<std::endl;
+#endif
+	  std::cerr << "error code:" << result<< std::endl;
+	  const char* err_string = luaL_checklstring(i->first,-1,NULL);
+	  std::cerr << "script error:" << err_string << std::endl;
 	}
 #endif
 	
@@ -400,7 +431,9 @@ int script::parameters_parse(lua_State* L, std::string format, ...){
   GLuint stack_size = lua_gettop(L);
   if (stack_size != format.size()){
 #ifdef DEBUG
-    std::cerr << "FFFFFFFFFUUUUU-" << std::endl;
+    luaL_where(L,0);
+    std::string err_pos = lua_tolstring(L,-1,NULL);
+    std::cerr << err_pos << "arguments error!" << std::endl;
 #endif
     lua_pushstring(L,"Wrong arguments number!");
     lua_error(L);
@@ -447,22 +480,22 @@ int bind::log(lua_State* L){
 #endif
   return 0;
 }
-//параметры: целое - хендл врага, и функция - функция вида func(handle,table)
+
+//параметры: целое - хендл врага, и функция - функция вида func(handle)
 int bind::bind_AI(lua_State* L){
-#ifdef DEBUG
-    std::cerr << "creating AI state .";
-#endif
-  if ((game::script -> create_AI_state(L))!=NULL)
+  lua_State* thread = game::script -> create_AI_state(L);
+  if (thread!=NULL){
+    //    lua_pushthread(thread);
+    //    lua_xmove(thread,L,1);
+    //return 1;
     return 0;
+  }
   else{
 #ifdef DEBUG
     std::cerr << "Could not create AI state!" << std::endl;
 #endif
     return 0;
   }
-#ifdef DEBUG
-    std::cerr << ".hmm!" << std::endl;
-#endif
 }
 
 int bind::engine_get_frame(lua_State* L){

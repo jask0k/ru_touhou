@@ -7,11 +7,12 @@ graze = 0;
 power = 0;
 god_mode = 0;
 
-function lantern_AI(sprite, table)
+function lantern_AI(sprite)
    sprite_set_position(sprite,-31,GAME_FIELD_HEIGHT-100,0);
    sprite_set_speed(sprite,1,0,0);
    sprite_start_animation(sprite,1,1);
-   wait(32);
+   wait(60);
+   sprite_set_speed(sprite,0,-1,0);
    while true do
       local her_xpos = hero_x();
       local her_ypos = hero_y();
@@ -19,23 +20,42 @@ function lantern_AI(sprite, table)
       for i = 1, 5 do
 	 local lan_xpos,lan_ypos
 	 lan_xpos,lan_ypos = sprite_get_position(sprite)
-	 local bullet = enbullet_create_target(0,lan_xpos,lan_ypos,4,her_xpos,her_ypos,0);
-	 wait(10);
+	 local bullet = enbullet_create_target(0,lan_xpos,lan_ypos,4-(i*0.2),her_xpos,her_ypos,0);
+	 wait(3);
       end
-      wait(10);
+      wait(30);
    end
 end
 
-function sample_AI(bullet, table) -- исскуственный интеллект для управления спрайтами
--- в первом параметре функции - хендл врага, управляемого интеллектом
--- во втором - таблица, которую выдают каждому управляемому объекту
+function lantern2_AI(sprite)
+   sprite_set_position(sprite,GAME_FIELD_WIDTH+31,GAME_FIELD_HEIGHT-100,0);
+   sprite_set_speed(sprite,-1,0,0);
+   sprite_start_animation(sprite,1,1);
+   wait(60);
+   sprite_set_speed(sprite,0,-1,0);
+   while true do
+      local her_xpos = hero_x();
+      local her_ypos = hero_y();
+      local i
+      for i = 1, 5 do
+	 local lan_xpos,lan_ypos
+	 lan_xpos,lan_ypos = sprite_get_position(sprite)
+	 local bullet = enbullet_create_target(0,lan_xpos,lan_ypos,4-(i*0.2),her_xpos,her_ypos,0);
+	 wait(3);
+      end
+      wait(30);
+   end
+end
+
+function sample_AI(bullet) -- исскуственный интеллект для управления спрайтами
+-- в параметре функции - хендл чего-то, управляемого интеллектом
    while true do
       enbullet_stray(bullet,5);
       wait(1);
    end
 end
 
-function sample_AI2(bullet, table)
+function sample_AI2(bullet)
    while true do
       enbullet_lock_on_hero(bullet,0,3)
       wait(60)
@@ -51,7 +71,7 @@ spritesheet_load("lantern.png");
 log("Starting first level!");
 wait(1); -- Подождать кадр
 
-background_set_fog_density(.6,-0.005);
+background_set_fog_density(.5,-0.004);
 
 logo = sprite_create("level1.png",LAYER_EMBLEM); -- Создание спрайта на слое переднего плана
 sprite_set_scale(logo,.5); -- Установка масштабирования спрайта
@@ -65,19 +85,21 @@ background_set_fog_density(.1,0);
 sprite_set_alpha_speed(logo,-0.01); -- Разгущаем его
 wait(130); -- Ещё ждём
 
-
 for i = 1,5 do
-   lantern = sprite_create("lantern.png",LAYER_ENEMY);
+   local lantern = sprite_create("lantern.png",LAYER_ENEMY);
+   --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
+   local lantern2 = sprite_create("lantern.png",LAYER_ENEMY);
+   --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
+   bind_AI(CONTROL_SPRITE,lantern2,lantern2_AI);
    wait(60);
 end
-
---[[
+--wait(10000);
 for k = 40, 340, 100 do
    sprite = enbullet_create(69,k,300,3,0); -- Пускаем пули
    bind_AI(CONTROL_BULLET,sprite,sample_AI);
---   sprite = enbullet_create(69,k,300,3,0); -- Пускаем пули
---   bind_AI(CONTROL_BULLET,sprite,sample_AI2);
+   sprite = enbullet_create(69,k,300,3,0); -- Пускаем пули
+   bind_AI(CONTROL_BULLET,sprite,sample_AI2);
 --   wait(30);
 end
 
