@@ -23,7 +23,7 @@ function lantern_AI(sprite)
 	 local bullet = enbullet_create_target(0,lan_xpos,lan_ypos,4-(i*0.2),her_xpos,her_ypos,0);
 	 wait(3);
       end
-      wait(30);
+      wait(45);
    end
 end
 
@@ -43,7 +43,7 @@ function lantern2_AI(sprite)
 	 local bullet = enbullet_create_target(0,lan_xpos,lan_ypos,4-(i*0.2),her_xpos,her_ypos,0);
 	 wait(3);
       end
-      wait(30);
+      wait(45);
    end
 end
 
