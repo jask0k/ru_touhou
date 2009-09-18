@@ -3,6 +3,7 @@ project (danmaku)
 
 find_package(SDL REQUIRED)
 find_package(SDL_image REQUIRED)
+find_package(SDL_mixer REQUIRED)
 find_package(Lua51 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLU REQUIRED)

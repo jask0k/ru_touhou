@@ -12,6 +12,7 @@ class CScript;
 #include "script.hpp"
 #include "enemy_bullet.hpp"
 #include "particles.hpp"
+#include "music.hpp"
 
 #include "SDL.h"
 #include "SDL_opengl.h"

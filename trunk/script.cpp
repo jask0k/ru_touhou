@@ -73,6 +73,10 @@ namespace bind{
   declare_function(background_set_rotation_speed);
   declare_function(background_set_fog_colour);
   declare_function(background_set_fog_density);
+
+  declare_function(sound_create);
+  declare_function(sound_destroy);
+  declare_function(sound_play);
 }
 
 int CScript::do_binds(){
@@ -131,6 +135,10 @@ int CScript::do_binds(){
   bind_function(background_set_rotation_speed);
   bind_function(background_set_fog_colour);
   bind_function(background_set_fog_density);
+
+  bind_function(sound_create);
+  bind_function(sound_destroy);
+  bind_function(sound_play);
 
   return 0;
 }
@@ -847,3 +855,30 @@ int bind::background_set_fog_density(lua_State* L){
   game::background -> set_fog_density(density,vfog);
   return 0;
 }
+
+int bind::sound_create(lua_State* L){
+  char* filename;
+  script::parameters_parse(L,"s",&filename);
+
+  std::string full_path = std::string("th_ru/")+filename;
+  SDL_RWops* file=SDL_RWFromZZIP(full_path.c_str(), "r");
+  int sound_handle = game::boom_box->create_sound(file);
+  if(file) SDL_RWclose(file);
+  lua_pushinteger(L,sound_handle);
+  return 1;
+}
+
+int bind::sound_destroy(lua_State* L){
+  int sound_handle;
+  script::parameters_parse(L,"i",&sound_handle);
+  game::boom_box -> destroy_sound(sound_handle);
+  return 0;
+}
+
+int bind::sound_play(lua_State* L){
+  int sound_handle;
+  script::parameters_parse(L,"i",&sound_handle);
+  game::boom_box -> play_sound(sound_handle);
+  return 0;
+}
+

@@ -21,6 +21,7 @@ set (DATA_FILE th_ru.dat)
 set (PICTURES ui.png grnd03.jpg)
 set (SPRITESHEETS aya.png aya_2.png bullets.png fontg.png effects.png
 	level1.png lantern.png)
+set (SOUNDS spawn.wav)
 
 foreach (SP_SHEET ${SPRITESHEETS})
 	list (APPEND ANIMATIONS ${SP_SHEET}.spr)
@@ -33,5 +34,6 @@ add_custom_command(
 	COMMAND ${ZIP_PACKER} -u ../${DATA_FILE} 
 	${LUA_B} ${PICTURES}
 	${SPRITESHEETS} ${ANIMATIONS}
-	DEPENDS ${LUA_B} ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS}
+	${SOUNDS}
+	DEPENDS ${LUA_B} ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS} ${SOUNDS}
 )
