@@ -9,10 +9,12 @@ namespace game{
   CHero* hero;
   CEnemyBulletManager* ebmanager = new CEnemyBulletManager(std::string("bullets.png"));
   CParticleManager* pmanager = new CParticleManager;
+  CBoomBox *boom_box = new CBoomBox;
 }
 
 int main(int argc, char* argv[]){
   game::engine->loop(); 
+  delete game::boom_box;
   delete game::pmanager;
   delete game::ebmanager;
   delete game::background;

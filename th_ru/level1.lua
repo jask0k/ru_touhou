@@ -68,6 +68,7 @@ end
 -- Всякие загрузки-шмагрузки
 spritesheet_load("level1.png");
 spritesheet_load("lantern.png");
+lantern_spawn_sound = sound_create("spawn.wav");
 log("Starting first level!");
 wait(1); -- Подождать кадр
 
@@ -92,6 +93,7 @@ for i = 1,5 do
    local lantern2 = sprite_create("lantern.png",LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    bind_AI(CONTROL_SPRITE,lantern2,lantern2_AI);
+   sound_play(lantern_spawn_sound);
    wait(60);
 end
 --wait(10000);
