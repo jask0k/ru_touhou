@@ -14,8 +14,8 @@ class CScript;
 #include "particles.hpp"
 #include "music.hpp"
 
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
 #include <ctime>
 #ifndef WIN32
 #include <unistd.h>

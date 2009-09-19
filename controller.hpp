@@ -1,8 +1,8 @@
 #ifndef _CONTROLLER_HPP
 #define _CONTROLLER_HPP
 #include "config.hpp"
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
 #include <set>
 #include <cmath>
 #include <iostream>

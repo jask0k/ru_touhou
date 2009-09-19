@@ -1,6 +1,6 @@
 #include "music.hpp"
 
-#include "SDL_mixer.h"
+#include <SDL/SDL_mixer.h>
 #include <iostream>
 #include <cstdlib>
 

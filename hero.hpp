@@ -2,8 +2,8 @@
 #define _HERO_HPP
 
 #include "sprite.hpp"
-#include "SDL_opengl.h"
-#include "SDL.h"
+#include <SDL/SDL_opengl.h>
+#include <SDL/SDL.h>
 #include <cmath>
 #include "config.hpp"
 

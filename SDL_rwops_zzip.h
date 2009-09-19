@@ -14,7 +14,7 @@
 #ifndef _SDL_RWops_ZZIP_h
 #define _SDL_RWops_ZZIP_h
 
-#include <SDL_rwops.h>
+#include <SDL/SDL_rwops.h>
 
 #ifndef ZZIP_NO_DECLSPEC
 #define ZZIP_DECLSPEC
@@ -34,3 +34,6 @@ SDL_RWops *SDL_RWFromZZIP(const char* file, const char* mode);
 #endif
 
 #endif
+
+#undef _zzip_read
+#undef _zzip_write
