@@ -5,7 +5,7 @@
 #include <ctime>
 #include <cmath>
 #include <vector>
-#include <SDL_opengl.h>
+#include <SDL/SDL_opengl.h>
 
 #include "config.hpp"
 

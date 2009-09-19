@@ -1,8 +1,8 @@
 #ifndef _TEXT_HPP
 #define _TEXT_HPP
 
-#include "SDL.h"
-#include "SDL_opengl.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
 #include "config.hpp"
 #include "sprite.hpp"
 #include <vector>

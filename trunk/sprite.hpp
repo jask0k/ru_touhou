@@ -1,9 +1,9 @@
 #ifndef _SPRITE_HPP
 #define _SPRITE_HPP
 
-#include "SDL_opengl.h"
-#include "SDL.h"
-#include "SDL_rwops.h"
+#include <SDL/SDL_opengl.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_rwops.h>
 
 #include <cstdlib>
 #include <vector>

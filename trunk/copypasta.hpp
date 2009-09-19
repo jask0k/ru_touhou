@@ -1,9 +1,9 @@
 #ifndef _COPYPASTA_HPP
 #define _COPYPASTA_HPP
 
-#include "SDL.h"
-#include "SDL_opengl.h"
-#include "SDL_image.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#include <SDL/SDL_image.h>
 #include <iostream>
 #include <cmath>
 #include "SDL_rwops_zzip.h"
