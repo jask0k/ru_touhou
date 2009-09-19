@@ -2,11 +2,11 @@
 #define _MUSIC_HPP
 
 #include "SDL.h"
-#include <tr1/memory>
+#include "shared_ptr_velosiped.hpp"
 #include <vector>
 
 class CSound;
-typedef std::tr1::shared_ptr<CSound> CSoundP;
+typedef velosiped::shared_ptr<CSound> CSoundP;
 
 class CBoomBox {
   std::vector<CSoundP> sounds; // keeps sounds alive while the user needs them
