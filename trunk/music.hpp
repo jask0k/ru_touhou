@@ -2,6 +2,7 @@
 #define _MUSIC_HPP
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
 #include <tr1/memory>
 #include <vector>
 
