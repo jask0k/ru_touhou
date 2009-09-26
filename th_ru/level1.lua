@@ -70,6 +70,7 @@ spritesheet_load("level1.png");
 spritesheet_load("lantern.png");
 lantern_spawn_sound = sound_create("spawn.wav");
 log("Starting first level!");
+music_play("music.xm");
 wait(1); -- Подождать кадр
 
 background_set_fog_density(.5,-0.004);

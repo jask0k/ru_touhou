@@ -77,6 +77,8 @@ namespace bind{
   declare_function(sound_create);
   declare_function(sound_destroy);
   declare_function(sound_play);
+
+  declare_function(music_play);
 }
 
 int CScript::do_binds(){
@@ -139,6 +141,8 @@ int CScript::do_binds(){
   bind_function(sound_create);
   bind_function(sound_destroy);
   bind_function(sound_play);
+
+  bind_function(music_play);
 
   return 0;
 }
@@ -879,6 +883,17 @@ int bind::sound_play(lua_State* L){
   int sound_handle;
   script::parameters_parse(L,"i",&sound_handle);
   game::boom_box -> play_sound(sound_handle);
+  return 0;
+}
+
+int bind::music_play(lua_State* L){
+  char* filename;
+  script::parameters_parse(L,"s",&filename);
+
+  std::string full_path = std::string("th_ru/")+filename;
+  SDL_RWops* file=SDL_RWFromZZIP(full_path.c_str(), "r");
+  game::boom_box -> play_music(file);
+  if(file) SDL_RWclose(file);
   return 0;
 }
 

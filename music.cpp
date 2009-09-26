@@ -50,6 +50,51 @@ public:
 };
 
 ////////////////////////////////////////////////
+// CMusic
+////////////////////////////////////////////////
+
+class CMusic {
+  Mix_Music *music;
+public:
+  CMusic(const char *file) : music(0) {
+    Mix_SetError("");
+    if(file) {
+      music = Mix_LoadMUS(file);
+    }
+    if(!music) {
+      std::cerr << Mix_GetError() << std::endl;
+      std::cerr << "Error: failed to load music from file " << file << std::endl;
+    }
+  }
+  CMusic(SDL_RWops *src) : music(0) {
+    Mix_SetError("");
+    if(src) {
+      music = Mix_LoadMUS_RW(src);
+    }
+    if(!music) {
+      std::cerr << Mix_GetError() << std::endl;
+      std::cerr << "Error: failed to load music from SDL_RWops " << src << std::endl;
+    }
+  }
+  ~CMusic() {
+    if(music) {
+      Mix_FreeMusic(music);
+    }
+  }
+  int play() {
+    int ret = -1;
+    if(music) {
+      ret = Mix_PlayMusic(music, -1);
+      if(ret < 0) {
+        std::cerr << Mix_GetError() << std::endl;
+        std::cerr << "Error: failed to play music" << std::endl;
+      }
+    }
+    return ret;
+  }
+};
+
+////////////////////////////////////////////////
 // CBoomBox
 ////////////////////////////////////////////////
 
@@ -83,6 +128,8 @@ CBoomBox::~CBoomBox() {
 
   sounds.clear(); // destroy all CSound instances BEFORE calling Mix_CloseAudio
   channels.clear(); // destroy all CSound instances BEFORE calling Mix_CloseAudio
+
+  music.reset(); // destroy CMusic instance (this automatically stops music playback)
 
   Mix_CloseAudio();
 }
@@ -132,4 +179,14 @@ void CBoomBox::play_sound(size_t i) {
       }
     }
   }
+}
+
+void CBoomBox::play_music(const char *file) {
+  music.reset(new CMusic(file));
+  music->play();
+}
+
+void CBoomBox::play_music(SDL_RWops *src) {
+  music.reset(new CMusic(src));
+  music->play();
 }
