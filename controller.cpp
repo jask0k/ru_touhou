@@ -47,7 +47,7 @@ int CController::handle_event(SDL_Event* event){
   case SDL_JOYBUTTONUP: //отпущена кнопка на джойстике
     return jbutton(event -> jbutton.button, STATE_UP);
   case SDL_JOYAXISMOTION: //управление джойстиком
-	  return axismove();
+    return axismove();
   default:
     return 0;
   }
@@ -82,9 +82,6 @@ int CController::button(SDLKey key, bool key_state){
   case SDLK_LCTRL:
     control = B_SKIP;
     break;
-  //case SDLK_PRINT:
-  //engine -> state.screenshot=true;
-  //  return 1;
   default:
     return 0;
   }
@@ -132,7 +129,7 @@ int CController::axismove(){
   
   analog_state.dir = atan2((float)-vy,(float)vx);
   
-  analog_state.pow = (sqrt((float)(vx*vx + vy*vy))/32768)/(fabs(sin(analog_state.dir))+fabs(cos(analog_state.dir)));
+  analog_state.pow = sqrt(((float)vx*vx + (float)vy*vy))/32768/(fabs(sin(analog_state.dir))+fabs(cos(analog_state.dir)));
 
   return 1;
 }
