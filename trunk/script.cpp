@@ -245,6 +245,8 @@ lua_State* CScript::create_AI_state(lua_State* L){
     //    std::cerr << cond << std::endl;
     //и удаляем его оттудова
     lua_remove(L,2);
+    if (cond.compare("")!=0 && check_cond(L,cond))
+      return NULL;
     //смотрим, сколько лишних параметров у нас есть
     GLuint par_num = lua_gettop(L)-1;
     //    std::cerr << par_num << std::endl;
@@ -272,7 +274,7 @@ int CScript::destroy_AI_state(std::map<lua_State*,AI_state>::iterator position){
   lua_getglobal(level_state,"AI_table");
   lua_pushnil(level_state);
   lua_setfield(level_state,-2,reader.str().c_str());
-  std::cerr << "destroing " << reader.str() << std::endl;
+  //  std::cerr << "destroing " << reader.str() << std::endl;
   AI_states.erase(position);
   return 0;
 }
