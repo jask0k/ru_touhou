@@ -213,7 +213,8 @@ CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
   animation(0),state(0),animation_timer(0),
   next_animation(0),decay_timer(0),
   animation_active(false),decay_active(false),
-  scale(1.f),blur(false),layer(layer),follow(0){}
+  scale(1.f),blur(false),layer(layer),follow(0),
+  destroy_tracking(false){}
 
 void CSprite::draw(){
 #ifdef DEBUG
@@ -408,8 +409,20 @@ void CSpriteManager::think(){
 GLuint CSpriteManager::destroy_sprite(GLuint handle){
   if (collection.count(handle) == 0)
     return 0;
+  if (collection[handle] -> destroy_tracking)
+    destroyed_collection.insert(handle);
   collection.erase(handle);
   if (free_handle>handle)
     free_handle=handle;
   return free_handle;
+}
+
+GLboolean CSpriteManager::sprite_destroyed(GLuint handle){
+  if (destroyed_collection.count(handle)>0){
+    destroyed_collection.erase(handle);
+    return true;
+  }
+  if (!collection[handle]->destroy_tracking)
+    collection[handle]->destroy_tracking = true;
+  return false;
 }

@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <set>
 
 #include "copypasta.hpp"
 #include "config.hpp"
@@ -97,7 +98,6 @@ public:
   void draw();//отрисовка
   decay_state think();//анимация, движение, и т.д.
   
-  
 private:
   CSpriteSheet* ssheet;//указатель на спрайтовый лист
   GLfloat x,y;//координаты центра спрайта
@@ -129,6 +129,9 @@ private:
   Layer layer;
 
   GLuint follow;
+
+  GLboolean destroy_tracking;
+
   friend class CSpriteManager;
 };
 
@@ -141,8 +144,10 @@ public:
   
   GLuint destroy_sprite(GLuint handle);
   CSprite* get_sprite(GLuint handle);
+  GLboolean sprite_destroyed(GLuint handle);
 private:
   std::map<GLuint,CSprite*> collection;
+  std::set<GLuint> destroyed_collection;
   GLuint free_handle;//минимальный свободный псевдоуказатель
 };
 

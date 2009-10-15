@@ -28,20 +28,30 @@ private:
   friend class CEnemyBulletManager;
 };
 
+struct SEnBulletProto{
+  std::string spritesheet;
+  GLfloat scale;
+  GLboolean animated;
+  GLint frame_animation;
+};
+
 class CEnemyBulletManager{
 public:
-  CEnemyBulletManager(std::string spritesheet);
-  GLuint create_bullet(GLint frame, GLfloat xpos, GLfloat ypos, GLfloat speed, GLfloat angle);
-  GLuint create_bullet_aimed(GLint frame, GLfloat xpos, GLfloat ypos, GLfloat speed,
+  CEnemyBulletManager();
+  GLuint create_proto(std::string spritesheet, GLint frame_animation, GLboolean animated, GLfloat scale);
+  GLuint create_bullet(GLuint proto, GLfloat xpos, GLfloat ypos, GLfloat speed, GLfloat angle);
+  GLuint create_bullet_aimed(GLuint proto, GLfloat xpos, GLfloat ypos, GLfloat speed,
 		       GLfloat xtarget, GLfloat ytarget, GLfloat stray);
-  GLuint create_bullet_aimed_hero(GLint frame, GLfloat xpos, GLfloat ypos, GLfloat speed, GLfloat stray);
+  GLuint create_bullet_aimed_hero(GLuint proto, GLfloat xpos, GLfloat ypos, GLfloat speed, GLfloat stray);
   GLuint destroy_bullet(GLuint handle);
   CEnemyBullet* get_bullet(GLuint handle);
   void think();
 private:
-  std::string spritesheet;
+  //  std::string spritesheet;
   GLuint free_handle;
   std::map<GLuint,CEnemyBullet*> collection;
+  std::vector<SEnBulletProto> proto_collection;
+  std::map<GLuint,GLboolean> destroyed;
 };
 
 namespace game{

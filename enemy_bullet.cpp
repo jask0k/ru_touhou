@@ -73,14 +73,27 @@ int CEnemyBullet::stray(GLfloat angle){
   return 0;
 }
 
-CEnemyBulletManager::CEnemyBulletManager(std::string spritesheet):
-  spritesheet(spritesheet),free_handle(1){}
+CEnemyBulletManager::CEnemyBulletManager():free_handle(1){}
 
-GLuint CEnemyBulletManager::create_bullet(GLint frame, GLfloat xpos, GLfloat ypos, 
-				   GLfloat speed, GLfloat angle){
-  GLuint sprite_num = game::smanager -> create_sprite(spritesheet, LAYER_ENEMY_BULLET);
+GLuint CEnemyBulletManager::create_proto(std::string spritesheet, GLint frame_animation, GLboolean animated, GLfloat scale){
+  SEnBulletProto proto={spritesheet, scale, animated, frame_animation};
+  proto_collection.push_back(proto);
+  return proto_collection.size()-1;
+}
+
+GLuint CEnemyBulletManager::create_bullet(GLuint proto, GLfloat xpos, GLfloat ypos, 
+					  GLfloat speed, GLfloat angle){
+  if (proto>=proto_collection.size()){
+    throw "incorrect proto";
+  }
+  GLuint sprite_num = game::smanager -> create_sprite(proto_collection[proto].spritesheet, LAYER_ENEMY_BULLET);
   CEnemyBullet* bullet = new CEnemyBullet(sprite_num, xpos, ypos, angle, speed);
-  game::smanager -> get_sprite(sprite_num) -> set_frame(frame);
+  if (proto_collection[proto].animated)
+    game::smanager -> get_sprite(sprite_num) -> start_animation(proto_collection[proto].frame_animation);
+  else
+    game::smanager -> get_sprite(sprite_num) -> set_frame(proto_collection[proto].frame_animation);
+
+  game::smanager -> get_sprite(sprite_num) -> set_scale(proto_collection[proto].scale);
   GLuint handle = this -> free_handle;
   collection.insert(std::pair<GLuint, CEnemyBullet*>(handle,bullet));
   while(collection.count(free_handle))
@@ -88,18 +101,18 @@ GLuint CEnemyBulletManager::create_bullet(GLint frame, GLfloat xpos, GLfloat ypo
   return handle;
 }
 
-GLuint CEnemyBulletManager::create_bullet_aimed(GLint frame, GLfloat xpos, GLfloat ypos, 
+GLuint CEnemyBulletManager::create_bullet_aimed(GLuint proto, GLfloat xpos, GLfloat ypos, 
 						GLfloat speed, GLfloat xtarget, GLfloat ytarget, 
 						GLfloat stray){
   GLfloat angle = 0.f;
   if ((xpos!=xtarget) || (ypos!=ytarget))
     angle = atan2(ytarget-ypos, xtarget-xpos)*180/M_PI+stray;
-  return create_bullet(frame, xpos, ypos, speed, angle);
+  return create_bullet(proto, xpos, ypos, speed, angle);
 }
 
-GLuint CEnemyBulletManager::create_bullet_aimed_hero(GLint frame, GLfloat xpos, GLfloat ypos, 
+GLuint CEnemyBulletManager::create_bullet_aimed_hero(GLuint proto, GLfloat xpos, GLfloat ypos, 
 						     GLfloat speed, GLfloat stray){
-  return create_bullet_aimed(frame, xpos, ypos, speed, game::hero -> x, game::hero -> y, stray);
+  return create_bullet_aimed(proto, xpos, ypos, speed, game::hero -> x, game::hero -> y, stray);
 }
 
 GLuint CEnemyBulletManager::destroy_bullet(GLuint handle){
