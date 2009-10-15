@@ -18,9 +18,8 @@ enum control_type{
 
 struct AI_state{
   GLuint timer;
-  //  GLuint handle;
-  //  control_type type;
   std::string quit_condition;
+  std::string wait_condition;
 };
 
 class CScript{
@@ -30,6 +29,8 @@ private:
   
   GLuint timer;
   GLboolean timer_active;
+
+  std::string cond;
   
   struct{
     GLboolean resume;
@@ -61,6 +62,8 @@ public:
   int think();
   int init_level(int level);
   int set_timer(lua_State* state, GLuint timer);
+  int set_cond(lua_State* state, std::string cond);
+  //  int set_cond(lua_State* state, const char* cond);
   CScript();
   ~CScript();
 };

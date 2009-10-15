@@ -19,7 +19,9 @@ namespace script{
 namespace bind{
 //бинды
   declare_function(log);
-  declare_function(wait);//Пауза на несколько кадров
+  declare_function(wait_time);//Пауза на несколько кадров
+  declare_function(wait_cond);
+  declare_function(wait_time_cond);
   declare_function(thread_start);
 
   declare_function(engine_get_frame);
@@ -37,6 +39,7 @@ namespace bind{
   declare_function(enbullet_create_target);
   declare_function(enbullet_create_hero);
   declare_function(enbullet_destroy);
+  declare_function(enbullet_destroyed);
   declare_function(enbullet_lock_on);
   declare_function(enbullet_lock_on_hero);
   declare_function(enbullet_stray);
@@ -84,7 +87,9 @@ namespace bind{
 }
 
 int CScript::do_binds(){
-  bind_function(wait);
+  bind_function(wait_time);
+  bind_function(wait_cond);
+  bind_function(wait_time_cond);
   bind_function(log);
   bind_function(thread_start);
 
@@ -103,6 +108,7 @@ int CScript::do_binds(){
   bind_function(enbullet_create_target);
   bind_function(enbullet_create_hero);
   bind_function(enbullet_destroy);
+  bind_function(enbullet_destroyed);
   bind_function(enbullet_lock_on);
   bind_function(enbullet_lock_on_hero);
   bind_function(enbullet_stray);
@@ -166,7 +172,7 @@ int CScript::do_globals(){
   return 0;
 }
 
-CScript::CScript():level_state(luaL_newstate()){
+CScript::CScript():level_state(luaL_newstate()),cond(""){
   luaL_openlibs(level_state);
   do_globals();
   do_binds();
@@ -223,26 +229,29 @@ GLboolean CScript::check_cond(lua_State* L, std::string cond){
 }
 
 lua_State* CScript::create_AI_state(lua_State* L){
-  if (lua_isfunction(L, -1) == 1 && lua_isstring(L, -2) == 1){
+  if (lua_isfunction(L, 1) == 1 && lua_isstring(L, 2) == 1){
     //создаём тред АИ
     lua_State* state = lua_newthread(L);
     //переносим указатель на тред на дно стека, он нам пока не нужен
     lua_insert(L,1);
+    
+    lua_pushvalue(L,2);
+    lua_remove(L,2);
     //переносим указатель на функцию в стек треда АИ
     lua_xmove(L,state,1);
 
     //забираем условие выхода из стека
-    std::string cond = std::string(luaL_checkstring(L,-1));
+    std::string cond = std::string(luaL_checkstring(L,2));
     //    std::cerr << cond << std::endl;
     //и удаляем его оттудова
-    lua_pop(L,1);
+    lua_remove(L,2);
     //смотрим, сколько лишних параметров у нас есть
     GLuint par_num = lua_gettop(L)-1;
     //    std::cerr << par_num << std::endl;
     //и суём их все в параметры треда
     lua_xmove(L,state,par_num);
     //создаём структуру, содержащую инфу про тред АИ
-    AI_state st = {0,cond};
+    AI_state st = {0,cond,std::string("")};
     //и засовываем её в коллекцию
     AI_states.insert(std::pair<lua_State*,AI_state>(state,st));
     lua_getglobal(L,"AI_table");
@@ -338,13 +347,14 @@ int CScript::think(){
   std::map<lua_State*,AI_state>::iterator i;
   std::map<lua_State*,AI_state>::iterator bad_handle;
   for (i = AI_states.begin(); i != AI_states.end();){
-    bool cleanup=false;
+    //    bool cleanup=false;
     if (i -> second.timer > 0)
       --(i->second.timer);
-    if (check_cond(i->first, i->second.quit_condition)){
-      cleanup = true;
-    }
-    if (cleanup){
+    if (i->second.quit_condition.compare("")!=0 && 
+	check_cond(i->first, i->second.quit_condition)){
+      //      cleanup = true;
+      //    }
+      //    if (cleanup){
       bad_handle = i;
       ++i;
       if (destroy_AI_state(bad_handle) == -1){
@@ -352,9 +362,11 @@ int CScript::think(){
 	std::cerr << "fixme:Could not destroy AI state!" << std::endl;
 #endif
       }
-      cleanup = false;
+      //      cleanup = false;
     }
-    else if (i -> second.timer == 0){
+    else if (i -> second.timer == 0 || 
+	     ((i -> second.wait_condition.compare("")!=0) && 
+	      (check_cond(i->first,i -> second.wait_condition)))){
 // #ifdef DEBUG
 //       std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
 //       int it;
@@ -401,12 +413,11 @@ int CScript::think(){
     lua_resume(level_state, 0);
     state.resume=false;
   }
-  if (timer_active){
-    if (--timer == 0){
-      timer_active = false;
-      if (lua_resume(level_state, 0) == 0)
-	return 1;
-    }
+  if ((timer_active && --timer == 0)||
+      (cond.compare("")!=0 && check_cond(level_state, cond))){
+    timer_active = false;
+    if (lua_resume(level_state, 0) == 0)
+      return 1;
   }
   return 0;
 }
@@ -426,6 +437,14 @@ int CScript::set_timer(lua_State* state, GLuint timer){
   }
   else
     AI_states[state].timer = timer; 
+  return 0;
+}
+
+int CScript::set_cond(lua_State* state, std::string cond){
+  if (state == level_state)
+    this -> cond = cond;
+  else
+    AI_states[state].wait_condition = cond; 
   return 0;
 }
 
@@ -474,7 +493,7 @@ int script::parameters_parse(lua_State* L, std::string format, ...){
       break;
     case TYPE_STRING:{
       const char** var = va_arg(vl,const char**);
-      *var = (luaL_checklstring(L,cur_var,NULL));
+      *var = (luaL_checkstring(L,cur_var));
     }
       break;
     }
@@ -483,9 +502,25 @@ int script::parameters_parse(lua_State* L, std::string format, ...){
   return stack_size;
 }
 
-int bind::wait(lua_State* L){
+int bind::wait_time(lua_State* L){
   int timer;
   script::parameters_parse(L,"i",&timer);
+  game::script->set_timer(L, timer);
+  return lua_yield(L, 0);
+}
+
+int bind::wait_cond(lua_State* L){
+  const char* cond;
+  script::parameters_parse(L,"s",&cond);
+  game::script->set_cond(L, cond);
+  return lua_yield(L, 0);
+}
+
+int bind::wait_time_cond(lua_State* L){
+  int timer;
+  const char* cond;
+  script::parameters_parse(L,"is",&timer, &cond);
+  game::script->set_cond(L, cond);
   game::script->set_timer(L, timer);
   return lua_yield(L, 0);
 }
@@ -500,13 +535,13 @@ int bind::log(lua_State* L){
 }
 
 //параметры: целое - хендл врага, и функция - функция вида func(handle)
+//не обращайте внимания, я просто сосу хуйцы, ололо
 int bind::thread_start(lua_State* L){
   lua_State* thread = game::script -> create_AI_state(L);
   if (thread!=NULL){
-    //    lua_pushthread(thread);
-    //    lua_xmove(thread,L,1);
-    //return 1;
-    return 0;
+    lua_pushthread(thread);
+    lua_xmove(thread,L,1);
+    return 1;
   }
   else{
 #ifdef DEBUG
@@ -616,6 +651,14 @@ int bind::enbullet_destroy(lua_State* L){
   script::parameters_parse(L, "i", &handle);
   game::ebmanager -> destroy_bullet(handle);
   return 0;
+}
+
+int bind::enbullet_destroyed(lua_State* L){
+  GLuint bullet;
+  script::parameters_parse(L,"i",&bullet);
+  int result = game::ebmanager -> bullet_destroyed(bullet);
+  lua_pushboolean(L,result);
+  return 1;
 }
 
 int bind::enbullet_lock_on(lua_State* L){
