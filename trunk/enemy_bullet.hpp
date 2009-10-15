@@ -25,6 +25,7 @@ private:
   GLuint sprite_no;
   GLboolean grazed;
   GLfloat acceleration;
+  GLboolean managed;
   friend class CEnemyBulletManager;
 };
 
@@ -45,13 +46,14 @@ public:
   GLuint create_bullet_aimed_hero(GLuint proto, GLfloat xpos, GLfloat ypos, GLfloat speed, GLfloat stray);
   GLuint destroy_bullet(GLuint handle);
   CEnemyBullet* get_bullet(GLuint handle);
+  GLboolean bullet_destroyed(GLuint handle);
   void think();
 private:
   //  std::string spritesheet;
   GLuint free_handle;
   std::map<GLuint,CEnemyBullet*> collection;
   std::vector<SEnBulletProto> proto_collection;
-  std::map<GLuint,GLboolean> destroyed;
+  std::set<GLuint> destroyed_collection;
 };
 
 namespace game{

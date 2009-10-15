@@ -2,7 +2,7 @@
  
 CEnemyBullet::CEnemyBullet(GLuint sprite_no, GLfloat posx, GLfloat posy, 
 			   GLfloat angle, GLfloat speed):
-  sprite_no(sprite_no), grazed(false), acceleration(0.0f){
+  sprite_no(sprite_no), grazed(false), acceleration(0.0f), managed(false){
   CSprite* sprite_handle = game::smanager->get_sprite(sprite_no);
   sprite_handle -> set_position(posx, posy);
   sprite_handle -> set_angle(speed,angle);
@@ -118,6 +118,9 @@ GLuint CEnemyBulletManager::create_bullet_aimed_hero(GLuint proto, GLfloat xpos,
 GLuint CEnemyBulletManager::destroy_bullet(GLuint handle){
   if (collection.count(handle) == 0)
     return 0;
+  if (collection[handle]->managed){
+    destroyed_collection.insert(handle);
+  }
    // ЗДЕСЬ ДОЛЖНА БЫТЬ АНИМАЦИЯ ИСЧЕЗНОВЕНИЯ ПУЛИ
   CSprite* sprite = game::smanager -> get_sprite(collection[handle] -> sprite_no);
   if (sprite != NULL){
@@ -163,4 +166,13 @@ void CEnemyBulletManager::think(){
       ++i;
     }
   
+}
+GLboolean CEnemyBulletManager::bullet_destroyed(GLuint handle){
+  if (destroyed_collection.count(handle)>0){
+    destroyed_collection.erase(handle);
+    return true;
+  }
+  if (!collection[handle]->managed)
+    collection[handle]->managed = true;
+  return false;
 }
