@@ -16,6 +16,7 @@ class CBoomBox {
   std::vector<CSoundP> sounds; // keeps sounds alive while the user needs them
   std::vector<CSoundP> channels; // keeps sounds alive while the playback needs them
   CMusicP music;
+  bool no_sound;
 public:
   CBoomBox();
   ~CBoomBox();

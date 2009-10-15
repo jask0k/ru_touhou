@@ -20,7 +20,7 @@ namespace bind{
 //бинды
   declare_function(log);
   declare_function(wait);//Пауза на несколько кадров
-  declare_function(bind_AI);
+  declare_function(thread_start);
 
   declare_function(engine_get_frame);
   declare_function(engine_god_mode);
@@ -32,6 +32,7 @@ namespace bind{
 
   declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
 
+  declare_function(enbullet_create_proto);
   declare_function(enbullet_create);
   declare_function(enbullet_create_target);
   declare_function(enbullet_create_hero);
@@ -43,6 +44,7 @@ namespace bind{
 
   declare_function(sprite_create);//создание спрайтов
   declare_function(sprite_destroy);
+  declare_function(sprite_destroyed);
   declare_function(sprite_get_position);
   declare_function(sprite_get_vector);
   declare_function(sprite_get_angle);
@@ -84,7 +86,7 @@ namespace bind{
 int CScript::do_binds(){
   bind_function(wait);
   bind_function(log);
-  bind_function(bind_AI);
+  bind_function(thread_start);
 
   bind_function(engine_get_frame);
   bind_function(engine_god_mode);
@@ -96,6 +98,7 @@ int CScript::do_binds(){
   bind_function(hero_y);
   bind_function(hero_sprite);
 
+  bind_function(enbullet_create_proto);
   bind_function(enbullet_create);
   bind_function(enbullet_create_target);
   bind_function(enbullet_create_hero);
@@ -107,6 +110,7 @@ int CScript::do_binds(){
 
   bind_function(sprite_create);
   bind_function(sprite_destroy);
+  bind_function(sprite_destroyed);
   bind_function(sprite_get_position);
   bind_function(sprite_get_vector);
   bind_function(sprite_get_angle);
@@ -210,26 +214,37 @@ int CScript::run_function(std::string funcname){
   return 0;
 }
 
+GLboolean CScript::check_cond(lua_State* L, std::string cond){
+  std::string query = std::string("return (") + cond + std::string(")");
+  luaL_dostring(L,query.c_str());
+  GLboolean result = lua_toboolean(L,-1);
+  lua_pop(L,1);
+  return result;
+}
+
 lua_State* CScript::create_AI_state(lua_State* L){
-  if (lua_isfunction(L, -1) == 1 && lua_isnumber(L, -2) == 1){
+  if (lua_isfunction(L, -1) == 1 && lua_isstring(L, -2) == 1){
     //создаём тред АИ
     lua_State* state = lua_newthread(L);
     //переносим указатель на тред на дно стека, он нам пока не нужен
     lua_insert(L,1);
     //переносим указатель на функцию в стек треда АИ
     lua_xmove(L,state,1);
-    //достаём индекс элемента одного из менеджеров, к которому будет привязан скрипт АИ
-    //с уничтожением этого элемента прекращается скрипт
-    GLuint bind_number = luaL_checkinteger(L,-1);
-    //в каком менеджере искать этот элемент
-    control_type type = (control_type)luaL_checkinteger(L,-2);
-    //кладём в стек треда АИ индекс
-    lua_pushnumber(state,bind_number);
+
+    //забираем условие выхода из стека
+    std::string cond = std::string(luaL_checkstring(L,-1));
+    //    std::cerr << cond << std::endl;
+    //и удаляем его оттудова
+    lua_pop(L,1);
+    //смотрим, сколько лишних параметров у нас есть
+    GLuint par_num = lua_gettop(L)-1;
+    //    std::cerr << par_num << std::endl;
+    //и суём их все в параметры треда
+    lua_xmove(L,state,par_num);
     //создаём структуру, содержащую инфу про тред АИ
-    AI_state st = {0,bind_number,type};
+    AI_state st = {0,cond};
     //и засовываем её в коллекцию
     AI_states.insert(std::pair<lua_State*,AI_state>(state,st));
-    lua_pop(L,2);
     lua_getglobal(L,"AI_table");
     lua_insert(L,1);
     std::ostringstream reader;
@@ -326,15 +341,8 @@ int CScript::think(){
     bool cleanup=false;
     if (i -> second.timer > 0)
       --(i->second.timer);
-    switch(i->second.type){
-    case CONTROL_BULLET:
-      if  (get_bullet(i->second.handle) == NULL)
-	cleanup = true;
-      break;
-    case CONTROL_SPRITE:
-      if  (get_sprite(i->second.handle) == NULL)
-	cleanup = true;
-      break;
+    if (check_cond(i->first, i->second.quit_condition)){
+      cleanup = true;
     }
     if (cleanup){
       bad_handle = i;
@@ -373,13 +381,11 @@ int CScript::think(){
 	}
 #ifdef DEBUG
 	if (result!=0){
-#ifdef DEBUG
-      std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
-            int it;
-      for (it=1;it<=lua_gettop(i->first);++it)
-	std::cerr << lua_typename(i->first, lua_type(i->first, it)) << std::endl;
-      std::cerr << "end!"<<std::endl;
-#endif
+	  std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
+	  int it;
+	  for (it=1;it<=lua_gettop(i->first);++it)
+	    std::cerr << lua_typename(i->first, lua_type(i->first, it)) << std::endl;
+	  std::cerr << "end!"<<std::endl;
 	  std::cerr << "error code:" << result<< std::endl;
 	  const char* err_string = luaL_checklstring(i->first,-1,NULL);
 	  std::cerr << "script error:" << err_string << std::endl;
@@ -494,7 +500,7 @@ int bind::log(lua_State* L){
 }
 
 //параметры: целое - хендл врага, и функция - функция вида func(handle)
-int bind::bind_AI(lua_State* L){
+int bind::thread_start(lua_State* L){
   lua_State* thread = game::script -> create_AI_state(L);
   if (thread!=NULL){
     //    lua_pushthread(thread);
@@ -556,38 +562,50 @@ int bind::spritesheet_load(lua_State* L){
   return 0;
 };
 
+int bind::enbullet_create_proto(lua_State* L){
+  char* spritesheet;
+  GLint frame_animation;
+  GLint animated;
+  GLfloat scale;
+  
+  script::parameters_parse(L,"siif", &spritesheet, &frame_animation, &animated, &scale);
+  GLuint handle = game::ebmanager->create_proto(spritesheet,frame_animation,(animated==1),scale);
+  lua_pushinteger(L,handle);
+  return 1;
+}
+
 int bind::enbullet_create(lua_State* L){
-  GLint frame;
+  GLint proto;
   GLfloat xpos, ypos;
   GLfloat speed, angle;
   
-  script::parameters_parse(L,"iffff", &frame, &xpos, &ypos, &speed, &angle);
-  GLuint handle = game::ebmanager->create_bullet(frame,xpos,ypos,speed,angle);
+  script::parameters_parse(L,"iffff", &proto, &xpos, &ypos, &speed, &angle);
+  GLuint handle = game::ebmanager->create_bullet(proto,xpos,ypos,speed,angle);
   lua_pushinteger(L,handle);
   return 1;
 }
 
 int bind::enbullet_create_target(lua_State* L){
-  GLint frame;
+  GLint proto;
   GLfloat xpos, ypos;
   GLfloat speed, xtarget, ytarget;
   GLfloat stray;
   
-  script::parameters_parse(L,"iffffff", &frame, &xpos, &ypos, &speed, &xtarget, &ytarget, &stray);
-  GLuint handle = game::ebmanager->create_bullet_aimed(frame,xpos,ypos,speed,
+  script::parameters_parse(L,"iffffff", &proto, &xpos, &ypos, &speed, &xtarget, &ytarget, &stray);
+  GLuint handle = game::ebmanager->create_bullet_aimed(proto,xpos,ypos,speed,
 						       xtarget,ytarget,stray);
   lua_pushinteger(L,handle);
   return 1;
 }
 
 int bind::enbullet_create_hero(lua_State* L){
-  GLint frame;
+  GLint proto;
   GLfloat xpos, ypos;
   GLfloat speed;
   GLfloat stray;
   
-  script::parameters_parse(L,"iffff", &frame, &xpos, &ypos, &speed, &stray);
-  GLuint handle = game::ebmanager->create_bullet_aimed_hero(frame,xpos,ypos,speed,stray);
+  script::parameters_parse(L,"iffff", &proto, &xpos, &ypos, &speed, &stray);
+  GLuint handle = game::ebmanager->create_bullet_aimed_hero(proto,xpos,ypos,speed,stray);
   lua_pushinteger(L,handle);
   return 1;
 }
@@ -647,6 +665,14 @@ int bind::sprite_destroy(lua_State* L){
   script::parameters_parse(L,"i",&sprite);
   game::smanager -> destroy_sprite(sprite);
   return 0;
+}
+
+int bind::sprite_destroyed(lua_State* L){
+  GLuint sprite;
+  script::parameters_parse(L,"i",&sprite);
+  int result = game::smanager -> sprite_destroyed(sprite);
+  lua_pushboolean(L,result);
+  return 1;
 }
 
 int bind::sprite_get_position(lua_State* L){

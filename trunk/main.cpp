@@ -7,7 +7,7 @@ namespace game{
   CEngine* engine = new CEngine;
   CBack* background = new CBack;
   CHero* hero;
-  CEnemyBulletManager* ebmanager = new CEnemyBulletManager(std::string("bullets.png"));
+  CEnemyBulletManager* ebmanager = new CEnemyBulletManager;
   CParticleManager* pmanager = new CParticleManager;
   CBoomBox *boom_box = new CBoomBox;
 }

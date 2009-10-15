@@ -18,8 +18,9 @@ enum control_type{
 
 struct AI_state{
   GLuint timer;
-  GLuint handle;
-  control_type type;
+  //  GLuint handle;
+  //  control_type type;
+  std::string quit_condition;
 };
 
 class CScript{
@@ -41,6 +42,7 @@ private:
 public:
   int load_script(std::string scriptname);
   int run_script(std::string scriptname);
+  GLboolean check_cond(lua_State* L, std::string cond);
   int run_function(std::string funcname);
   lua_State* create_AI_state(lua_State* L);
   int destroy_AI_state(std::map<lua_State*,AI_state>::iterator position);

@@ -99,22 +99,29 @@ public:
 ////////////////////////////////////////////////
 
 CBoomBox::CBoomBox() {
+  no_sound = false;
   bool sdl_audio_preinited = SDL_INIT_AUDIO & SDL_WasInit(SDL_INIT_AUDIO);
   if(!sdl_audio_preinited) {
     if( SDL_InitSubSystem(SDL_INIT_AUDIO) < 0 ) {
+#ifdef DEBUG
       std::cerr << SDL_GetError() << std::endl;
       std::cerr << "Panic: failed SDL_INIT_AUDIO" << std::endl;
-      abort();
+#endif
+      //      abort();
+      no_sound = true;
     }
   }
 
-  if( Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) < 0 ) {
+  if( (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) < 0) && (!no_sound)) {
+#ifdef DEBUG    
     std::cerr << Mix_GetError() << std::endl;
     std::cerr << "Panic: failed Mix_OpenAudio" << std::endl;
-    abort();
+#endif
+    no_sound = true;
+    //    abort();
   }
-
-  channels.resize(Mix_AllocateChannels(-1));
+  if (!no_sound)
+    channels.resize(Mix_AllocateChannels(-1));
 }
 
 CBoomBox::~CBoomBox() {
@@ -135,6 +142,8 @@ CBoomBox::~CBoomBox() {
 }
 
 size_t CBoomBox::create_sound(const char *file) {
+  if (no_sound)
+    return 0;
   CSoundP sound(new CSound(file));
   for(size_t i = 0, size = sounds.size(); i < size; ++i) {
     if(!sounds[i]) {
@@ -147,6 +156,8 @@ size_t CBoomBox::create_sound(const char *file) {
 }
 
 size_t CBoomBox::create_sound(SDL_RWops *src) {
+  if (no_sound)
+    return 0;
   CSoundP sound(new CSound(src));
   for(size_t i = 0, size = sounds.size(); i < size; ++i) {
     if(!sounds[i]) {
@@ -159,12 +170,16 @@ size_t CBoomBox::create_sound(SDL_RWops *src) {
 }
 
 void CBoomBox::destroy_sound(size_t i) {
+  if (no_sound)
+    return;
   if(i < sounds.size()) {
     sounds[i].reset();
   }
 }
 
 void CBoomBox::play_sound(size_t i) {
+  if (no_sound)
+    return;
   if(i < sounds.size()) {
     CSoundP sound(sounds[i]);
     if(sound) {
@@ -182,11 +197,15 @@ void CBoomBox::play_sound(size_t i) {
 }
 
 void CBoomBox::play_music(const char *file) {
+  if (no_sound)
+    return;
   music.reset(new CMusic(file));
   music->play();
 }
 
 void CBoomBox::play_music(SDL_RWops *src) {
+  if (no_sound)
+    return;
   music.reset(new CMusic(src));
   music->play();
 }
