@@ -98,33 +98,33 @@ public:
 // CBoomBox
 ////////////////////////////////////////////////
 
-CBoomBox::CBoomBox() {
-  no_sound = false;
+CBoomBox::CBoomBox() : no_sound(true) {
   bool sdl_audio_preinited = SDL_INIT_AUDIO & SDL_WasInit(SDL_INIT_AUDIO);
   if(!sdl_audio_preinited) {
     if( SDL_InitSubSystem(SDL_INIT_AUDIO) < 0 ) {
-#ifdef DEBUG
       std::cerr << SDL_GetError() << std::endl;
-      std::cerr << "Panic: failed SDL_INIT_AUDIO" << std::endl;
-#endif
-      //      abort();
-      no_sound = true;
+      std::cerr << "Error: failed SDL_INIT_AUDIO" << std::endl;
+      return;
     }
   }
 
   if( (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) < 0) && (!no_sound)) {
-#ifdef DEBUG    
     std::cerr << Mix_GetError() << std::endl;
-    std::cerr << "Panic: failed Mix_OpenAudio" << std::endl;
-#endif
-    no_sound = true;
-    //    abort();
+    std::cerr << "Error: failed Mix_OpenAudio" << std::endl;
+    return;
   }
-  if (!no_sound)
-    channels.resize(Mix_AllocateChannels(-1));
+
+  channels.resize(Mix_AllocateChannels(-1));
+
+  no_sound = false;
 }
 
 CBoomBox::~CBoomBox() {
+  if (no_sound)
+    return;
+
+  music.reset(); // destroy CMusic instance (this automatically stops music playback)
+
   // request for all playback to halt
   Mix_HaltChannel(-1);
 
@@ -135,8 +135,6 @@ CBoomBox::~CBoomBox() {
 
   sounds.clear(); // destroy all CSound instances BEFORE calling Mix_CloseAudio
   channels.clear(); // destroy all CSound instances BEFORE calling Mix_CloseAudio
-
-  music.reset(); // destroy CMusic instance (this automatically stops music playback)
 
   Mix_CloseAudio();
 }
