@@ -35,6 +35,7 @@ namespace bind{
   declare_function(spritesheet_load);//загрузка спрайтового листа менеджером
 
   declare_function(enbullet_create_proto);
+  declare_function(enbullet_set_proto_tint);
   declare_function(enbullet_create);
   declare_function(enbullet_create_target);
   declare_function(enbullet_create_hero);
@@ -104,6 +105,7 @@ int CScript::do_binds(){
   bind_function(hero_sprite);
 
   bind_function(enbullet_create_proto);
+  bind_function(enbullet_set_proto_tint);
   bind_function(enbullet_create);
   bind_function(enbullet_create_target);
   bind_function(enbullet_create_hero);
@@ -369,21 +371,7 @@ int CScript::think(){
     else if (i -> second.timer == 0 || 
 	     ((i -> second.wait_condition.compare("")!=0) && 
 	      (check_cond(i->first,i -> second.wait_condition)))){
-// #ifdef DEBUG
-//       std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
-//       int it;
-//       for (it=1;it<=lua_gettop(i->first);++it)
-// 	std::cerr << lua_typename(i->first, lua_type(i->first, it)) << std::endl;
-//       std::cerr << "end!"<<std::endl;
-//#endif
       int result = lua_resume(i->first,0);
-// #ifdef DEBUG
-//       std::cerr << "stack content '"<<i->first<<"'"<<std::endl;
-//       //      int it;
-//       for (it=1;it<=lua_gettop(i->first);++it)
-// 	std::cerr << lua_typename(i->first, lua_type(i->first, it)) << std::endl;
-//       std::cerr << "end!"<<std::endl;
-// #endif
       if (result!=LUA_YIELD){
 	//завершились с ошибкой или скрипт закончил выполнение
 	bad_handle = i;
@@ -609,6 +597,15 @@ int bind::enbullet_create_proto(lua_State* L){
   GLuint handle = game::ebmanager->create_proto(spritesheet,frame_animation,(animated==1),scale);
   lua_pushinteger(L,handle);
   return 1;
+}
+
+int bind::enbullet_set_proto_tint(lua_State* L){
+  GLuint handle;
+  GLfloat r,g,b,a;
+  
+  script::parameters_parse(L,"iffff", &handle, &r, &g, &b, &a);
+  game::ebmanager->set_proto_tint(handle,r,g,b,a);
+  return 0;
 }
 
 int bind::enbullet_create(lua_State* L){

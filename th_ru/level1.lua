@@ -68,10 +68,13 @@ end
 -- Всякие загрузки-шмагрузки
 spritesheet_load("level1.png");
 spritesheet_load("lantern.png");
+spritesheet_load("bullete.png")
 lantern_spawn_sound = sound_create("spawn.wav");
 log("Starting first level!");
 music_play("music.xm");
-sample_proto = enbullet_create_proto("bullets.png",0,0,1)
+--sample_proto = enbullet_create_proto("bullets.png",0,0,1)
+sample_proto = enbullet_create_proto("bullete.png",2,0,.3)
+enbullet_set_proto_tint(sample_proto, .781, .5, .25, 1.)
 sample_proto2 = enbullet_create_proto("bullets.png",3,0,2)
 wait_time(1); -- Подождать кадр
 

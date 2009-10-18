@@ -34,12 +34,14 @@ struct SEnBulletProto{
   GLfloat scale;
   GLboolean animated;
   GLint frame_animation;
+  GLfloat r,g,b,a;
 };
 
 class CEnemyBulletManager{
 public:
   CEnemyBulletManager();
   GLuint create_proto(std::string spritesheet, GLint frame_animation, GLboolean animated, GLfloat scale);
+  GLuint set_proto_tint(GLuint handle, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
   GLuint create_bullet(GLuint proto, GLfloat xpos, GLfloat ypos, GLfloat speed, GLfloat angle);
   GLuint create_bullet_aimed(GLuint proto, GLfloat xpos, GLfloat ypos, GLfloat speed,
 		       GLfloat xtarget, GLfloat ytarget, GLfloat stray);
