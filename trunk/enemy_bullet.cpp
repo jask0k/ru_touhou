@@ -76,9 +76,16 @@ int CEnemyBullet::stray(GLfloat angle){
 CEnemyBulletManager::CEnemyBulletManager():free_handle(1){}
 
 GLuint CEnemyBulletManager::create_proto(std::string spritesheet, GLint frame_animation, GLboolean animated, GLfloat scale){
-  SEnBulletProto proto={spritesheet, scale, animated, frame_animation};
+  SEnBulletProto proto={spritesheet, scale, animated, frame_animation,1.f,1.f,1.f,1.f};
   proto_collection.push_back(proto);
   return proto_collection.size()-1;
+}
+
+GLuint CEnemyBulletManager::set_proto_tint(GLuint handle, GLfloat r, GLfloat g, GLfloat b, GLfloat a){
+  proto_collection[handle].r = r;
+  proto_collection[handle].g = g;
+  proto_collection[handle].b = b;
+  proto_collection[handle].a = a;
 }
 
 GLuint CEnemyBulletManager::create_bullet(GLuint proto, GLfloat xpos, GLfloat ypos, 
@@ -94,6 +101,10 @@ GLuint CEnemyBulletManager::create_bullet(GLuint proto, GLfloat xpos, GLfloat yp
     game::smanager -> get_sprite(sprite_num) -> set_frame(proto_collection[proto].frame_animation);
 
   game::smanager -> get_sprite(sprite_num) -> set_scale(proto_collection[proto].scale);
+  game::smanager -> get_sprite(sprite_num) -> set_tint(proto_collection[proto].r,
+						       proto_collection[proto].g,
+						       proto_collection[proto].b);
+  game::smanager -> get_sprite(sprite_num) -> set_alpha(proto_collection[proto].a);
   GLuint handle = this -> free_handle;
   collection.insert(std::pair<GLuint, CEnemyBullet*>(handle,bullet));
   while(collection.count(free_handle))
