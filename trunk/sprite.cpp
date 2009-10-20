@@ -411,6 +411,7 @@ GLuint CSpriteManager::destroy_sprite(GLuint handle){
     return 0;
   if (collection[handle] -> destroy_tracking)
     destroyed_collection.insert(handle);
+  delete collection[handle];
   collection.erase(handle);
   if (free_handle>handle)
     free_handle=handle;

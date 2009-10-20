@@ -69,6 +69,9 @@ end
 spritesheet_load("level1.png");
 spritesheet_load("lantern.png");
 spritesheet_load("bullete.png")
+spritesheet_load("fontscore.png")
+font1=font_load("fontscore.png")
+label1 = label_create(440,410,"PREVED",font1,LAYER_PANEL,0)
 lantern_spawn_sound = sound_create("spawn.wav");
 log("Starting first level!");
 music_play("music.xm");

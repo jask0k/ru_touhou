@@ -16,11 +16,15 @@ enum text_align{
   ALIGN_LEFT = 1
 };
 
+enum text_layer{
+  LAYER_GAME,//слой на игровом поле
+  LAYER_PANEL//слой на панельке
+};
 
 
 class CLabel{
 public:
-  CLabel(GLint x, GLint y, std::string text, CSpriteSheet* font, GLuint decay=0);
+  CLabel(GLint x, GLint y, std::string text, CSpriteSheet* font, text_layer layer, GLuint decay=0);
   ~CLabel();
   void draw();
   decay_state think();
@@ -33,19 +37,30 @@ private:
   text_align align;
   std::string text;
   CSpriteSheet* font;
+  text_layer layer;
+  friend class CLabelManager;
 };
 
-class CText{
+class CLabelManager{
 public:
-  ~CText();
-  void draw();
+  CLabelManager();
+  ~CLabelManager();
+  void draw(text_layer layer);
   void think();
   int font_load(std::string fontname);
-  CLabel* text_add(GLint x, GLint y, std::string text, GLuint font_n, GLuint decay=0);
+  GLuint text_add(GLint x, GLint y, std::string text, GLuint font_n, text_layer layer, GLuint decay=0);
+  CLabel* get_label(GLuint handle); 
+  void destroy_label(GLuint handle);
+  
 private:
-  std::vector<CLabel*> labels;
+
+  GLuint min_handle;
+  std::map<GLuint,CLabel*> labels;
   std::vector<CSpriteSheet*> fonts;
 };
  
   
+namespace game{
+  extern CLabelManager* lmanager;
+}
 #endif

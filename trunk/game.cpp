@@ -99,12 +99,12 @@ CEngine::CEngine(){
 #endif
 
   controller = new CController;
-  text = new CText;
+  //  text = new CText;
   game::script -> run_script("init");
   game::script -> run_script("hero");
-  text -> font_load (std::string("fontg.png"));
-  text -> text_add(9, 18, std::string("fps:"), 0);
-  fps_manager = new CFrameManager(text -> text_add(45, 18, std::string("0"), 0));
+  game::lmanager -> font_load (std::string("fontg.png"));
+  game::lmanager -> text_add(9, 18, std::string("fps:"), 0, LAYER_GAME, 0);
+  fps_manager = new CFrameManager(game::lmanager-> get_label (game::lmanager -> text_add(45, 18, std::string("0"), 0, LAYER_GAME, 0)));
   ui_background = LoadTexture_simple("th_ru/ui.png");
 }
 
@@ -197,7 +197,7 @@ void CEngine::think(){
   game::hero -> set_speed_angle(c_state.strength*speed, c_state.direction);
   game::hero -> think();
   game::script -> think();
-  text ->think();
+  game::lmanager ->think();
   game::background -> think();
   game::smanager -> think();
   game::ebmanager -> think();
@@ -299,6 +299,8 @@ void CEngine::draw_game(){
     glTexCoord2i(1, 0); glVertex2i(xres, yres);
     glTexCoord2i(0, 0); glVertex2i(0, yres);}
   glEnd();
+  
+  game::lmanager -> draw(LAYER_PANEL);
 
   glDisable2D();
 
@@ -328,7 +330,8 @@ void CEngine::draw_game(){
   game::smanager -> draw(LAYER_HERO_BULLET);
   game::smanager -> draw(LAYER_HERO);
   game::smanager -> draw(LAYER_EMBLEM);
-  text -> draw();
+  game::lmanager -> draw(LAYER_GAME);
+  //  text -> draw();
 
   glDisable2D();
   glDisable(GL_SCISSOR_TEST);
