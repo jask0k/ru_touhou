@@ -3,6 +3,7 @@
 namespace game{
   CSpriteSheetManager* ssmanager = new CSpriteSheetManager;
   CSpriteManager* smanager = new CSpriteManager;
+  CLabelManager* lmanager = new CLabelManager;
   CScript* script = new CScript;
   CEngine* engine = new CEngine;
   CBack* background = new CBack;

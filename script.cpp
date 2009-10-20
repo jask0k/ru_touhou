@@ -7,6 +7,7 @@
 #define bind_function(name) lua_register(level_state, #name, bind::name)
 #define get_sprite(name) (game::smanager -> get_sprite(name))
 #define get_bullet(name) (game::ebmanager -> get_bullet(name))
+#define get_label(name) (game::lmanager -> get_label(name))
 
 
 namespace script{
@@ -85,6 +86,12 @@ namespace bind{
   declare_function(sound_play);
 
   declare_function(music_play);
+
+  declare_function(font_load);
+  declare_function(label_create);
+  declare_function(label_destroy);
+  declare_function(label_set_text);
+  declare_function(label_set_number);
 }
 
 int CScript::do_binds(){
@@ -156,6 +163,12 @@ int CScript::do_binds(){
 
   bind_function(music_play);
 
+  bind_function(font_load);
+  bind_function(label_create);
+  bind_function(label_destroy);
+  bind_function(label_set_text);
+  bind_function(label_set_number);
+
   return 0;
 }
 
@@ -168,6 +181,10 @@ int CScript::do_globals(){
   declare_number(LAYER_HERO_BULLET);
   declare_number(LAYER_HERO);
   declare_number(LAYER_EMBLEM);
+
+  declare_number(LAYER_GAME);
+  declare_number(LAYER_PANEL);
+
 
   declare_number(CONTROL_BULLET);
   declare_number(CONTROL_SPRITE);
@@ -965,3 +982,44 @@ int bind::music_play(lua_State* L){
   return 0;
 }
 
+int bind::font_load(lua_State* L){
+  char* filename;
+  script::parameters_parse(L,"s",&filename);
+  
+  int fhandle = game::lmanager -> font_load(filename);
+  lua_pushnumber(L,fhandle);
+  return 1;
+}
+
+int bind::label_create(lua_State* L){
+  GLint x,y;
+  char* text;
+  GLuint font_n,decay;
+  text_layer layer;
+  script::parameters_parse(L,"iisiii",&x,&y,&text,&font_n,&layer,&decay);
+  GLuint handle = game::lmanager -> text_add(x,y,text,font_n,layer,decay);
+  lua_pushnumber(L,handle);
+  return 1;
+}
+
+int bind::label_destroy(lua_State* L){
+  GLuint handle;
+  script::parameters_parse(L,"i",&handle);
+  game::lmanager->destroy_label(handle);
+  return 0;
+
+}
+
+int bind::label_set_text(lua_State* L){
+  GLuint handle;
+  char* text;
+  script::parameters_parse(L,"is",&handle,&text);
+  get_label(handle) -> change_text(std::string(text));
+}
+
+int bind::label_set_number(lua_State* L){
+  GLuint handle;
+  GLfloat text;
+  script::parameters_parse(L,"if",&handle,&text);
+  get_label(handle) -> change_text(text);
+}

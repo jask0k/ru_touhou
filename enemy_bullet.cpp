@@ -81,7 +81,7 @@ GLuint CEnemyBulletManager::create_proto(std::string spritesheet, GLint frame_an
   return proto_collection.size()-1;
 }
 
-GLuint CEnemyBulletManager::set_proto_tint(GLuint handle, GLfloat r, GLfloat g, GLfloat b, GLfloat a){
+void CEnemyBulletManager::set_proto_tint(GLuint handle, GLfloat r, GLfloat g, GLfloat b, GLfloat a){
   proto_collection[handle].r = r;
   proto_collection[handle].g = g;
   proto_collection[handle].b = b;
@@ -136,7 +136,7 @@ GLuint CEnemyBulletManager::destroy_bullet(GLuint handle){
   CSprite* sprite = game::smanager -> get_sprite(collection[handle] -> sprite_no);
   if (sprite != NULL){
     sprite -> set_speed(0,0);
-    sprite -> set_scale_speed(.2f);
+    sprite -> set_scale_speed(.1f);
     sprite -> set_alpha_speed(-.1f);
     sprite -> set_decay(10);
   }

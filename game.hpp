@@ -70,7 +70,7 @@ private:
   //  CHero* hero;//ГГ
   CFrameManager* fps_manager;
   CController* controller;
-  CText* text;
+  //  CText* text;
 public:
   int xres,yres;//разрешение экрана
   int colour;//цветность в битах
