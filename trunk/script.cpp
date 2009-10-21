@@ -1015,6 +1015,7 @@ int bind::label_set_text(lua_State* L){
   char* text;
   script::parameters_parse(L,"is",&handle,&text);
   get_label(handle) -> change_text(std::string(text));
+  return 0;
 }
 
 int bind::label_set_number(lua_State* L){
@@ -1022,4 +1023,5 @@ int bind::label_set_number(lua_State* L){
   GLfloat text;
   script::parameters_parse(L,"if",&handle,&text);
   get_label(handle) -> change_text(text);
+  return 0;
 }

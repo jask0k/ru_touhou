@@ -24,8 +24,8 @@ if (${WIN32})
   add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-D_GNU_SOURCE=1)
 else ()
-  set (CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3")
-  add_definitions(-DDEBUG)
+	set (CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3")
+	add_definitions(-DDEBUG)
 endif()
 
 set (danmaku_LIBS 
