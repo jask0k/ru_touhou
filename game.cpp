@@ -157,7 +157,7 @@ void CEngine::new_game(){
   game::script -> set_integer("graze",0);
   game::script -> set_integer("lives",3);
   frames = 0;
-  game::background -> init("th_ru/grnd03.jpg");
+  game::background -> init("th_ru/grass.png");
   game::hero -> set_position(GAME_FIELD_WIDTH/2, 100);
   game::script->init_level(1);
 }

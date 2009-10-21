@@ -51,8 +51,8 @@ void CBack::draw(){
     glBegin(GL_QUADS);{
       glTexCoord2f(flightX+0,flightY+0); glVertex3f(-15,0,-1);
       glTexCoord2f(flightX+5,flightY+0); glVertex3f(15,0,-1);
-      glTexCoord2f(flightX+5,flightY+5); glVertex3f(15,20,-1);
-      glTexCoord2f(flightX+0,flightY+5); glVertex3f(-15,20,-1);
+      glTexCoord2f(flightX+5,flightY+5); glVertex3f(15,30,-1);
+      glTexCoord2f(flightX+0,flightY+5); glVertex3f(-15,30,-1);
     }
     glEnd();
     glDisable (GL_FOG);
