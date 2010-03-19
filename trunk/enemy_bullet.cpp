@@ -1,8 +1,8 @@
 #include "enemy_bullet.hpp"
  
 CEnemyBullet::CEnemyBullet(GLuint sprite_no, GLfloat posx, GLfloat posy, 
-			   GLfloat angle, GLfloat speed):
-  sprite_no(sprite_no), grazed(false), acceleration(0.0f), managed(false){
+			   GLfloat angle, GLfloat speed, GLuint proto):
+  sprite_no(sprite_no), grazed(false), acceleration(0.0f), managed(false), proto_no(proto){
   CSprite* sprite_handle = game::smanager->get_sprite(sprite_no);
   sprite_handle -> set_position(posx, posy);
   sprite_handle -> set_angle(speed,angle);
@@ -75,8 +75,8 @@ int CEnemyBullet::stray(GLfloat angle){
 
 CEnemyBulletManager::CEnemyBulletManager():free_handle(1){}
 
-GLuint CEnemyBulletManager::create_proto(std::string spritesheet, GLint frame_animation, GLboolean animated, GLfloat scale){
-  SEnBulletProto proto={spritesheet, scale, animated, frame_animation,1.f,1.f,1.f,1.f};
+GLuint CEnemyBulletManager::create_proto(std::string& spritesheet, GLint frame_animation, GLboolean animated, GLfloat scale, std::string& die_func){
+  SEnBulletProto proto={spritesheet, die_func, scale, animated, frame_animation,1.f,1.f,1.f,1.f};
   proto_collection.push_back(proto);
   return proto_collection.size()-1;
 }
@@ -94,7 +94,7 @@ GLuint CEnemyBulletManager::create_bullet(GLuint proto, GLfloat xpos, GLfloat yp
     throw "incorrect proto";
   }
   GLuint sprite_num = game::smanager -> create_sprite(proto_collection[proto].spritesheet, LAYER_ENEMY_BULLET);
-  CEnemyBullet* bullet = new CEnemyBullet(sprite_num, xpos, ypos, angle, speed);
+  CEnemyBullet* bullet = new CEnemyBullet(sprite_num, xpos, ypos, angle, speed, proto);
   if (proto_collection[proto].animated)
     game::smanager -> get_sprite(sprite_num) -> start_animation(proto_collection[proto].frame_animation);
   else
@@ -129,18 +129,17 @@ GLuint CEnemyBulletManager::create_bullet_aimed_hero(GLuint proto, GLfloat xpos,
 GLuint CEnemyBulletManager::destroy_bullet(GLuint handle){
   if (collection.count(handle) == 0)
     return 0;
+  //если это интересно движку, сохраняем хэндл пули в сет уничтоженных
   if (collection[handle]->managed){
     destroyed_collection.insert(handle);
   }
-   // ЗДЕСЬ ДОЛЖНА БЫТЬ АНИМАЦИЯ ИСЧЕЗНОВЕНИЯ ПУЛИ
-  CSprite* sprite = game::smanager -> get_sprite(collection[handle] -> sprite_no);
+  GLuint sprite_no = collection[handle] -> sprite_no;
+  GLuint proto_no = collection[handle] -> proto_no;
+  CSprite* sprite = game::smanager -> get_sprite(sprite_no);
   if (sprite != NULL){
-    sprite -> set_speed(0,0);
-    sprite -> set_scale_speed(.1f);
-    sprite -> set_alpha_speed(-.1f);
-    sprite -> set_decay(10);
+    //Вызываем скрипт исчезновения пули с параметром номера спрайта
+    game::script -> run_function(proto_collection[proto_no].die_func,sprite_no);
   }
-    //  game::smanager -> destroy_sprite(get_bullet(handle) -> sprite_no);
   collection.erase(handle);
   if (free_handle>handle)
     free_handle=handle;
@@ -157,7 +156,7 @@ CEnemyBullet* CEnemyBulletManager::get_bullet(GLuint handle){
 void CEnemyBulletManager::think(){
   GLuint bad_handle;
   //  GLint graze;
-  std::map<GLuint,CEnemyBullet*>::iterator i;
+  bullet_it i;
   for (i = collection.begin();i != collection.end();)
     switch (i -> second -> graze()){
     case BULLET_KILL:
@@ -178,6 +177,7 @@ void CEnemyBulletManager::think(){
     }
   
 }
+
 GLboolean CEnemyBulletManager::bullet_destroyed(GLuint handle){
   if (destroyed_collection.count(handle)>0){
     destroyed_collection.erase(handle);
@@ -186,4 +186,57 @@ GLboolean CEnemyBulletManager::bullet_destroyed(GLuint handle){
   if (!collection[handle]->managed)
     collection[handle]->managed = true;
   return false;
+}
+
+GLuint CEnemyBulletManager::destroy_bullets_circle(GLfloat x, 
+						   GLfloat y, 
+						   GLfloat r){
+  bullet_it i;
+  GLuint bullet_counter = 0;
+  for (i=collection.begin();i!=collection.end();){
+    GLfloat bullet_x = game::smanager -> get_sprite(i->second->sprite_no) -> get_xpos();
+    GLfloat bullet_y = game::smanager -> get_sprite(i->second->sprite_no) -> get_ypos();
+    if (hypot(fabs(bullet_x - x),fabs(bullet_y - y)) <= r){
+      GLuint bad_handle = i -> first;
+      ++i;
+      destroy_bullet(bad_handle);
+      ++bullet_counter;
+    }
+    else
+      ++i;
+  }
+  return bullet_counter;
+}
+
+GLuint CEnemyBulletManager::destroy_bullets_rectangle(GLfloat x1, GLfloat y1,
+						      GLfloat x2, GLfloat y2){
+  bullet_it i;
+  GLuint bullet_counter = 0;
+  for (i=collection.begin();i!=collection.end();){
+    GLfloat bullet_x = game::smanager -> get_sprite(i->second->sprite_no) -> get_xpos();
+    GLfloat bullet_y = game::smanager -> get_sprite(i->second->sprite_no) -> get_ypos();
+    //TODO: нормальная проверка
+    if ((bullet_x >= x1) && (bullet_x <= x2) &&
+	(bullet_y >= y1) && (bullet_y <= y2)){
+      GLuint bad_handle = i -> first;
+      ++i;
+      destroy_bullet(bad_handle);
+      ++bullet_counter;
+    }
+    else
+      ++i;
+  }
+  return bullet_counter;
+}
+
+GLuint CEnemyBulletManager::destroy_bullets_all(){
+  bullet_it i;
+  GLuint bullet_counter = 0;
+  for (i=collection.begin();i!=collection.end();){
+    GLuint bad_handle = i -> first;
+    ++i;
+    destroy_bullet(bad_handle);
+    ++bullet_counter;
+  }
+  return bullet_counter;
 }

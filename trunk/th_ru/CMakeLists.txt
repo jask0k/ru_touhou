@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 find_program(LUA_COMPILER 
   NAMES luac luac5.1)
 
-set (LUA_B init.luc level1.luc hero.luc)
+set (LUA_B functions.luc init.luc level1.luc hero.luc)
 
 add_custom_target (scripts ALL DEPENDS ${LUA_B})
 

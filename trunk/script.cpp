@@ -41,6 +41,9 @@ namespace bind{
   declare_function(enbullet_create_target);
   declare_function(enbullet_create_hero);
   declare_function(enbullet_destroy);
+  declare_function(enbullet_destroy_all);
+  declare_function(enbullet_destroy_circle);
+  declare_function(enbullet_destroy_rectangle);
   declare_function(enbullet_destroyed);
   declare_function(enbullet_lock_on);
   declare_function(enbullet_lock_on_hero);
@@ -117,6 +120,9 @@ int CScript::do_binds(){
   bind_function(enbullet_create_target);
   bind_function(enbullet_create_hero);
   bind_function(enbullet_destroy);
+  bind_function(enbullet_destroy_all);
+  bind_function(enbullet_destroy_circle);
+  bind_function(enbullet_destroy_rectangle);
   bind_function(enbullet_destroyed);
   bind_function(enbullet_lock_on);
   bind_function(enbullet_lock_on_hero);
@@ -236,6 +242,24 @@ int CScript::run_function(std::string funcname){
 #endif
       return 1;
     }
+  return 0;
+}
+
+int CScript::run_function(std::string funcname, GLuint parameter){
+  lua_getfield(level_state, LUA_GLOBALSINDEX, funcname.c_str());
+  if (lua_isfunction(level_state,-1)){
+    lua_pushinteger(level_state,parameter);
+    if (lua_pcall(level_state,1,0,0) != 0){
+#ifdef DEBUG
+      std::string err_message(luaL_checklstring(level_state,1,NULL));
+      luaL_where(level_state,0);
+      std::string err_pos = lua_tolstring(level_state,-1,NULL);
+
+      std::cerr << "lua error while running function:" << err_pos << err_message << std::endl;
+#endif
+      return 1;
+    }
+  }
   return 0;
 }
 
@@ -606,12 +630,16 @@ int bind::spritesheet_load(lua_State* L){
 
 int bind::enbullet_create_proto(lua_State* L){
   char* spritesheet;
+  char* die_func;
   GLint frame_animation;
   GLint animated;
   GLfloat scale;
   
-  script::parameters_parse(L,"siif", &spritesheet, &frame_animation, &animated, &scale);
-  GLuint handle = game::ebmanager->create_proto(spritesheet,frame_animation,(animated==1),scale);
+  script::parameters_parse(L,"siifs", &spritesheet, &frame_animation, &animated, &scale, &die_func);
+  std::string spritesheet_s(spritesheet);
+  std::string die_func_s(die_func);
+
+  GLuint handle = game::ebmanager->create_proto(spritesheet_s,frame_animation,(animated==1),scale,die_func_s);
   lua_pushinteger(L,handle);
   return 1;
 }
@@ -666,6 +694,30 @@ int bind::enbullet_destroy(lua_State* L){
 
   script::parameters_parse(L, "i", &handle);
   game::ebmanager -> destroy_bullet(handle);
+  return 0;
+}
+
+int bind::enbullet_destroy_all(lua_State* L){
+  //  GLuint handle;
+
+  //script::parameters_parse(L, "i", &handle);
+  game::ebmanager -> destroy_bullets_all();
+  return 0;
+}
+
+int bind::enbullet_destroy_circle(lua_State* L){
+  GLfloat x,y,r;
+
+  script::parameters_parse(L, "fff", &x, &y, &r);
+  game::ebmanager -> destroy_bullets_circle(x,y,r);
+  return 0;
+}
+
+int bind::enbullet_destroy_rectangle(lua_State* L){
+  GLfloat x1,y1,x2,y2;
+
+  script::parameters_parse(L, "ffff", &x1, &y1, &x2, &y2);
+  game::ebmanager -> destroy_bullets_rectangle(x1,y1,x2,y2);
   return 0;
 }
 

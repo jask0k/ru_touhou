@@ -76,9 +76,9 @@ lantern_spawn_sound = sound_create("spawn.wav");
 log("Starting first level!");
 music_play("music.xm");
 --sample_proto = enbullet_create_proto("bullets.png",0,0,1)
-sample_proto = enbullet_create_proto("bullete.png",2,0,.3)
+sample_proto = enbullet_create_proto("bullete.png",3,0,.3,"explosion")
 enbullet_set_proto_tint(sample_proto, .781, .5, .25, 1.)
-sample_proto2 = enbullet_create_proto("bullets.png",3,0,2)
+sample_proto2 = enbullet_create_proto("bullete.png",0,0,1,"big_bad")
 wait_time(1); -- Подождать кадр
 
 background_set_fog_density(.5,-0.004);
@@ -98,10 +98,12 @@ wait_time(130); -- Ещё ждём
 for i = 1,5 do
    local lantern = sprite_create("lantern.png",LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
-   thread_start(lantern_AI,string.format("sprite_destroyed(%d)",lantern),lantern);
+   --  thread_start(lantern_AI,string.format("sprite_destroyed(%d)",lantern),lantern);
+   control_sprite(lantern_AI, lantern);
    local lantern2 = sprite_create("lantern.png",LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
-   thread_start(lantern2_AI,string.format("sprite_destroyed(%d)",lantern2),lantern2);
+   -- thread_start(lantern2_AI,string.format("sprite_destroyed(%d)",lantern2),lantern2);
+   control_sprite(lantern2_AI, lantern2);
    wait_time(60);
 end
 --wait_time(10000);
