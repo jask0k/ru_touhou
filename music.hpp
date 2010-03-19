@@ -28,6 +28,8 @@ public:
 
   void play_music(const char *file);
   void play_music(SDL_RWops *src);
+
+  void sound_disable(){no_sound = true;};
 };
 
 namespace game {

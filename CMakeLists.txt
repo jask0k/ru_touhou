@@ -34,8 +34,8 @@ set (danmaku_LIBS
   ${ZZIP_LIBRARY} )
 
 set (danmaku_SRCS 
-  back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp
-  main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp SDL_rwops_zzip.c)
+  back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp variables.cpp
+  main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp SDL_rwops_zzip.c enemy.cpp)
 
 add_executable (danmaku ${danmaku_SRCS})
 target_link_libraries(danmaku ${danmaku_LIBS})

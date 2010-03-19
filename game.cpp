@@ -101,6 +101,7 @@ CEngine::CEngine(){
   controller = new CController;
   //  text = new CText;
   game::script -> run_script("init");
+  game::script -> run_script("functions");
   game::script -> run_script("hero");
   game::lmanager -> font_load (std::string("fontg.png"));
   game::lmanager -> text_add(9, 18, std::string("fps:"), 0, LAYER_GAME, 0);
