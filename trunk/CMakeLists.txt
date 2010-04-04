@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.6) 
-project (danmaku)
+cmake_minimum_required(VERSION 2.6) 
+project(danmaku)
 
 find_package(SDL REQUIRED)
 find_package(SDL_image REQUIRED)
@@ -11,7 +11,7 @@ find_package(GLU REQUIRED)
 find_library(ZZIP_LIBRARY zzip)
 find_path(ZZIP_INCLUDE_DIR zzip.h)
 
-set (danmaku_INCLUDES 
+set(danmaku_INCLUDES 
   ${CMAKE_SOURCE_DIR} ${SDL_INCLUDE_DIR} 
   ${SDLMIXER_INCLUDE_DIR}
   ${SDLIMAGE_INCLUDE_DIR} ${LUA_INCLUDE_DIR} 
@@ -20,24 +20,30 @@ set (danmaku_INCLUDES
 
 include_directories(${danmaku_INCLUDES})
 
-if (${WIN32})
+if(${WIN32})
   add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-D_GNU_SOURCE=1)
-else ()
-	set (CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3")
-	add_definitions(-DDEBUG)
-endif()
+else(${WIN32})
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3")
+  add_definitions(-DDEBUG)
+endif(${WIN32})
 
-set (danmaku_LIBS 
+if(CMAKE_COMPILER_IS_MINGW)
+  SET(CMAKE_RC_COMPILER "windres")
+  SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <SOURCE> -O coff -o <OBJECT>")
+  ENABLE_LANGUAGE(RC)
+endif(CMAKE_COMPILER_IS_MINGW)
+
+set(danmaku_LIBS 
   ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${LUA_LIBRARIES} 
   ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${SDLMIXER_LIBRARY}
-  ${ZZIP_LIBRARY} )
+  ${ZZIP_LIBRARY})
 
-set (danmaku_SRCS 
+set(danmaku_SRCS 
   back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp variables.cpp
-  main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp SDL_rwops_zzip.c enemy.cpp)
-
-add_executable (danmaku ${danmaku_SRCS})
+  main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp SDL_rwops_zzip.c enemy.cpp danmaku.rc)
+  
+add_executable(danmaku ${danmaku_SRCS})
 target_link_libraries(danmaku ${danmaku_LIBS})
 
 add_subdirectory(th_ru)
