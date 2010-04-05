@@ -1,23 +1,30 @@
 #include "main.hpp"
 
-#include <cstring>
-
 namespace game{
-  CSpriteSheetManager* ssmanager = new CSpriteSheetManager;
-  CSpriteManager* smanager = new CSpriteManager;
-  CLabelManager* lmanager = new CLabelManager;
-  CScript* script = new CScript;
-  CEngine* engine = new CEngine;
-  CBack* background = new CBack;
+  CSpriteSheetManager* ssmanager;
+  CSpriteManager* smanager;
+  CLabelManager* lmanager;
+  CScript* script;
+  CEngine* engine;
+  CBack* background;
   CHero* hero;
-  CEnemyBulletManager* ebmanager = new CEnemyBulletManager;
-  CParticleManager* pmanager = new CParticleManager;
-  CBoomBox *boom_box = new CBoomBox;
+  CEnemyBulletManager* ebmanager;
+  CParticleManager* pmanager;
+  CBoomBox* boom_box;
 }
 
 int main(int argc, char* argv[]){
-  int i;
-  for (i = 1;i<argc;i++)
+  PHYSFS_init(argv[0]);
+  game::ssmanager = new CSpriteSheetManager;
+  game::smanager = new CSpriteManager;
+  game::lmanager = new CLabelManager;
+  game::script = new CScript;
+  game::engine = new CEngine;
+  game::background = new CBack;
+  game::ebmanager = new CEnemyBulletManager;
+  game::pmanager = new CParticleManager;
+  game::boom_box = new CBoomBox;
+  for (int i = 1;i<argc;i++)
     if (strncmp("-nosound",argv[i],8) == 0){
 #ifdef DEBUG
       std::cerr << "Disabling sound!\n";

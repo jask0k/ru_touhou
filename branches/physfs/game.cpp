@@ -1,12 +1,5 @@
 #include "game.hpp"
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <SDL/SDL_image.h>
-#include <cmath>
-#include <iostream>
-
-
 CFrameManager::CFrameManager(CLabel* label): FPS(0),frames(0),fps_label(label),
 					     fps_ticks(1000.0/60.0),last_ticks(SDL_GetTicks()){
 }
@@ -97,6 +90,9 @@ CEngine::CEngine(){
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
+  
+  PHYSFS_addToSearchPath("th_ru.dat", 1);
+  PHYSFS_addToSearchPath("./", 1);
 
   controller = new CController;
   //  text = new CText;

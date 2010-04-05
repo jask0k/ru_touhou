@@ -1,7 +1,5 @@
 #include "script.hpp"
 
-#include <cstdarg>
-
 #define declare_number(name) lua_pushnumber(level_state, name);lua_setglobal(level_state, #name)
 #define declare_function(name) int name(lua_State* L)
 #define bind_function(name) lua_register(level_state, #name, bind::name)
@@ -11,8 +9,6 @@
 
 
 namespace script{
-  //функция чтения скриптов из dat
-  const char* reader(lua_State* L, void* filename, size_t* size);
   //формат вида "ifs", где каждый символ - тип переменной
   int parameters_parse(lua_State* L, std::string format, ...);
 }
@@ -210,8 +206,25 @@ CScript::~CScript(){
 }
 
 int CScript::load_script(std::string scriptname){
-  std::string full_path=std::string("th_ru/")+scriptname+std::string(".luc");
-  return lua_load(level_state,script::reader, (void*)full_path.c_str(), scriptname.c_str());
+  std::string full_path=std::string("th_ru/")+scriptname+std::string(".lua");
+  SDL_RWops *fp;
+  long len=0;
+  char *buf=NULL;
+  fp=PHYSFSRWOPS_openRead(full_path.c_str());
+  if (fp!=NULL)
+  {
+      SDL_RWseek(fp, 0, SEEK_END);
+      len=SDL_RWtell(fp); //get position at end (length)
+      SDL_RWseek(fp, 0, SEEK_SET);
+      buf=(char *)malloc(len); //malloc buffer
+      SDL_RWread(fp,buf,len,1); //read into buffer
+      SDL_RWclose(fp);
+  }
+  else
+  {
+   printf("Script load failed: %s\n", SDL_GetError());
+  }
+  return luaL_loadbuffer(level_state,buf,len-1,scriptname.c_str());
 }
 
 int CScript::run_script(std::string scriptname){
@@ -477,16 +490,6 @@ int CScript::set_cond(lua_State* state, std::string cond){
   else
     AI_states[state].wait_condition = cond; 
   return 0;
-}
-
-const char* script::reader(lua_State* L, void* filename, size_t* size){
-  (void)L;//чтоб не было варнинга
-  SDL_RWops* rwops;
-  char* buf = (char*)calloc(1024*1024,sizeof(char));
-  rwops=SDL_RWFromZZIP((char*)filename,"r");
-  *size = SDL_RWread(rwops, buf, sizeof(char), 1024*1024);
-  buf = (char*)realloc(buf,*size);
-  return buf;
 }
 
 int script::parameters_parse(lua_State* L, std::string format, ...){
@@ -1002,7 +1005,7 @@ int bind::sound_create(lua_State* L){
   script::parameters_parse(L,"s",&filename);
 
   std::string full_path = std::string("th_ru/")+filename;
-  SDL_RWops* file=SDL_RWFromZZIP(full_path.c_str(), "r");
+  SDL_RWops* file=PHYSFSRWOPS_openRead(full_path.c_str());
   int sound_handle = game::boom_box->create_sound(file);
   if(file) SDL_RWclose(file);
   lua_pushinteger(L,sound_handle);
@@ -1028,7 +1031,7 @@ int bind::music_play(lua_State* L){
   script::parameters_parse(L,"s",&filename);
 
   std::string full_path = std::string("th_ru/")+filename;
-  SDL_RWops* file=SDL_RWFromZZIP(full_path.c_str(), "r");
+  SDL_RWops* file=PHYSFSRWOPS_openRead(full_path.c_str());
   game::boom_box -> play_music(file);
   if(file) SDL_RWclose(file);
   return 0;

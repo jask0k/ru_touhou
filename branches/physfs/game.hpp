@@ -13,10 +13,14 @@ class CScript;
 #include "enemy_bullet.hpp"
 #include "particles.hpp"
 #include "music.hpp"
+#include "physfsrwops.h"
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
+#include <SDL/SDL_image.h>
+#include <cmath>
 #include <ctime>
+#include <iostream>
 #ifndef WIN32
 #include <unistd.h>
 #endif
