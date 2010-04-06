@@ -30,7 +30,7 @@ if(MINGW OR MSYS)
   SET(CMAKE_RC_COMPILER "windres")
   SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <SOURCE> -O coff -o <OBJECT>")
   enable_language(RC)
-  add_definitions(-Wl,--subsystem,windows)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--subsystem,windows")
 endif()
 
 set(danmaku_LIBS 
