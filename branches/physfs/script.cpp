@@ -206,29 +206,37 @@ CScript::~CScript(){
 }
 
 int CScript::load_script(std::string scriptname){
-  std::string full_path=std::string("th_ru/")+scriptname+std::string(".lua");
+  std::string full_path=std::string("th_ru/")+scriptname+std::string(".luc");
   SDL_RWops *fp;
   long len=0;
   char *buf=NULL;
   fp=PHYSFSRWOPS_openRead(full_path.c_str());
   if (fp!=NULL)
   {
-      SDL_RWseek(fp, 0, SEEK_END);
-      len=SDL_RWtell(fp); //get position at end (length)
-      SDL_RWseek(fp, 0, SEEK_SET);
-      buf=(char *)malloc(len); //malloc buffer
-      SDL_RWread(fp,buf,len,1); //read into buffer
-      SDL_RWclose(fp);
+    SDL_RWseek(fp, 0, SEEK_END);
+    len=SDL_RWtell(fp); //get position at end (length)
+    SDL_RWseek(fp, 0, SEEK_SET);
+    buf=(char *)malloc(len); //malloc buffer
+    SDL_RWread(fp,buf,len,1); //read into buffer
+    SDL_RWclose(fp);
   }
   else
   {
-   printf("Script load failed: %s\n", SDL_GetError());
+    printf("Script load failed: %s\n", SDL_GetError());
   }
-  return luaL_loadbuffer(level_state,buf,len-1,scriptname.c_str());
+  return luaL_loadbuffer(level_state,buf,len,scriptname.c_str());
 }
 
 int CScript::run_script(std::string scriptname){
-  load_script(scriptname);
+  int ret=load_script(scriptname);
+  if(ret) {
+ #ifdef DEBUG
+    std::string err_str(luaL_checklstring(level_state,1,NULL));
+    std::cerr <<"lua error: "<< err_str << std::endl;
+#endif
+    return -1;
+  }
+
   if (lua_pcall(level_state,0,0,0) == 0){
     return 0;
   } else {
