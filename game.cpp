@@ -43,7 +43,6 @@ GLfloat CFrameManager::get_FPS(){
 
 CEngine::CEngine(){
   PHYSFS_addToSearchPath("th_ru.dat", 1);
-  PHYSFS_addToSearchPath("./", 1);
   state.screenshot = false;
   read_config();
 #ifdef DEBUG
@@ -103,7 +102,7 @@ CEngine::CEngine(){
   game::lmanager -> font_load (std::string("fontg.png"));
   game::lmanager -> text_add(9, 18, std::string("fps:"), 0, LAYER_GAME, 0);
   fps_manager = new CFrameManager(game::lmanager-> get_label (game::lmanager -> text_add(45, 18, std::string("0"), 0, LAYER_GAME, 0)));
-  ui_background = LoadTexture_simple("th_ru/ui.png");
+  ui_background = LoadTexture_simple("ui.png");
 }
 
 CEngine::~CEngine(){
@@ -155,7 +154,7 @@ void CEngine::new_game(){
   game::script -> set_integer("graze",0);
   game::script -> set_integer("lives",3);
   frames = 0;
-  game::background -> init("th_ru/grass.png");
+  game::background -> init("grass.png");
   game::hero -> set_position(GAME_FIELD_WIDTH/2, 100);
   game::script->init_level(1);
 }

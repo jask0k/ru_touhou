@@ -34,9 +34,9 @@ private:
   //вектор векторов анимаций
   
 public:
-  CSpriteSheet(char* filename);
+  CSpriteSheet(const char* filename);
   std::string sheetname;
-  vvint* parse_props(char* filename);
+  vvint* parse_props(const char* filename);
   void draw(GLuint animation, GLuint state, GLfloat x, GLfloat y, GLfloat rotation=0.0f, GLfloat scale=1.0f);
   void draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation=0.0f, GLfloat scale=1.0f); 
   //рисование с плавающими координатами
@@ -63,7 +63,7 @@ class CSpriteSheetManager{
 private:
   std::map<std::string,CSpriteSheet*> collection;
 public:
-  CSpriteSheet* load(char* filename);
+  CSpriteSheet* load(const char* filename);
   CSpriteSheet* dispatch(std::string sheetname);
 };
 
