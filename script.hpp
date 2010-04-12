@@ -1,16 +1,18 @@
 #ifndef _SCRIPT_HPP
 #define _SCRIPT_HPP
+
 class CEngine;
 
+#include <lua.hpp>
+#include <string>
+#include <cstdarg>
 
 #include "game.hpp"
 #include "hero.hpp"
 #include "back.hpp"
 #include "enemy_bullet.hpp"
 #include "text.hpp"
-#include <lua.hpp>
-#include "SDL_rwops_zzip.h"
-#include <string>
+#include "physfsrwops.h"
 
 //ЧТО ЭТОАААААААА?
 enum control_type{
