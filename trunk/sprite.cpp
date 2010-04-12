@@ -1,15 +1,14 @@
 #include "sprite.hpp"
 
-CSpriteSheet::CSpriteSheet(char* filename){
-  std::string full_filename = "th_ru/";
+CSpriteSheet::CSpriteSheet(const char* filename){
+  std::string full_filename = "";
   full_filename += filename;
-  if (LoadTexture(full_filename.c_str(), texture_handle,  sdl_texture)){
+  if (LoadTexture(filename, texture_handle, sdl_texture)){
 #ifdef DEBUG
     std::cerr << "Loaded spritesheet '" << filename << "'!" << std::endl;
 #endif
-    
     full_filename+=".spr";
-    animations = parse_props((char*)full_filename.c_str());
+    animations = parse_props(full_filename.c_str());
   }
   else{
     std::cerr << "could not load spritesheet " << filename << std::endl;
@@ -17,7 +16,7 @@ CSpriteSheet::CSpriteSheet(char* filename){
   }
 }
 
-vvint* CSpriteSheet::parse_props(char* filename){
+vvint* CSpriteSheet::parse_props(const char* filename){
   vvint* result = new vvint;
   vvint::iterator current_animation = result->begin();
   SDL_RWops* props_file=PHYSFSRWOPS_openRead(filename);
@@ -187,7 +186,7 @@ GLuint CSpriteSheet::get_pause(GLuint animation, GLuint state){
     return 0;
 }
 
-CSpriteSheet* CSpriteSheetManager::load(char* filename){
+CSpriteSheet* CSpriteSheetManager::load(const char* filename){
   CSpriteSheet* spritesheet = new CSpriteSheet(filename);
   std::string sheetname(filename);
   collection[sheetname] = spritesheet;

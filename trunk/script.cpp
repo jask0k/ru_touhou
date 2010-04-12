@@ -206,7 +206,7 @@ CScript::~CScript(){
 }
 
 int CScript::load_script(std::string scriptname){
-  std::string full_path=std::string("th_ru/")+scriptname+std::string(".luc");
+  std::string full_path=scriptname+std::string(".luc");
   SDL_RWops *fp;
   long len=0;
   char *buf=NULL;
@@ -1012,8 +1012,7 @@ int bind::sound_create(lua_State* L){
   char* filename;
   script::parameters_parse(L,"s",&filename);
 
-  std::string full_path = std::string("th_ru/")+filename;
-  SDL_RWops* file=PHYSFSRWOPS_openRead(full_path.c_str());
+  SDL_RWops* file = PHYSFSRWOPS_openRead(filename);
   int sound_handle = game::boom_box->create_sound(file);
   if(file) SDL_RWclose(file);
   lua_pushinteger(L,sound_handle);
@@ -1038,8 +1037,7 @@ int bind::music_play(lua_State* L){
   char* filename;
   script::parameters_parse(L,"s",&filename);
 
-  std::string full_path = std::string("th_ru/")+filename;
-  SDL_RWops* file=PHYSFSRWOPS_openRead(full_path.c_str());
+  SDL_RWops* file = PHYSFSRWOPS_openRead(filename);
   game::boom_box -> play_music(file);
   if(file) SDL_RWclose(file);
   return 0;

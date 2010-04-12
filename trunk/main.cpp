@@ -40,5 +40,6 @@ int main(int argc, char* argv[]){
   delete game::script;
   delete game::smanager;
   delete game::ssmanager;
+  PHYSFS_deinit();
   return 0;
 }
