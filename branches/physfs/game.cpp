@@ -42,6 +42,8 @@ GLfloat CFrameManager::get_FPS(){
 //}
 
 CEngine::CEngine(){
+  PHYSFS_addToSearchPath("th_ru.dat", 1);
+  PHYSFS_addToSearchPath("./", 1);
   state.screenshot = false;
   read_config();
 #ifdef DEBUG
@@ -51,6 +53,8 @@ CEngine::CEngine(){
   if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) != 0) {
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
   }
+  //грузим иконку окна
+  SDL_WM_SetIcon(IMG_Load_RW(PHYSFSRWOPS_openRead("icon.png"), 1), NULL);
   screen = SDL_SetVideoMode(xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen));
   
   //убираем курсор с экрана
@@ -91,9 +95,6 @@ CEngine::CEngine(){
   std::cerr << ".done!" << std::endl;
 #endif
   
-  PHYSFS_addToSearchPath("th_ru.dat", 1);
-  PHYSFS_addToSearchPath("./", 1);
-
   controller = new CController;
   //  text = new CText;
   game::script -> run_script("init");
