@@ -20,7 +20,7 @@ CSpriteSheet::CSpriteSheet(char* filename){
 vvint* CSpriteSheet::parse_props(char* filename){
   vvint* result = new vvint;
   vvint::iterator current_animation = result->begin();
-  SDL_RWops* props_file=SDL_RWFromZZIP(filename, "r");
+  SDL_RWops* props_file=PHYSFSRWOPS_openRead(filename);
   std::istringstream parse_numbers;
 #ifdef DEBUG
   std::cerr << "Parsing " << filename << ".";

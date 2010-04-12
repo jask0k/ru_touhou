@@ -16,7 +16,7 @@
 
 #include "copypasta.hpp"
 #include "config.hpp"
-#include "SDL_rwops_zzip.h"
+#include "physfsrwops.h"
 
 typedef std::vector<int> vint;
 typedef std::vector<std::vector<int> > vvint;

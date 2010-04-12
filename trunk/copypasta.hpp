@@ -6,7 +6,8 @@
 #include <SDL/SDL_image.h>
 #include <iostream>
 #include <cmath>
-#include "SDL_rwops_zzip.h"
+
+#include "physfsrwops.h"
 
 #define TEXTURE_LOAD_FAIL 0
 #define TEXTURE_LOAD_SUCCESS 1

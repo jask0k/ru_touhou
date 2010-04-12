@@ -1,12 +1,5 @@
 #include "game.hpp"
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <SDL/SDL_image.h>
-#include <cmath>
-#include <iostream>
-
-
 CFrameManager::CFrameManager(CLabel* label): FPS(0),frames(0),fps_label(label),
 					     fps_ticks(1000.0/60.0),last_ticks(SDL_GetTicks()){
 }
@@ -49,6 +42,8 @@ GLfloat CFrameManager::get_FPS(){
 //}
 
 CEngine::CEngine(){
+  PHYSFS_addToSearchPath("th_ru.dat", 1);
+  PHYSFS_addToSearchPath("./", 1);
   state.screenshot = false;
   read_config();
 #ifdef DEBUG
@@ -58,6 +53,8 @@ CEngine::CEngine(){
   if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) != 0) {
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
   }
+  //грузим иконку окна
+  SDL_WM_SetIcon(IMG_Load_RW(PHYSFSRWOPS_openRead("icon.png"), 1), NULL);
   screen = SDL_SetVideoMode(xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen));
   
   //убираем курсор с экрана
@@ -97,7 +94,7 @@ CEngine::CEngine(){
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
-
+  
   controller = new CController;
   //  text = new CText;
   game::script -> run_script("init");
