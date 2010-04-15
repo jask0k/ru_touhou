@@ -3,6 +3,7 @@
 
 #include <SDL/SDL_opengl.h>
 #include <SDL/SDL.h>
+
 #include "copypasta.hpp"
 #include "config.hpp"
 

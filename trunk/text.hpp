@@ -3,12 +3,13 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
-#include "config.hpp"
-#include "sprite.hpp"
 #include <vector>
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include "config.hpp"
+#include "sprite.hpp"
 
 enum text_align{
   ALIGN_RIGHT = -1,

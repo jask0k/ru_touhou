@@ -1,4 +1,5 @@
 #include "back.hpp"
+
 void CBack::init(const char* filename, GLfloat vy){
   this->flightY = 0.0f;
   this->flightX = 0.0f;

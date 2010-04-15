@@ -1,12 +1,14 @@
 #ifndef _HERO_HPP
 #define _HERO_HPP
 
-#include "sprite.hpp"
-#include <SDL/SDL_opengl.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_opengl.h>
+#include <iostream>
 #include <cmath>
-#include "config.hpp"
 
+#include "sprite.hpp"
+#include "config.hpp"
 
 class CHero{
 public:
