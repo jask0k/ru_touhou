@@ -18,12 +18,16 @@ set(danmaku_INCLUDES
 
 include_directories(${danmaku_INCLUDES})
 
-IF(MSVC)
+add_definitions(-DDEBUG)
+
+if(MSVC)
   add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-D_GNU_SOURCE=1)
-else()
+endif()
+  
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
   set(CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3")
-  add_definitions(-DDEBUG)
+  set(CMAKE_C_FLAGS "-Wall -Wextra -ggdb3")
 endif()
 
 if(MINGW OR MSYS)
