@@ -5,6 +5,8 @@
 #include <SDL/SDL_mixer.h>
 #include <tr1/memory>
 #include <vector>
+#include <iostream>
+#include <cstdlib>
 
 class CSound;
 typedef std::tr1::shared_ptr<CSound> CSoundP;

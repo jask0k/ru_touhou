@@ -4,7 +4,6 @@
 #include <SDL/SDL_opengl.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_rwops.h>
-
 #include <cstdlib>
 #include <vector>
 #include <string>

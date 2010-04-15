@@ -1,5 +1,6 @@
 #ifndef _VARIABLES_HPP
 #define _VARIABLES_HPP
+
 #include "text.hpp" 
 
 class CVariable{

@@ -1,12 +1,13 @@
 #ifndef _ENEMY_BULLET_HPP
 #define _ENEMY_BULLET_HPP
 
+#include <map>
+#include <cmath>
+
 #include "script.hpp"
 #include "sprite.hpp"
 #include "config.hpp"
 #include "particles.hpp"
-#include <map>
-#include <cmath>
 
 #define BULLET_KILL 2
 #define BULLET_GRAZE 1

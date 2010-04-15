@@ -1,6 +1,16 @@
 #ifndef _GAME_HPP
 #define _GAME_HPP
 
+#include <SDL/SDL.h>
+#include <SDL/SDL_opengl.h>
+#include <SDL/SDL_image.h>
+#include <cmath>
+#include <ctime>
+#include <iostream>
+#ifndef WIN32
+#include <unistd.h>
+#endif
+
 class CScript;
 
 #include "config.hpp"
@@ -14,16 +24,6 @@ class CScript;
 #include "particles.hpp"
 #include "music.hpp"
 #include "physfsrwops.h"
-
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-#include <SDL/SDL_image.h>
-#include <cmath>
-#include <ctime>
-#include <iostream>
-#ifndef WIN32
-#include <unistd.h>
-#endif
 
 namespace game{
   extern CEngine* engine;

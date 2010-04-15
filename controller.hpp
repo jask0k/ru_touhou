@@ -1,11 +1,14 @@
 #ifndef _CONTROLLER_HPP
 #define _CONTROLLER_HPP
-#include "config.hpp"
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 #include <set>
 #include <cmath>
 #include <iostream>
+
+#include "config.hpp"
+
 enum EButton{
   B_NIL = 0,
   B_UP = 1,

@@ -1,6 +1,4 @@
 #include "hero.hpp"
-#include <iostream>
-#include <SDL/SDL_image.h>
 
 CHero::CHero(const char* texture_file):
   vx(0),vy(0),x(GAME_FIELD_WIDTH/2),y(100),max_speed(8),
