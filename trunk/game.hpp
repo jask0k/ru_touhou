@@ -7,6 +7,10 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#ifdef WIN32
+#include <SDL/SDL_syswm.h>
+#include <winuser.h>
+#endif
 #ifndef WIN32
 #include <unistd.h>
 #endif
@@ -88,6 +92,8 @@ public:
   void draw_game();//рисование гуя и игры(нужно для красивого заблюривания во время паузы)
   int save_screenshot();
   unsigned long int get_frame(){return frames;};
-  
+#ifdef WIN32
+  HICON icon;
+#endif
 };
 #endif

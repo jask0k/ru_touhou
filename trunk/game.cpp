@@ -52,8 +52,20 @@ CEngine::CEngine(){
   if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) != 0) {
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
   }
-  //грузим иконку окна
+  SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
+  //Под виндой берём иконку из ресурсов бинарника и устанавливаем её для окна
+  //средствами винды. Не под виндой используем родную функцию SDL.
+  //Всё потому, что SDL отвратительно масштабирует иконку из игровых ресурсов.
+#ifdef WIN32
+  icon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(100));
+  SDL_SysWMinfo wminfo;
+  SDL_VERSION(&wminfo.version);
+  SDL_GetWMInfo(&wminfo);
+  HWND hwnd = wminfo.window;
+  SetClassLongPtr(hwnd, GCLP_HICON, (LONG_PTR)icon);
+#else
   SDL_WM_SetIcon(IMG_Load_RW(PHYSFSRWOPS_openRead("icon.png"), 1), NULL);
+#endif
   screen = SDL_SetVideoMode(xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen));
   
   //убираем курсор с экрана
@@ -89,7 +101,6 @@ CEngine::CEngine(){
   glEnable( GL_LIGHTING );
   glEnable( GL_POINT_SMOOTH );
   
-  SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
@@ -113,6 +124,9 @@ CEngine::~CEngine(){
   std::cerr << "Quitting.";
 #endif
   SDL_Quit();
+#ifdef WIN32
+  DestroyIcon(icon);
+#endif
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
