@@ -372,7 +372,7 @@ GLuint CSpriteManager::create_sprite(std::string spritesheet, Layer layer){
 }
 
 CSprite* CSpriteManager::get_sprite(GLuint handle){
-  return collection.get(handle);
+  return collection[handle];
   // if (collection.count(handle) == 1)
   //   return collection[handle];
   // else

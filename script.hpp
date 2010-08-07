@@ -7,6 +7,7 @@ class CEngine;
 #include <string>
 #include <cstdarg>
 
+#include "sprite.hpp"
 #include "game.hpp"
 #include "hero.hpp"
 #include "back.hpp"
