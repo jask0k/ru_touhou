@@ -8,6 +8,8 @@
 #include <sstream>
 #include <string>
 
+class CSpriteSheet;
+
 #include "config.hpp"
 #include "sprite.hpp"
 

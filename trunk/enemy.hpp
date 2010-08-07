@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 
+#include "collection.hpp"
 #include "enemy_bullet.hpp"
 #include "sprite.hpp"
 
@@ -22,7 +23,7 @@ private:
   GLuint bullet_proto;
   GLfloat hp;
   
-  GLboolean managed;
+  //  GLboolean managed;
 public:
   CEnemy(GLuint proto, GLuint bullet_proto, GLuint sprite, GLfloat max_hp);
   GLboolean think();
@@ -30,15 +31,16 @@ public:
   void shoot_at(GLfloat x, GLfloat y);
   void shoot_at_hero(GLfloat stray);
   void set_speed(GLfloat vx, GLfloat vy, GLfloat vr);
+  void set_animation(GLuint animation);
   friend class CEnemyManager;
 };
 
 class CEnemyManager{
 private:
-  std::map<GLuint,CEnemy*> collection;
+  CCollection<CEnemy> collection;
   std::vector<SEnemyProto> proto_collection;
-  std::set<GLuint> destroyed_collection;
-  GLuint free_handle;
+  //  std::set<GLuint> destroyed_collection;
+  //  GLuint free_handle;
 public:
   CEnemyManager();
   GLuint create_enemy_proto(std::string sheetname, GLuint animation, GLfloat max_hp, GLuint bullet_proto, std::string die_func);

@@ -16,10 +16,10 @@
 #endif
 
 class CScript;
-
+class CLabel;
 #include "config.hpp"
-#include "hero.hpp"
 #include "sprite.hpp"
+#include "hero.hpp"
 #include "copypasta.hpp"
 #include "controller.hpp"
 #include "text.hpp"
