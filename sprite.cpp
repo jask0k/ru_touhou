@@ -212,8 +212,8 @@ CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
   animation(0),state(0),animation_timer(0),
   next_animation(0),decay_timer(0),
   animation_active(false),decay_active(false),
-  scale(1.f),blur(false),layer(layer),follow(0),
-  destroy_tracking(false){}
+  scale(1.f),blur(false),layer(layer),follow(0){}
+  //  ,destroy_tracking(false){}
 
 void CSprite::draw(){
 #ifdef DEBUG
@@ -358,22 +358,25 @@ void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> rotation = angle-90.f;
 }
 
-CSpriteManager::CSpriteManager():free_handle(1){}
+//CSpriteManager::CSpriteManager():free_handle(1){}
+CSpriteManager::CSpriteManager(){}
 
 GLuint CSpriteManager::create_sprite(std::string spritesheet, Layer layer){
   CSprite* sprite = new CSprite(game::ssmanager->dispatch(spritesheet), layer);
-  GLuint result = free_handle;
-  collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
-  while(collection.count(free_handle))
-    ++free_handle;
-  return result;
+  //  GLuint result = free_handle;
+  
+  // collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
+  // while(collection.count(free_handle))
+  //   ++free_handle;
+  return collection.add(sprite);
 }
 
 CSprite* CSpriteManager::get_sprite(GLuint handle){
-  if (collection.count(handle) == 1)
-    return collection[handle];
-  else
-    return NULL;
+  return collection.get(handle);
+  // if (collection.count(handle) == 1)
+  //   return collection[handle];
+  // else
+  //   return NULL;
 }
 
 void  CSpriteManager::draw(Layer layer){
@@ -406,23 +409,25 @@ void CSpriteManager::think(){
 }
 
 GLuint CSpriteManager::destroy_sprite(GLuint handle){
-  if (collection.count(handle) == 0)
-    return 0;
-  if (collection[handle] -> destroy_tracking)
-    destroyed_collection.insert(handle);
-  delete collection[handle];
-  collection.erase(handle);
-  if (free_handle>handle)
-    free_handle=handle;
-  return free_handle;
+  //  if (collection.count(handle) == 0)
+  //    return 0;
+  // if (collection[handle] -> destroy_tracking)
+  //   destroyed_collection.insert(handle);
+  // delete collection[handle];
+  // collection.erase(handle);
+  // if (free_handle>handle)
+  //   free_handle=handle;
+  // return free_handle;
+  return collection.destroy(handle);
 }
 
 GLboolean CSpriteManager::sprite_destroyed(GLuint handle){
-  if (destroyed_collection.count(handle)>0){
-    destroyed_collection.erase(handle);
-    return true;
-  }
-  if (!collection[handle]->destroy_tracking)
-    collection[handle]->destroy_tracking = true;
-  return false;
+  //  if (destroyed_collection.count(handle)>0){
+  //  destroyed_collection.erase(handle);
+  //  return true;
+  //}
+  //  if (!collection[handle]->destroy_tracking)
+  //    collection[handle]->destroy_tracking = true;
+  //  return false;
+  return collection.destroy_check(handle);
 }
