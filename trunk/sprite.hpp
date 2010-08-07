@@ -16,6 +16,7 @@
 #include "copypasta.hpp"
 #include "config.hpp"
 #include "physfsrwops.h"
+#include "collection.hpp"
 
 typedef std::vector<int> vint;
 typedef std::vector<std::vector<int> > vvint;
@@ -129,7 +130,7 @@ private:
 
   GLuint follow;
 
-  GLboolean destroy_tracking;
+  //  GLboolean destroy_tracking;
 
   friend class CSpriteManager;
 };
@@ -145,9 +146,10 @@ public:
   CSprite* get_sprite(GLuint handle);
   GLboolean sprite_destroyed(GLuint handle);
 private:
-  std::map<GLuint,CSprite*> collection;
-  std::set<GLuint> destroyed_collection;
-  GLuint free_handle;//минимальный свободный псевдоуказатель
+  //  std::map<GLuint,CSprite*> collection;
+  //  std::set<GLuint> destroyed_collection;
+  //  GLuint free_handle;//минимальный свободный псевдоуказатель
+  CCollection<CSprite> collection;
 };
 
 namespace game{
