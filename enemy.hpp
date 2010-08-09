@@ -28,9 +28,12 @@ public:
   CEnemy(GLuint proto, GLuint bullet_proto, GLuint sprite, GLfloat max_hp);
   GLboolean think();
   GLboolean damage(GLfloat amount);
-  void shoot_at(GLfloat x, GLfloat y);
-  void shoot_at_hero(GLfloat stray);
-  void set_speed(GLfloat vx, GLfloat vy, GLfloat vr);
+  GLfloat get_x();
+  GLfloat get_y();
+  GLuint get_sprite_handle();
+  GLuint shoot_at(GLfloat x, GLfloat y, GLfloat speed);
+  GLuint shoot_at_hero(GLfloat stray, GLfloat speed);
+  void set_speed(GLfloat vx, GLfloat vy, GLfloat vr=0);
   void set_animation(GLuint animation);
   friend class CEnemyManager;
 };
