@@ -13,19 +13,19 @@ GLboolean CEnemy::damage(GLfloat amount){
 }
 
 GLuint CEnemy::shoot_at(GLfloat x, GLfloat y, GLfloat speed){
-  return ebmanager->create_bullet_aimed(proto_no, get_x(), get_y(), x, y, speed, 0 );
+  return game::ebmanager->create_bullet_aimed(proto_no, get_x(), get_y(), x, y, speed, 0 );
 }
 
 GLuint CEnemy::shoot_at_hero(GLfloat speed, GLfloat stray){
-  return ebmanager->create_bullet_aimed_hero(proto_no, get_x(), get_y(), speed, stray);  
+  return game::ebmanager->create_bullet_aimed_hero(proto_no, get_x(), get_y(), speed, stray);  
 }
 
 GLfloat CEnemy::get_x(){
-  return (smanager -> get_sprite(sprite_no)) -> get_xpos();
+  return (game::smanager -> get_sprite(sprite_no)) -> get_xpos();
 }
 
 GLfloat CEnemy::get_y(){
-  return (smanager -> get_sprite(sprite_no)) -> get_ypos();
+  return (game::smanager -> get_sprite(sprite_no)) -> get_ypos();
 }
 
 //CEnemyManager::CEnemyManager():free_handle(0){}

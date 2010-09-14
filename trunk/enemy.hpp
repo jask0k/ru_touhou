@@ -4,9 +4,10 @@
 #include <map>
 #include <string>
 
-#include "collection.hpp"
 #include "enemy_bullet.hpp"
 #include "sprite.hpp"
+
+#include "collection.hpp"
 
 struct SEnemyProto{
   std::string sheetname;
