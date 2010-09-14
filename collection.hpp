@@ -1,6 +1,6 @@
 #ifndef _COLLECTION_HPP
 #define _COLLECTION_HPP
-#include <GL/gl.h>
+#include <SDL/SDL_opengl.h>
 #include <map>
 #include <string>
 #include <set>
