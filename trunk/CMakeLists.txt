@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6) 
+cmake_minimum_required(VERSION 2.8) 
 project(danmaku)
 
 find_package(SDL REQUIRED)
@@ -7,14 +7,13 @@ find_package(SDL_mixer REQUIRED)
 find_package(Lua51 REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(GLU REQUIRED)
 
 set(danmaku_INCLUDES 
-  ${CMAKE_SOURCE_DIR} ${SDL_INCLUDE_DIR} 
-  ${SDLMIXER_INCLUDE_DIR}
-  ${SDLIMAGE_INCLUDE_DIR} ${LUA_INCLUDE_DIR} 
-  ${OPENGL_INCLUDE_DIR} ${GLU_INCLUDE_DIR} 
-  ${PHYSFS_INCLUDE_DIR})
+  ${CMAKE_SOURCE_DIR}
+  ${SDL_INCLUDE_DIR} ${SDLIMAGE_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR}
+  ${LUA_INCLUDE_DIR} ${PHYSFS_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIR} 
+)
 
 include_directories(${danmaku_INCLUDES})
 
@@ -31,21 +30,32 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 if(MINGW OR MSYS)
-  SET(CMAKE_RC_COMPILER "windres")
-  SET(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <SOURCE> -O coff -o <OBJECT>")
+  if(CMAKE_C_COMPILER MATCHES ".*/(.*)gcc.*")
+    set(CMAKE_RC_COMPILER "${CMAKE_MATCH_1}windres")
+  else()
+    set(CMAKE_RC_COMPILER "windres")
+  endif()
+  set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> <SOURCE> -O coff -o <OBJECT>")
   enable_language(RC)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--subsystem,windows")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--subsystem,windows")
+  set(SDL_LIBRARY mingw32;libSDLmain.a;libSDL.a;libwinmm.a;libgdi32.a;libkernel32.a;libmsvcrt.a;libuser32.a)
+  set(SDLIMAGE_LIBRARY libSDL_image.a;libpng.a;libtiff.a;libjpeg.a;libz.a)
+  set(SDLMIXER_LIBRARY libSDL_mixer.a;libSDL.a;libvorbisfile.a;libvorbis.a;libogg.a;libmikmod.a;libmad.a;libflac.a;libwinmm.a)
+  set(PHYSFS_LIBRARY libphysfs.a)
+  set(LUA_LIBRARY liblua.a)
 endif()
 
 set(danmaku_LIBS 
-  ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${LUA_LIBRARY} 
-  ${OPENGL_LIBRARIES} ${GLU_LIBRARIES} ${SDLMIXER_LIBRARY}
-  ${PHYSFS_LIBRARY})
+  ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY}
+  ${LUA_LIBRARY} ${PHYSFS_LIBRARY}
+  ${OPENGL_LIBRARIES}
+)
 
 set(danmaku_SRCS 
   back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp variables.cpp
   main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp enemy.cpp physfsrwops.c
-  danmaku.rc)
+  danmaku.rc
+)
   
 add_executable(danmaku ${danmaku_SRCS})
 target_link_libraries(danmaku ${danmaku_LIBS})
