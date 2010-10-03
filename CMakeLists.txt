@@ -17,16 +17,16 @@ set(danmaku_INCLUDES
 
 include_directories(${danmaku_INCLUDES})
 
-add_definitions(-DDEBUG)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+  set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -ggdb3 -DDEBUG")
+  set(CMAKE_C_FLAGS_DEBUG "-Wall -Wextra -ggdb3 -DDEBUG")
+  set(CMAKE_CXX_FLAGS_RELEASE "-s -O2")
+  set(CMAKE_C_FLAGS_RELEASE "-s -O2")
+endif()
 
 if(MSVC)
   add_definitions(-D_USE_MATH_DEFINES)
   add_definitions(-D_GNU_SOURCE=1)
-endif()
-  
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-  set(CMAKE_CXX_FLAGS "-Wall -Wextra -ggdb3")
-  set(CMAKE_C_FLAGS "-Wall -Wextra -ggdb3")
 endif()
 
 if(MINGW OR MSYS)
