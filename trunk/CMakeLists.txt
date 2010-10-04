@@ -30,7 +30,7 @@ if(MSVC)
 endif()
 
 if(MINGW OR MSYS)
-  if(CMAKE_C_COMPILER MATCHES ".*/(.*)gcc.*")
+  if(CMAKE_C_COMPILER MATCHES ".*/(.*)gcc*")
     set(CMAKE_RC_COMPILER "${CMAKE_MATCH_1}windres")
   else()
     set(CMAKE_RC_COMPILER "windres")
