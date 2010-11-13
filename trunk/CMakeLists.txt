@@ -54,7 +54,7 @@ set(danmaku_LIBS
 set(danmaku_SRCS 
   back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp variables.cpp
   main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp enemy.cpp physfsrwops.c
-  danmaku.rc
+  danmaku.rc resolution.cpp
 )
   
 add_executable(danmaku ${danmaku_SRCS})

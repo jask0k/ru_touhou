@@ -14,6 +14,9 @@
 
 #define JOY_DEAD_ZONE 300
 
+#define CURRENT_RES RES_1280
+
+
 enum decay_state{
   STILL_ALIVE,
   DECOMPOSED

@@ -28,6 +28,7 @@ class CLabel;
 #include "particles.hpp"
 #include "music.hpp"
 #include "physfsrwops.h"
+#include "resolution.hpp"
 
 namespace game{
   extern CEngine* engine;
@@ -80,9 +81,10 @@ private:
   CController* controller;
   //  CText* text;
 public:
-  int xres,yres;//разрешение экрана
-  int colour;//цветность в битах
-  int fullscreen;
+ // int xres,yres;//разрешение экрана
+ // int colour;//цветность в битах
+ // int fullscreen;					//вынесено далее
+  CResolutionManager* res_manager;
   EngineState state; //состояние движка
   CEngine();//конструктор, в нём мы инициализируем опенгл
   ~CEngine();
