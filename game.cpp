@@ -44,6 +44,8 @@ GLfloat CFrameManager::get_FPS(){
 CEngine::CEngine(){
   PHYSFS_addToSearchPath("th_ru.dat", 1);
   state.screenshot = false;
+  
+  res_manager = new CResolutionManager;
   read_config();
 #ifdef DEBUG
   std::cerr << "Initializing video.";
@@ -52,6 +54,8 @@ CEngine::CEngine(){
   if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_JOYSTICK) != 0) {
     std::cerr << "Init error: " << SDL_GetError() << "!" << std::endl;
   }
+  
+	// Выставляем заголовок окна
   SDL_WM_SetCaption("ru.touhou.project ru_touhou@conference.jabber.ru","ru.danmaku");
   //Под виндой берём иконку из ресурсов бинарника и устанавливаем её для окна
   //средствами винды. Не под виндой используем родную функцию SDL.
@@ -66,21 +70,20 @@ CEngine::CEngine(){
 #else
   SDL_WM_SetIcon(IMG_Load_RW(PHYSFSRWOPS_openRead("icon.png"), 1), NULL);
 #endif
-  screen = SDL_SetVideoMode(xres, yres, colour, SDL_OPENGL | (SDL_FULLSCREEN * fullscreen));
-  
-  //убираем курсор с экрана
-  SDL_ShowCursor(SDL_DISABLE);
 
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  res_manager->setMode();
+ 
+ 
   //начало установки 2d-режима
-  glViewport(0, 0, 640, 480);
+  glViewport(0, 0, res_manager->getWidth(), res_manager->getHeight());
  
   glClear(GL_COLOR_BUFFER_BIT);
  
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
  
-  glOrtho(0.0f, xres, 0.0f, yres, -1.0f, 1.0f);
+ glOrtho(0.0f, res_manager->getWidth(), 0.0f, res_manager->getHeight(), -1.0f, 1.0f);
+ 
 	
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -89,7 +92,7 @@ CEngine::CEngine(){
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   //^это для работы (полу-)прозрачности
 
-  glScissor(32, 16, GAME_FIELD_WIDTH, GAME_FIELD_HEIGHT);
+  glScissor(res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
   glDisable(GL_SCISSOR_TEST);
   //^это чтобы спрайты игрока, фона и прочего не вылезали
 
@@ -101,6 +104,7 @@ CEngine::CEngine(){
   glEnable( GL_LIGHTING );
   glEnable( GL_POINT_SMOOTH );
   
+ 
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
@@ -120,6 +124,7 @@ CEngine::~CEngine(){
   delete game::hero;
   delete fps_manager;
   delete controller;
+  delete res_manager;
 #ifdef DEBUG
   std::cerr << "Quitting.";
 #endif
@@ -132,14 +137,17 @@ CEngine::~CEngine(){
 #endif
 }
 
-int CEngine::read_config(){
+int CEngine::read_config(){			//TODO: запилить нормальный конфиг и нормально из него читать
 #ifdef DEBUG
   std::cerr << "Reading config.";
 #endif
-  xres = DEFAULT_X;
+  /*xres = DEFAULT_X;
   yres = DEFAULT_Y;
   colour = DEFAULT_COLOUR;
-  fullscreen = WINDOW_DEFAULT;
+  fullscreen = WINDOW_DEFAULT;*/
+  
+  res_manager->setValues( CURRENT_RES, DEFAULT_COLOUR, false );
+  
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
 #endif
@@ -231,7 +239,7 @@ void CEngine::handle_events(){
           state.main_state = ENGINE_STATE_QUIT;
 	  break;
         case SDLK_RETURN:
-          if (SDL_WM_ToggleFullScreen(screen)==0)
+          if ( !(res_manager->toggleFullscreen()) )
             std::cerr << "Failure!" << std::endl;
           break;
         case SDLK_PRINT:
@@ -295,27 +303,25 @@ void CEngine::loop(){
 
 void CEngine::draw_game(){
   
-  glViewport(0, 0, 640, 480);
+  glViewport(0, 0, res_manager->getWidth(), res_manager->getHeight());
   glLoadIdentity();
+
   glEnable2D();
   //рисуем панельку со статами здесь
   glBindTexture(GL_TEXTURE_2D, ui_background);
   glBegin( GL_QUADS );{
-    //    glTexCoord2i( 0  , 480 ); glVertex2i( 0,    0 );
-    //    glTexCoord2i( 640, 480 ); glVertex2i( xres, 0 );
-    //    glTexCoord2i( 640, 0   ); glVertex2i( xres, yres );
-    //    glTexCoord2i( 0  , 0   ); glVertex2i( 0,    yres );}
     glTexCoord2i(0, 1); glVertex2i(0, 0);
-    glTexCoord2i(1, 1); glVertex2i(xres, 0);
-    glTexCoord2i(1, 0); glVertex2i(xres, yres);
-    glTexCoord2i(0, 0); glVertex2i(0, yres);}
+    glTexCoord2i(1, 1); glVertex2i(res_manager->getWidth(), 0);
+    glTexCoord2i(1, 0); glVertex2i(res_manager->getWidth(), res_manager->getHeight());
+    glTexCoord2i(0, 0); glVertex2i(0, res_manager->getHeight());}
   glEnd();
   
+  glScalef( res_manager->getScaleX(), res_manager->getScaleY(), 1.0f);	// растягиваем игровую область в соответствии с разрешением
   game::lmanager -> draw(LAYER_PANEL);
 
   glDisable2D();
 
-  glViewport(32, 16, GAME_FIELD_WIDTH, GAME_FIELD_HEIGHT);
+  glViewport(res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -327,13 +333,13 @@ void CEngine::draw_game(){
 
   glEnable2D();
   
+  glScalef( res_manager->getScaleX(), res_manager->getScaleY(), 1.0f); 
   game::smanager -> draw(LAYER_BACKGROUND);
 
   game::pmanager -> draw();
-
+	
   game::smanager -> draw(LAYER_ENEMY_BULLET);
   game::smanager -> draw(LAYER_ENEMY);
-
 
 
   //рисуем спрайты
@@ -370,19 +376,22 @@ void CEngine::draw(){
 
 int CEngine::save_screenshot(){
   // Create two arrays of unsigned bytes (chars). 4 bytes per pixel (RGBA)
-  unsigned char *pixels = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
-  unsigned char *pixelsbuf = new unsigned char[DEFAULT_X * DEFAULT_Y * 4];
+  int x, y;
+  x = res_manager->getWidth();
+  y = res_manager->getHeight();
+  unsigned char *pixels = new unsigned char[x * y * 4];
+  unsigned char *pixelsbuf = new unsigned char[x * y * 4];
 
   // Read the front buffer
-  glReadPixels(0, 0, DEFAULT_X, DEFAULT_Y, GL_RGBA, GL_UNSIGNED_BYTE, pixelsbuf);
+  glReadPixels(0, 0, res_manager->getWidth(), res_manager->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, pixelsbuf);
 
   // Copy lines of pixels from pixelsbuf to pixels, flipping the image at the same time.
-  for(int i=0; i < DEFAULT_Y; ++i)
-    memcpy(pixels+(DEFAULT_Y-i-1)*DEFAULT_X*4, pixelsbuf+i*DEFAULT_X*4, DEFAULT_X*4);
+  for(int i=0; i < x; ++i)
+    memcpy(pixels+(y-i-1)*x*4, pixelsbuf+i*x*4, x*4);
 
   delete pixelsbuf;
 
-  SDL_Surface *screenshot = SDL_CreateRGBSurfaceFrom(pixels, DEFAULT_X, DEFAULT_Y, DEFAULT_COLOUR, DEFAULT_X*4, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
+  SDL_Surface *screenshot = SDL_CreateRGBSurfaceFrom(pixels, x, y, res_manager->getDepth(), x*4, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
 
   std::ostringstream filename_buff;
   time_t tp = time(NULL);
