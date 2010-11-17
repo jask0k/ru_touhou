@@ -21,11 +21,18 @@ bool CResolutionManager::setMode( Resolution res, int depth, bool fscreen )
 
 bool CResolutionManager::setValues( Resolution res, int depth, bool fscreen )
 {
+	// TODO: сюда можно вставить проверку на существование режима и прочие радости.
+	if( res >= RES_CUSTOM || res <= 0 )
+	{
+#ifdef DEBUG
+		std::cerr << "Wrong resolution" << std::endl;
+#endif
+		return false;			// обрабатывается отдельным методом
+	}
+	
 	resolution = res;
 	colorDepth = depth;
-	fullscreen = fscreen;
-	// TODO: сюда можно вставить проверку на существование режима и прочие радости.
-	
+	fullscreen = fscreen;	
 	
 	//выдираем заранее заготовленные значения
 	width				= resolution_metrics[res][0];
@@ -34,6 +41,14 @@ bool CResolutionManager::setValues( Resolution res, int depth, bool fscreen )
 	gameFieldOriginY 	= resolution_metrics[res][3];
 	gameFieldWidth		= resolution_metrics[res][4];
 	gameFieldHeight		= resolution_metrics[res][5];
+	borderWidth			= resolution_metrics[res][6];
+	
+	widescreen = ( borderWidth != 0 );
+	
+	if( widescreen ) std::cout << "Gone wide" << std::endl;
+	
+	xres = width + 2 * borderWidth;
+	yres = height;
 	
 	scaleX = ((float)width)/BASE_XRES;
 	scaleY = ((float)height)/BASE_YRES;
@@ -41,12 +56,49 @@ bool CResolutionManager::setValues( Resolution res, int depth, bool fscreen )
 	return true;	
 }
 
+// Для любителей (или обладателей) чего покастомнее
+// Заодно источник формул для любопытствующих
+bool CResolutionManager::setCustomValues( int w, int h, int depth, bool fscreen, bool wscreen )
+{
+	resolution = RES_CUSTOM;
+	colorDepth = depth;
+	fullscreen = fscreen;
+	widescreen = wscreen;
+	
+	height = h;
+	if( wscreen ) 
+	{
+		width = h * 4 / 3;
+		borderWidth = (w - width) / 2;
+	}
+	else 
+	{
+		width = w;
+		borderWidth = 0;
+	}
+	
+	xres = w;
+	yres = height;
+	
+	scaleX = ((float)width)/BASE_XRES;
+	scaleY = ((float)height)/BASE_YRES;
+	
+	gameFieldOriginX 	= (int) ((float)BASE_ORIGIN_X * scaleX);
+	gameFieldOriginY 	= (int) ((float)BASE_ORIGIN_Y * scaleY);
+	gameFieldWidth 		= (int) ((float)BASE_GAME_FIELD_WIDTH *  scaleX);
+	gameFieldHeight		= (int) ((float)BASE_GAME_FIELD_HEIGHT * scaleY);
+	
+	
+	return true;
+}
+
+
 bool CResolutionManager::setMode()
 {
 	if( screen != NULL )			// Освобождаем во избежание утечек
 		SDL_FreeSurface( screen );	// Правда, неведомо, будут ли эти утечки.
 		
-	screen = SDL_SetVideoMode(width, height, colorDepth, SDL_OPENGL | (SDL_FULLSCREEN * (int)fullscreen));
+	screen = SDL_SetVideoMode(xres, yres, colorDepth, SDL_OPENGL | (SDL_FULLSCREEN * (int)fullscreen));
 	if( !screen ) 
 	{
 		std::cerr << "Failed to set up resolution" << std::endl;

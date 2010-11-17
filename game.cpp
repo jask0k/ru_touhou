@@ -75,14 +75,15 @@ CEngine::CEngine(){
  
  
   //начало установки 2d-режима
-  glViewport(0, 0, res_manager->getWidth(), res_manager->getHeight());
+  
+  glViewport(res_manager->getBorderW(), 0, res_manager->getWidth(), res_manager->getHeight());
  
   glClear(GL_COLOR_BUFFER_BIT);
  
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
  
- glOrtho(0.0f, res_manager->getWidth(), 0.0f, res_manager->getHeight(), -1.0f, 1.0f);
+  glOrtho(res_manager->getBorderW(), res_manager->getWidth(), 0.0f, res_manager->getHeight(), -1.0f, 1.0f);
  
 	
   glMatrixMode(GL_MODELVIEW);
@@ -92,7 +93,7 @@ CEngine::CEngine(){
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   //^это для работы (полу-)прозрачности
 
-  glScissor(res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
+  glScissor(res_manager->getBorderW()+res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
   glDisable(GL_SCISSOR_TEST);
   //^это чтобы спрайты игрока, фона и прочего не вылезали
 
@@ -118,6 +119,9 @@ CEngine::CEngine(){
   game::lmanager -> text_add(9, 18, std::string("fps:"), 0, LAYER_GAME, 0);
   fps_manager = new CFrameManager(game::lmanager-> get_label (game::lmanager -> text_add(45, 18, std::string("0"), 0, LAYER_GAME, 0)));
   ui_background = LoadTexture_simple("ui.png");
+ 
+ // if( res_manager->isWidescreen() )
+   	 ui_widescreen = LoadTexture_simple( "ui_wide.png" );		// FIXME: смените это на что-нибудь
 }
 
 CEngine::~CEngine(){
@@ -146,7 +150,11 @@ int CEngine::read_config(){			//TODO: запилить нормальный ко
   colour = DEFAULT_COLOUR;
   fullscreen = WINDOW_DEFAULT;*/
   
-  res_manager->setValues( CURRENT_RES, DEFAULT_COLOUR, false );
+  
+  int x, y, wide;
+  res_manager->setCustomValues( 1024, 600, DEFAULT_COLOUR, false, true );
+  
+ // res_manager->setValues( CURRENT_RES, DEFAULT_COLOUR, false );
   
 #ifdef DEBUG
   std::cerr << ".done!" << std::endl;
@@ -238,10 +246,34 @@ void CEngine::handle_events(){
         case SDLK_ESCAPE:
           state.main_state = ENGINE_STATE_QUIT;
 	  break;
+
         case SDLK_RETURN:
           if ( !(res_manager->toggleFullscreen()) )
             std::cerr << "Failure!" << std::endl;
           break;
+        case SDLK_KP_PLUS:
+          if( !(res_manager->setMode( (Resolution)((int)res_manager->getResolution()+1), res_manager->getDepth(), res_manager->isFullscreen() )) )
+          	std::cerr << "Failure!" << std::endl;
+			
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(res_manager->getBorderW(), res_manager->getWidth(), 0.0f, res_manager->getHeight(), -1.0f, 1.0f);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+            glScissor(res_manager->getBorderW()+res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
+          break;
+        case SDLK_KP_MINUS:
+          if( !(res_manager->setMode( (Resolution)((int)res_manager->getResolution()-1), res_manager->getDepth(), res_manager->isFullscreen() )) )
+          	std::cerr << "Failure!" << std::endl;
+          	
+          	glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(res_manager->getBorderW(), res_manager->getWidth(), 0.0f, res_manager->getHeight(), -1.0f, 1.0f);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+            glScissor(res_manager->getBorderW()+res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
+          break;
+  	
         case SDLK_PRINT:
           state.screenshot=true;
           break;
@@ -303,7 +335,28 @@ void CEngine::loop(){
 
 void CEngine::draw_game(){
   
-  glViewport(0, 0, res_manager->getWidth(), res_manager->getHeight());
+  if( res_manager->isWidescreen() )		// дорисовываем особенности широкоформатки
+  {
+  	glViewport( 0, 0, res_manager->getXRes(), res_manager->getYRes() );
+	glEnable2D();
+  	glBindTexture(GL_TEXTURE_2D, ui_widescreen);
+	glBegin( GL_QUADS );{
+		glTexCoord2i(0, 1); glVertex2i(0, 0);
+		glTexCoord2i(1, 1); glVertex2i(res_manager->getBorderW(), 0);
+		glTexCoord2i(1, 0); glVertex2i(res_manager->getBorderW(), res_manager->getHeight());
+		glTexCoord2i(0, 0); glVertex2i(0, res_manager->getHeight());}
+	glEnd();
+	glBegin( GL_QUADS );{
+		glTexCoord2i(0, 1); glVertex2i(res_manager->getXRes(), 0);
+		glTexCoord2i(1, 1); glVertex2i(res_manager->getXRes() - res_manager->getBorderW(), 0);
+		glTexCoord2i(1, 0); glVertex2i(res_manager->getXRes() - res_manager->getBorderW(), res_manager->getHeight());
+		glTexCoord2i(0, 0); glVertex2i(res_manager->getXRes(), res_manager->getHeight());}
+	glEnd();
+	glDisable2D();
+  }
+  
+  
+  glViewport(res_manager->getBorderW(), 0, res_manager->getWidth(), res_manager->getHeight());
   glLoadIdentity();
 
   glEnable2D();
@@ -321,7 +374,7 @@ void CEngine::draw_game(){
 
   glDisable2D();
 
-  glViewport(res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
+  glViewport(res_manager->getBorderW() + res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -377,13 +430,13 @@ void CEngine::draw(){
 int CEngine::save_screenshot(){
   // Create two arrays of unsigned bytes (chars). 4 bytes per pixel (RGBA)
   int x, y;
-  x = res_manager->getWidth();
-  y = res_manager->getHeight();
+  x = res_manager->getXRes();
+  y = res_manager->getYRes();
   unsigned char *pixels = new unsigned char[x * y * 4];
   unsigned char *pixelsbuf = new unsigned char[x * y * 4];
 
   // Read the front buffer
-  glReadPixels(0, 0, res_manager->getWidth(), res_manager->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, pixelsbuf);
+  glReadPixels(0, 0, x, y, GL_RGBA, GL_UNSIGNED_BYTE, pixelsbuf);
 
   // Copy lines of pixels from pixelsbuf to pixels, flipping the image at the same time.
   for(int i=0; i < x; ++i)

@@ -72,6 +72,7 @@ private:
   void think();//то, что будет выполнятся каждый кадр(кроме рисования), математика и всё такое
   SDL_Surface* screen;//поверхность экрана
   GLuint ui_background;//текстура панели
+  GLuint  ui_widescreen; // дополнение панели на широкоэкран
   int read_config();//чтение конфига
   int write_config();//запись конфига
   void handle_events();//обработка событий
