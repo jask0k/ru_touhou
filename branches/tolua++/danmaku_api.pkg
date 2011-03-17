@@ -1,0 +1,34 @@
+//Тайпдефы, чтоб tolua++ узнавала опенглные типы
+typedef float GLfloat;
+typedef unsigned int GLuint;
+typedef bool GLboolean;
+typedef int GLint;
+typedef unsigned int size_t;
+
+$using namespace game;
+
+//подключаем цппшные заголовки с экспортируемыми в луа классами
+module game{
+$cfile "back.hpp"
+$cfile "controller.hpp"
+$cfile "hero_bullet.hpp"
+$cfile "enemy.hpp"
+$cfile "enemy_bullet.hpp"
+$cfile "game.hpp"
+$cfile "hero.hpp"
+$cfile "music.hpp"
+$cfile "particles.hpp"
+//$cfile "script.hpp"
+$cfile "sprite.hpp"
+$cfile "text.hpp"
+$cfile "variables.hpp"
+}
+
+//сокращения
+$renaming CSpriteSheet @ ssheet
+$renaming CSprite @ sprite
+$renaming CEnemy @ enemy
+$renaming CHeroBullet @ hbullet
+$renaming CEnemyBullet @ ebullet
+$renaming CLabel @ label
+$renaming CVariable @ var
