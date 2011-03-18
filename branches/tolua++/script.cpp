@@ -91,6 +91,13 @@ int CScript::load_script(std::string scriptname){
   return luaL_loadbuffer(level_state,buf,len,scriptname.c_str());
 }
 
+void CScript::print_error() const
+{
+	std::string err_message(luaL_checklstring(level_state,-1,NULL));
+	luaL_where(level_state,0);
+	std::cerr <<"lua error: "<< lua_tolstring(level_state,-1,NULL) << err_message << std::endl;
+}
+
 int CScript::run_script(std::string scriptname){
   int ret=load_script(scriptname);
   if(ret) {
@@ -105,10 +112,7 @@ int CScript::run_script(std::string scriptname){
     return 0;
   } else {
 #ifdef DEBUG
-    std::string err_message(luaL_checklstring(level_state,1,NULL));
-    luaL_where(level_state,0);
-    std::string err_pos = lua_tolstring(level_state,-1,NULL);
-    std::cerr <<"lua error: "<< err_pos << err_message << std::endl;
+    print_error();
 #endif
     return 1;
   }
@@ -119,11 +123,7 @@ int CScript::run_function(std::string funcname){
   if (lua_isfunction(level_state,-1))
     if (lua_pcall(level_state,0,0,0) != 0){
 #ifdef DEBUG
-      std::string err_message(luaL_checklstring(level_state,1,NULL));
-      luaL_where(level_state,0);
-      std::string err_pos = lua_tolstring(level_state,-1,NULL);
-
-      std::cerr << "lua error while running function:" << err_pos << err_message << std::endl;
+      print_error();
 #endif
       return 1;
     }
@@ -136,11 +136,7 @@ int CScript::run_function(std::string funcname, GLuint parameter){
     lua_pushinteger(level_state,parameter);
     if (lua_pcall(level_state,1,0,0) != 0){
 #ifdef DEBUG
-      std::string err_message(luaL_checklstring(level_state,1,NULL));
-      luaL_where(level_state,0);
-      std::string err_pos = lua_tolstring(level_state,-1,NULL);
-
-      std::cerr << "lua error while running function:" << err_pos << err_message << std::endl;
+      print_error();
 #endif
       return 1;
     }
@@ -153,11 +149,7 @@ int CScript::run_function(std::string funcname, void* ptr, const char* type){
     tolua_pushusertype(level_state, ptr, type);
     if (lua_pcall(level_state,1,0,0) != 0){
 #ifdef DEBUG
-      std::string err_message(luaL_checklstring(level_state,1,NULL));
-      luaL_where(level_state,0);
-      std::string err_pos = lua_tolstring(level_state,-1,NULL);
-
-      std::cerr << "lua error while running function:" << err_pos << err_message << std::endl;
+      print_error();
 #endif
       return 1;
     }

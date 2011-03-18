@@ -48,6 +48,8 @@ private:
   //(в связи со злобным сборщиком мусора луа, продублирована в главном треде луа)
   std::map<lua_State*,AI_state> AI_states;
 
+  void print_error() const;
+
   int do_binds();
   int do_globals();
 public:
