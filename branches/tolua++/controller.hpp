@@ -72,7 +72,7 @@ public:
   GLfloat get_kx();
   GLfloat get_ky();
   struct controller_state get_state();
-  int set_state(struct controller_state);
+  void set_state(struct controller_state);
   
   EButton get_confirm();//смотрит, нажата ли кнопка атаки или бомбы и 
   //очищает их состояние, нужно для меню

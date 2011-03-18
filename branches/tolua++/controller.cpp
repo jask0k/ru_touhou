@@ -199,7 +199,7 @@ struct controller_state CController::get_state(){
   return result;
 }
 
-int CController::set_state(struct controller_state new_state){
+void CController::set_state(struct controller_state new_state){
   save_old();
   analog_state.dir = new_state.direction;
   analog_state.pow = new_state.strength;
