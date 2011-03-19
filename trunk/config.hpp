@@ -14,7 +14,7 @@
 
 #define JOY_DEAD_ZONE 300
 
-#define CURRENT_RES RES_800x600
+#define CURRENT_RES RES_640x480
 
 
 enum decay_state{

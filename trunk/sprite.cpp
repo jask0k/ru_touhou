@@ -457,5 +457,5 @@ GLboolean CSpriteManager::sprite_destroyed(CSprite* handle){
   //    collection[handle]->destroy_tracking = true;
   //  return false;
   //   return collection.destroy_check(handle);
-  return collection.count(handle);
+  return !collection.count(handle);
 }
