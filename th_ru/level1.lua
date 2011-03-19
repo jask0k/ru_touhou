@@ -82,13 +82,13 @@ log(".")
 sample_proto2 = game.ebmanager:create_proto(bullete.png,0,false,1,"big_bad") --создаём ещё прототип
 log(".")
 wait_time(1); -- Подождать кадр
-game.background:set_fog_density(.5,-0.004);-- создаём разрежающийся туман
+game.background:set_fog_density(.5,-0.004)-- создаём разрежающийся туман
 
-logo = sprite:new(level_ss,game.LAYER_EMBLEM); -- Создание спрайта на слое переднего плана
+logo = game.sprite:new(level_ss,game.LAYER_EMBLEM); -- Создание спрайта на слое переднего плана
 logo.scale = .5; -- Установка масштабирования спрайта
-logo.x = game.GAME_FIELD_WIDTH/2-10;
-logo.y = game.GAME_FIELD_HEIGHT/2; -- Установка положения спрайта
-logo:set_speed(0.1,0,0); -- Установка скорости передвижения
+logo.x = GAME_FIELD_WIDTH/2-10;
+logo.y = GAME_FIELD_HEIGHT/2; -- Установка положения спрайта
+logo.v_x = 0.1 -- Установка скорости передвижения
 logo.alpha = 0.0; -- Установка прозрачности логотипа
 logo.v_alpha = 0.01; -- Сгущаем логотип 
 wait_time(100); -- Ждём

@@ -11,6 +11,7 @@ hero_scale = 0.0625
 game.hbmanager:load_spritesheet(game.ssheet:new("bullets.png"));
 
 main_proto = game.hbmanager:create_proto("", 1, 1, false, 8, 1, 1, 1, .2);
+log(main_proto)
 
 function hero_fire_begin() -- эта функция вызывается при нажатии кнопки атаки
 --   log("otake!") -- запись в логе
@@ -44,14 +45,16 @@ function hero_focus_begin() -- эта функция вызывается ког
 --   hitbox = game.sprite:create("bullets.png", LAYER_HERO);
 --   sprite_set_follow (hitbox, hero_sprite());
 --   sprite_set_frame(hitbox,1);
-   focus = game.sprite:new(effects, game.LAYER_BACKGROUND);
+   focus = game.sprite:new(effects, game.LAYER_BACKGROUND)
+   focus.x = game.hero.sprite.x
+   focus.y = game.hero.sprite.y
+   focus.follow = game.hero.sprite
    focus.alpha = 0
    focus.v_alpha = 0.05
    focus.max_alpha = .5
    focus.scale = .01
    focus.max_scale = 1.5
    focus.v_r = -2
-   focus.follow = game.hero.sprite
    focus.v_scale = .1
 
 end
