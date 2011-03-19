@@ -1,31 +1,32 @@
 #include "hero.hpp"
 
-CHero::CHero(const char* texture_file):
+CHero::CHero(const char* scriptname):
   vx(0),vy(0),x(GAME_FIELD_WIDTH/2),y(100),max_speed(8),
-  sprite_no(game::smanager->create_sprite(texture_file, LAYER_HERO)){
-  (game::smanager->get_sprite(sprite_no))->set_position(x,y);
-  (game::smanager->get_sprite(sprite_no))->set_scale(0.0625f);
-}
-
-CHero::CHero(std::string texture_file):
-  vx(0),vy(0),x(GAME_FIELD_WIDTH/2),y(100),max_speed(8),
-  sprite_no(game::smanager->create_sprite(texture_file, LAYER_HERO)){
-  (game::smanager->get_sprite(sprite_no))->set_position(x,y);
-  (game::smanager->get_sprite(sprite_no))->set_scale(0.0625f);
+  sprite(NULL){
+  game::script -> run_script(scriptname);
+  CSpriteSheet* texture_file = (CSpriteSheet*)game::script->get_class("hero_spritesheet");
+  sprite = new CSprite(texture_file, LAYER_HERO);
+  sprite->x = x;
+  sprite->y = y;
+  sprite->scale = game::script->get_number("hero_scale");
+  //  (game::smanager->get_sprite(sprite_no))->set_position(x,y);
+  //  (game::smanager->get_sprite(sprite_no))->set_scale(0.0625f);
 }
 
 CHero::~CHero(){
-  //  delete sprite;
+  delete sprite;
 }
 
 void CHero::draw(){
-  (game::smanager->get_sprite(sprite_no)) -> draw();
+  //  sprite -> draw();
 }
 
 void CHero::set_position(GLfloat x0, GLfloat y0){
   x = x0;
   y = y0;
-  (game::smanager->get_sprite(sprite_no)) -> set_position(x0, y0);
+  //(game::smanager->get_spritesprite_no)) -> set_position(x0, y0);
+  sprite -> x = x0;
+  sprite -> y = y0;
 }
 
 void CHero::set_speed(GLfloat vx0, GLfloat vy0){
@@ -39,7 +40,7 @@ void CHero::set_speed_angle(GLfloat velocity, GLfloat direction){
 }
 
 GLfloat CHero::get_height(){
-  CSprite* sprite = game::smanager -> get_sprite(sprite_no);
+  //  CSprite* sprite = game::smanager -> get_sprite(sprite_no);
   return sprite -> get_width();
 }
 

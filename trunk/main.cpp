@@ -8,9 +8,12 @@ namespace game{
   CEngine* engine;
   CBack* background;
   CHero* hero;
+  CHeroBulletManager* hbmanager;
   CEnemyBulletManager* ebmanager;
+  CEnemyManager* enmanager;
   CParticleManager* pmanager;
   CBoomBox* boom_box;
+  CController* controller;
 }
 
 int main(int argc, char* argv[]){
@@ -22,6 +25,8 @@ int main(int argc, char* argv[]){
   game::engine = new CEngine;
   game::background = new CBack;
   game::ebmanager = new CEnemyBulletManager;
+  game::enmanager = new CEnemyManager;
+  game::hbmanager = new CHeroBulletManager;
   game::pmanager = new CParticleManager;
   game::boom_box = new CBoomBox;
   for (int i = 1;i<argc;i++)
@@ -34,6 +39,7 @@ int main(int argc, char* argv[]){
   game::engine->loop(); 
   delete game::boom_box;
   delete game::pmanager;
+  delete game::hbmanager;
   delete game::ebmanager;
   delete game::background;
   delete game::engine;

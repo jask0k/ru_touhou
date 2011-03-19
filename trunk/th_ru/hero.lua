@@ -2,23 +2,36 @@
 -- потом это будет несколько скриптов вида hero_xxx.lua
 -- в этом скрипте описываются всякие атаки и ништяки, специфичные для персонажа
 
-spritesheet_load("effects.png"); -- загрузка спрайтового листа
+effects = game.ssheet:new("effects.png"); -- загрузка спрайтового листа
 hero_name="ayayaya";
+
+hero_spritesheet = game.ssheet:new("aya_2.png")
+hero_scale = 0.0625
+
+game.hbmanager:load_spritesheet(game.ssheet:new("bullets.png"));
+
+main_proto = game.hbmanager:create_proto("", 1, 1, false, 8, 1, 1, 1, .2);
 
 function hero_fire_begin() -- эта функция вызывается при нажатии кнопки атаки
 --   log("otake!") -- запись в логе
-   begin_frame = engine_get_frame() -- сохраняем номер кадра, в котором начали стрелять
+   begin_frame = game.engine.frames -- сохраняем номер кадра, в котором начали стрелять
 end
 
 function hero_fire() -- эта функция вызывается каждый кадр, когда нажата кнопка атаки
-   if ((engine_get_frame()-begin_frame) % 3) == 0 then
+   if ((game.engine.frames-begin_frame) % 3) == 0 then -- стреляем через два кадра, это нужно, 
+                                                       -- чтоб создать ощущение движения пуль:
+                                                       -- стрельба в каждом кадре создаёт ощущение
+                                                       -- неподвижной струйки из пуль для глаза,
+                                                       -- стрельба через кадр создаёт ощущение
+                                                       -- _мигающей_ неподвижной струйки
       for i = 55,125,5 do
-	 sprite = sprite_create("bullets.png", LAYER_HERO_BULLET);
-	 sprite_set_position(sprite,hero_x(),hero_y(),i);
-	 sprite_set_frame(sprite,8);
-	 sprite_set_angle(sprite,10,i);
-	 sprite_set_alpha(sprite,.2);
-	 sprite_set_scale(sprite,2);
+	 bullet = game.hbullet:new(main_proto,10,i) -- наверно, здесь будет работать сборщик мусора
+--	 sprite = sprite_create("bullets.png", LAYER_HERO_BULLET);
+--	 sprite_set_position(sprite,hero_x(),hero_y(),i);
+--	 sprite_set_frame(sprite,8);
+--	 sprite_set_angle(sprite,10,i);
+--	 sprite_set_alpha(sprite,.2);
+--	 sprite_set_scale(sprite,2);
       end
    end
 end
@@ -28,32 +41,32 @@ function hero_fire_end() -- эта функция вызывается когд�
 end
 
 function hero_focus_begin() -- эта функция вызывается когда нажимают кнопку фокуса
-   hitbox = sprite_create("bullets.png", LAYER_HERO);
-   sprite_set_follow (hitbox, hero_sprite());
-   sprite_set_frame(hitbox,1);
-   focus = sprite_create("effects.png", LAYER_BACKGROUND);
-   sprite_set_alpha(focus,0);
-   sprite_set_alpha_speed(focus,0.05);
-   sprite_set_alpha_limit(focus,0,.5);
-   sprite_set_scale(focus,.01);
-   sprite_set_scale_limit(focus,0,1.5);
-   sprite_set_speed(focus,0,0,-2);
-   sprite_set_follow(focus,hero_sprite());
-   sprite_set_scale_speed(focus,0.1);
+--   hitbox = game.sprite:create("bullets.png", LAYER_HERO);
+--   sprite_set_follow (hitbox, hero_sprite());
+--   sprite_set_frame(hitbox,1);
+   focus = game.sprite:new(effects, game.LAYER_BACKGROUND);
+   focus.alpha = 0
+   focus.v_alpha = 0.05
+   focus.max_alpha = .5
+   focus.scale = .01
+   focus.max_scale = 1.5
+   focus.v_r = -2
+   focus.follow = game.hero.sprite
+   focus.v_scale = .1
 
 end
 
 function hero_focus() -- эта функция вызывается каждый кадр во время фокуса
-   engine_god_mode(1);
+--   engine_god_mode(1);
 --   particle_set_colour(1,1,1,1);
 --   particle_create_to(hero_x(),hero_y(),20);
 end
 
 function hero_focus_end() -- эта функция вызывается когда отпускают фокус
-   sprite_destroy(hitbox);
-   sprite_set_decay(focus,30);
-   sprite_set_alpha_speed(focus,-.05);
-   sprite_set_scale_speed(focus,-0.1);
+--   sprite_destroy(hitbox);
+   focus.decay = 30
+   focus.v_alpha = -.05;
+   focus.v_scale = -0.1;
 end
 
 function hero_graze() -- эта функция вызывается когда герой получает грейз

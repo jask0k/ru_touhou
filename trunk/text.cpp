@@ -83,9 +83,8 @@ void CLabelManager::think(){
   }
 }
 
-int CLabelManager::font_load(std::string fontname){
-  CSpriteSheet* font_sheet = game::ssmanager -> dispatch(fontname);
-  fonts.push_back(font_sheet);
+int CLabelManager::font_load(CSpriteSheet* fontsheet){
+  fonts.push_back(fontsheet);
   return fonts.size()-1;
 }
 

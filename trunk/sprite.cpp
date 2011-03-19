@@ -14,6 +14,11 @@ CSpriteSheet::CSpriteSheet(const char* filename){
     std::cerr << "could not load spritesheet " << filename << std::endl;
     SDL_Quit();
   }
+  game::ssmanager -> add(this);
+}
+
+CSpriteSheet::~CSpriteSheet(){
+  game::ssmanager -> del(this);
 }
 
 vvint* CSpriteSheet::parse_props(const char* filename){
@@ -143,6 +148,7 @@ void CSpriteSheet::draw(GLint frame, GLfloat x, GLfloat y, GLfloat rotation, GLf
   glEnd();
   glPopMatrix();
 }
+
 void CSpriteSheet::draw_int(GLuint frame, GLint x, GLint y){
   if (frame >= (GLuint)rectangle.x * rectangle.y){
     std::cerr << "incorrect frame!" << std::endl;
@@ -186,25 +192,27 @@ GLuint CSpriteSheet::get_pause(GLuint animation, GLuint state){
     return 0;
 }
 
-CSpriteSheet* CSpriteSheetManager::load(const char* filename){
-  CSpriteSheet* spritesheet = new CSpriteSheet(filename);
-  std::string sheetname(filename);
-  collection[sheetname] = spritesheet;
-  collection.insert(std::pair<std::string,CSpriteSheet*>(sheetname,spritesheet));
-  return spritesheet;
+void CSpriteSheetManager::add(CSpriteSheet* new_member){
+  if (!collection.count(new_member))
+    collection.insert(new_member);
 }
 
-CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
-  if (collection.count(sheetname) == 0){
-    std::cerr << "could not find " << sheetname << "! Did you load it properly?" << std::endl;
-    SDL_Quit();
-    exit(1);
-  }
-  return collection[sheetname];
+void CSpriteSheetManager::del(CSpriteSheet* old_member){
+  if (collection.count(old_member))
+    collection.erase(old_member);
 }
+
+// CSpriteSheet* CSpriteSheetManager::dispatch(std::string sheetname){
+//   if (collection.count(sheetname) == 0){
+//     std::cerr << "could not find " << sheetname << "! Did you load it properly?" << std::endl;
+//     SDL_Quit();
+//     exit(1);
+//   }
+//   return collection[sheetname];
+// }
 
 CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
-  ssheet(ssheet),x(0),y(0),rotation(0),alpha(1.f),
+  x(0),y(0),rotation(0),alpha(1.f),
   tint_r(1.f),tint_g(1.f),tint_b(1.f),v_alpha(0.f),
   min_alpha(0.f),max_alpha(1.f),
   v_x(0.f),v_y(0.f),v_r(0.f),v_scale(0.f),
@@ -212,8 +220,25 @@ CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
   animation(0),state(0),animation_timer(0),
   next_animation(0),decay_timer(0),
   animation_active(false),decay_active(false),
-  scale(1.f),blur(false),layer(layer),follow(0){}
-  //  ,destroy_tracking(false){}
+  scale(1.f),blur(false),layer(layer),follow(NULL),ssheet(ssheet){
+  game::smanager -> add_sprite(this);
+#ifdef DEBUG
+  std::cerr << "creating sprite!" <<std::endl;
+#endif
+}
+
+// CSprite::CSprite(const char* ssheet, Layer layer){
+//   CSprite(game::ssmanager->dispatch(std::string(ssheet)), layer);
+// }
+
+// CSprite::CSprite(std::string ssheet, Layer layer){
+//   CSprite(game::ssmanager->dispatch(ssheet), layer);
+// }
+//   //  ,destroy_tracking(false){}
+
+CSprite::~CSprite(){
+  game::smanager -> destroy_sprite(this);
+}
 
 void CSprite::draw(){
 #ifdef DEBUG
@@ -268,11 +293,11 @@ void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
   rotation = new_rotation;
 }
 
-void CSprite::set_scale(GLfloat scale, GLfloat v_scale){
-  if (scale>0)
-    this -> scale = scale;
-  this -> v_scale = v_scale;
-}
+// void CSprite::set_scale(GLfloat scale, GLfloat v_scale){
+//   if (scale>0)
+//     this -> scale = scale;
+//   this -> v_scale = v_scale;
+// }
 
 void CSprite::set_tint(GLfloat red, GLfloat green, GLfloat blue){
   this->tint_r = red;
@@ -328,6 +353,10 @@ decay_state CSprite::think(){
       }
       animation_timer = ssheet -> get_pause(animation,state);
     }
+  if (follow!=NULL&&!game::smanager->sprite_destroyed(follow)){
+    x = follow -> x;
+    y = follow -> y;
+  }
   if (decay_active)
     if (--decay_timer == 0)
       return DECOMPOSED;
@@ -337,19 +366,19 @@ decay_state CSprite::think(){
     return STILL_ALIVE;
 }
 
-void CSprite::set_alpha(GLfloat amount){
-  this -> alpha = amount;
-}
+// void CSprite::set_alpha(GLfloat amount){
+//   this -> alpha = amount;
+// }
 
-void CSprite::set_alpha_speed(GLfloat amount){
-  this -> v_alpha = amount;
-}
+// void CSprite::set_alpha_speed(GLfloat amount){
+//   this -> v_alpha = amount;
+// }
 
-void CSprite::set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r){
-  this -> v_x = v_x;
-  this -> v_y = v_y;
-  this -> v_r = v_r;
-}
+// void CSprite::set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r){
+//   this -> v_x = v_x;
+//   this -> v_y = v_y;
+//   this -> v_r = v_r;
+// }
 
 void CSprite::set_angle(GLfloat v, GLfloat angle){
   this -> v_r = 0.f;
@@ -361,54 +390,51 @@ void CSprite::set_angle(GLfloat v, GLfloat angle){
 //CSpriteManager::CSpriteManager():free_handle(1){}
 CSpriteManager::CSpriteManager(){}
 
-GLuint CSpriteManager::create_sprite(std::string spritesheet, Layer layer){
-  CSprite* sprite = new CSprite(game::ssmanager->dispatch(spritesheet), layer);
-  //  GLuint result = free_handle;
+// GLuint CSpriteManager::create_sprite(std::string spritesheet, Layer layer){
+//   CSprite* sprite = new CSprite(game::ssmanager->dispatch(spritesheet), layer);
+//   //  GLuint result = free_handle;
   
-  // collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
-  // while(collection.count(free_handle))
-  //   ++free_handle;
-  return collection.add(sprite);
+//   // collection.insert(std::pair<GLuint, CSprite*>(result,sprite));
+//   // while(collection.count(free_handle))
+//   //   ++free_handle;
+//   return collection.add(sprite);
+// }
+
+void CSpriteManager::add_sprite(CSprite* new_sprite){
+  collection.insert(new_sprite);
 }
 
-CSprite* CSpriteManager::get_sprite(GLuint handle){
-  return collection[handle];
-  // if (collection.count(handle) == 1)
-  //   return collection[handle];
-  // else
-  //   return NULL;
-}
+//CSprite* CSpriteManager::get_sprite(GLuint handle){
+//   return collection[handle];
+//   // if (collection.count(handle) == 1)
+//   //   return collection[handle];
+//   // else
+//   //   return NULL;
+// }
 
 void  CSpriteManager::draw(Layer layer){
-  std::map<GLuint,CSprite*>::iterator i;
+  std::set<CSprite*>::iterator i;
   for (i = collection.begin(); i != collection.end(); ++i)
-    if (i->second->layer == layer)
-      i -> second -> draw();
+    if ((*i)->layer == layer)
+      (*i) -> draw();
 }
 
 void CSpriteManager::think(){
-  std::map<GLuint,CSprite*>::iterator i;
+  std::set<CSprite*>::iterator i;
   for (i = collection.begin();i != collection.end();)
-    if (i -> second -> think() == DECOMPOSED){
-      GLuint bad_handle = i -> first;
-      ++i;
-      destroy_sprite(bad_handle);
+    if ((*i) -> think() == DECOMPOSED){
+      //      std::vector<CSprite*>::iterator bad_handle = i;
+      //      ++i;
+      collection.erase(i++);
     }
     else
       ++i;
-  for (i = collection.begin();i != collection.end();++i)
-    if (i -> second -> follow > 0){
-      CSprite* master_sprite = get_sprite(i -> second -> follow);
-      if (master_sprite != NULL){
-	(get_sprite(i -> first)) -> set_position(master_sprite -> x, master_sprite -> y, 
-						 (get_sprite(i->first)) -> rotation);
-      }
-      else
-	i -> second -> follow = 0;
-    }
+  //  for (i = collection.begin();i != collection.end();++i)
+  //  if ((*i) -> follow != NULL)
+  //    (*i) -> set_position((*i) -> follow -> x, (*i) -> follow -> y, (*i) -> rotation);
 }
 
-GLuint CSpriteManager::destroy_sprite(GLuint handle){
+void CSpriteManager::destroy_sprite(CSprite* ptr){
   //  if (collection.count(handle) == 0)
   //    return 0;
   // if (collection[handle] -> destroy_tracking)
@@ -418,10 +444,11 @@ GLuint CSpriteManager::destroy_sprite(GLuint handle){
   // if (free_handle>handle)
   //   free_handle=handle;
   // return free_handle;
-  return collection.destroy(handle);
+  // return collection.destroy(handle);
+  collection.erase(ptr);
 }
 
-GLboolean CSpriteManager::sprite_destroyed(GLuint handle){
+GLboolean CSpriteManager::sprite_destroyed(CSprite* handle){
   //  if (destroyed_collection.count(handle)>0){
   //  destroyed_collection.erase(handle);
   //  return true;
@@ -429,5 +456,6 @@ GLboolean CSpriteManager::sprite_destroyed(GLuint handle){
   //  if (!collection[handle]->destroy_tracking)
   //    collection[handle]->destroy_tracking = true;
   //  return false;
-  return collection.destroy_check(handle);
+  //   return collection.destroy_check(handle);
+  return collection.count(handle);
 }

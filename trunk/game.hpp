@@ -24,15 +24,18 @@ class CLabel;
 #include "controller.hpp"
 #include "text.hpp"
 #include "script.hpp"
+#include "enemy.hpp"
 #include "enemy_bullet.hpp"
+#include "hero_bullet.hpp"
 #include "particles.hpp"
 #include "music.hpp"
 #include "physfsrwops.h"
 #include "resolution.hpp"
 
 namespace game{
-  extern CEngine* engine;
+  extern CEngine* engine;//tolua_export
 }
+//tolua_begin
 
 //состояния движка
 enum EngineMainState{
@@ -52,6 +55,7 @@ struct EngineState{
 };
   
 class CFrameManager{
+  //tolua_end
 private:
   GLfloat FPS;
   unsigned long frames;//количество кадров от начала игры
@@ -60,14 +64,16 @@ private:
   GLuint last_ticks;
 public:
   CFrameManager(CLabel* label);
-  GLfloat get_FPS();//извлечение FPS
+  GLfloat get_FPS();//извлечение FPS //tolua_export
   // GLfloat get_aFPS();//извлечение среднего показателя FPS
   //  void begin_frame();//начало кадра -- сохраняем время начала кадра
   void wait();//конец кадра -- ждём время, обновляем FPS
+  //tolua_begin
 };
 
 
 class CEngine{
+  //tolua_end
 private:
   void think();//то, что будет выполнятся каждый кадр(кроме рисования), математика и всё такое
   SDL_Surface* screen;//поверхность экрана
@@ -76,12 +82,13 @@ private:
   int read_config();//чтение конфига
   int write_config();//запись конфига
   void handle_events();//обработка событий
-  unsigned long int frames; //количество кадров от начала игры
   //  CHero* hero;//ГГ
   CFrameManager* fps_manager;
-  CController* controller;
+  //  CController* controller;
   //  CText* text;
 public:
+	  //tolua_begin
+  unsigned long int frames; //количество кадров от начала игры
  // int xres,yres;//разрешение экрана
  // int colour;//цветность в битах
  // int fullscreen;					//вынесено далее
@@ -89,14 +96,15 @@ public:
   EngineState state; //состояние движка
   CEngine();//конструктор, в нём мы инициализируем опенгл
   ~CEngine();
+  //tolua_end
   void new_game();//начало игры
   void loop();//основной цикл игры
   void draw();//рендеринг картинки, менюшек
   void draw_game();//рисование гуя и игры(нужно для красивого заблюривания во время паузы)
-  int save_screenshot();
-  unsigned long int get_frame(){return frames;};
+  int save_screenshot();//tolua_export
+  unsigned long int get_frame(){return frames;};//tolua_export
 #ifdef WIN32
   HICON icon;
 #endif
-};
+};//tolua_export
 #endif
