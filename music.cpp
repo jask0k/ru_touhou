@@ -1,5 +1,7 @@
 #include "music.hpp"
 
+#include "physfsrwops.h"
+
 ////////////////////////////////////////////////
 // CSound
 ////////////////////////////////////////////////
@@ -138,7 +140,9 @@ CBoomBox::~CBoomBox() {
 size_t CBoomBox::create_sound(const char *file) {
   if (no_sound)
     return 0;
-  CSoundP sound(new CSound(file));
+  SDL_RWops* filep = PHYSFSRWOPS_openRead(file);
+  CSoundP sound(new CSound(filep));
+  if(filep) SDL_RWclose(filep);
   for(size_t i = 0, size = sounds.size(); i < size; ++i) {
     if(!sounds[i]) {
       sounds[i] = sound;
@@ -193,7 +197,9 @@ void CBoomBox::play_sound(size_t i) {
 void CBoomBox::play_music(const char *file) {
   if (no_sound)
     return;
-  music.reset(new CMusic(file));
+  SDL_RWops* filep = PHYSFSRWOPS_openRead(file);
+  music.reset(new CMusic(filep));
+  if(filep) SDL_RWclose(filep);
   music->play();
 }
 

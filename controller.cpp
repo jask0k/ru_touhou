@@ -199,6 +199,25 @@ struct controller_state CController::get_state(){
   return result;
 }
 
+int CController::set_state(struct controller_state new_state){
+  save_old();
+  analog_state.dir = new_state.direction;
+  analog_state.pow = new_state.strength;
+  if (new_state.attack == LONG_DOWN || new_state.attack == JUST_DOWN)
+    state -> insert(B_ATTACK);
+  else
+    state -> erase(B_ATTACK);
+  if (new_state.focus == LONG_DOWN || new_state.focus == JUST_DOWN)
+    state -> insert(B_FOCUS);
+  else
+    state -> erase(B_FOCUS);
+  if (new_state.skip)
+    state -> insert(B_SKIP);
+  else
+    state -> erase(B_SKIP);
+  
+}
+
 EButton CController::get_confirm(){
   if (state -> count(B_ATTACK)){
     state -> erase(B_ATTACK);
@@ -208,6 +227,14 @@ EButton CController::get_confirm(){
     state -> erase(B_BOMB);
     return B_BOMB;}
   return B_NIL;
+}
+
+bool CController::get_pause(){
+  return (state -> count(B_PAUSE) == 1);
+}
+
+bool CController::get_bomb(){
+  return (state -> count(B_BOMB) == 1);
 }
 
 GLfloat CController::get_kx(){

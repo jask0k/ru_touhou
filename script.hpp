@@ -60,8 +60,9 @@ public:
   //запуск функции
   int run_function(std::string funcname);
   //запуск функции с целочисленным параметром
-  //TODO: УБРАТЬ ЭТОТ МЕРЗКИЙ ХАК И НАПИСАТЬ НОРМАЛЬНЫЙ МЕТОД, С ВАРИАЦИЕЙ ТИПОВ ПАРАМЕТРОВ
   int run_function(std::string funcname, GLuint parameter);
+  //запуск функции с параметром сишного типа(фак еах, обожаю толуа)
+  int run_function(std::string funcname, void* ptr, const char* type);
   //создние треда с состоянием
   lua_State* create_AI_state(lua_State* L);
   int destroy_AI_state(std::map<lua_State*,AI_state>::iterator position);
@@ -77,6 +78,7 @@ public:
   GLfloat set_number(const char* var_name, GLfloat value);
   std::string set_string(std::string var_name, std::string value);
   std::string set_string(const char* var_name, std::string value);
+  void* get_class(const char* var_name);
   //проверяем состояния тредов, запускаем выполнение тех, кому нужно выполнятся
   int think();
   //запуск скрипта уровня

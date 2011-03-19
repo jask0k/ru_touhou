@@ -13,10 +13,11 @@
 #define PARTICLE_DESTROYED -1
 
 #define DEBUG_SIZE 2
-
+//tolua_begin
 struct RGBAcolour{
   GLfloat r,g,b,a;
 };
+//tolua_end
 
 class CParticle{
 private:
@@ -41,7 +42,7 @@ public:
   friend class CParticleManager;
 };
 
-class CParticleManager{
+class CParticleManager{//tolua_export
 private:
   //Цвет, который будет придаваться созданным частицам
   struct RGBAcolour current_colour;
@@ -55,6 +56,7 @@ public:
   void draw();
   //Перемещение и уничтожение сгнивших частиц
   void think();
+  //tolua_begin
   //установка цвета следующих частиц
   void set_colour(struct RGBAcolour colour);
   //установка цвета следующих частиц(поцветовая версия)
@@ -66,8 +68,9 @@ public:
   //создание рандомной частицы, летящей под определённым углом
   void create_angle(GLfloat posx, GLfloat posy, GLuint decay, GLfloat angle);
 };
+//tolua_end
 
 namespace game{
-  extern CParticleManager* pmanager;
+  extern CParticleManager* pmanager;//tolua_export
 };
 #endif

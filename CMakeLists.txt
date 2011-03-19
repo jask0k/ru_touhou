@@ -48,15 +48,31 @@ endif()
 set(danmaku_LIBS 
   ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY}
   ${LUA_LIBRARY} ${PHYSFS_LIBRARY}
-  ${OPENGL_LIBRARIES}
+  ${OPENGL_LIBRARIES} tolua++
 )
 
 set(danmaku_SRCS 
   back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp variables.cpp
   main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp enemy.cpp physfsrwops.c
-  danmaku.rc resolution.cpp
+  danmaku.rc resolution.cpp danmaku_api.hpp hero_bullet.cpp
 )
-  
+
+#хедеры, из которых генерится апи, не забываем прописывать //tolua_export, //tolua_begin, //tolua_end
+set(danmaku_HEADERS
+  back.hpp controller.hpp enemy.hpp enemy_bullet.hpp game.hpp hero.hpp music.hpp particles.hpp
+  sprite.hpp text.hpp variables.hpp hero_bullet.hpp)
+
+
+
+#генерим апи 
+add_custom_command( 
+  OUTPUT danmaku_api.hpp 
+#у меня tolua++ с параметром -o сегфолтится почему-то
+  COMMAND tolua++ danmaku_api.pkg > danmaku_api.hpp 
+  MAIN_DEPENDENCY danmaku_api.pkg
+  DEPENDS ${danmaku_HEADERS})
+
+
 add_executable(danmaku ${danmaku_SRCS})
 target_link_libraries(danmaku ${danmaku_LIBS})
 

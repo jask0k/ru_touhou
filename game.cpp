@@ -27,7 +27,7 @@ void CFrameManager::wait(){
     last_ticks = SDL_GetTicks();
     FPS = 0;
 #ifdef DEBUG
-    std::cerr << "LAG!"<<std::endl;
+    //    std::cerr << "LAG!"<<std::endl;
 #endif
   }
   fps_label -> change_text(FPS);
@@ -110,12 +110,14 @@ CEngine::CEngine(){
   std::cerr << ".done!" << std::endl;
 #endif
   
-  controller = new CController;
+  game::controller = new CController;
   //  text = new CText;
   game::script -> run_script("init");
   game::script -> run_script("functions");
-  game::script -> run_script("hero");
-  game::lmanager -> font_load (std::string("fontg.png"));
+  //  game::script -> run_script("hero");
+  //Перенести в скрипты?
+  CSpriteSheet* fps_font = new CSpriteSheet("fontg.png"); 
+  game::lmanager -> font_load (fps_font);
   game::lmanager -> text_add(9, 18, std::string("fps:"), 0, LAYER_GAME, 0);
   fps_manager = new CFrameManager(game::lmanager-> get_label (game::lmanager -> text_add(45, 18, std::string("0"), 0, LAYER_GAME, 0)));
   ui_background = LoadTexture_simple("ui.png");
@@ -127,7 +129,7 @@ CEngine::CEngine(){
 CEngine::~CEngine(){
   delete game::hero;
   delete fps_manager;
-  delete controller;
+  delete game::controller;
   delete res_manager;
 #ifdef DEBUG
   std::cerr << "Quitting.";
@@ -174,7 +176,7 @@ int CEngine::write_config(){
 }
 
 void CEngine::new_game(){
-  game::hero = new CHero(std::string("aya_2.png"));
+  game::hero = new CHero("hero");
   state.main_state = ENGINE_STATE_GAME;
   state.active = true;
   state.lockdown = false;
@@ -190,7 +192,7 @@ void CEngine::new_game(){
 }
 
 void CEngine::think(){
-  controller_state c_state = controller -> get_state();
+  controller_state c_state = game::controller -> get_state();
   GLfloat speed;
   speed = (c_state.focus)?0.5f:1.0f;
 
@@ -235,9 +237,9 @@ void CEngine::think(){
 
 void CEngine::handle_events(){
   SDL_Event *event = new SDL_Event;
-  controller -> save_old();
+  game::controller -> save_old();
   while (SDL_PollEvent(event)){
-    if (controller -> handle_event(event))
+    if (game::controller -> handle_event(event))
       continue;
     switch (event -> type){  
     

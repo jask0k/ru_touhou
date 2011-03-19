@@ -6,108 +6,113 @@ lives = 5;
 graze = 0;
 power = 0;
 god_mode = 0;
-
-function lantern_AI(sprite)
-   sprite_set_position(sprite,-31,GAME_FIELD_HEIGHT-100,0);
-   sprite_set_speed(sprite,1,0,0);
-   sprite_start_animation(sprite,1,1);
-   wait_time(60);
-   sprite_set_speed(sprite,0,-1,0);
+--функция треда врага - позволяет пускать несколько врагов по одному пути
+--параметр функции - указатель на врага
+--(на самом деле что угодно, движок не смотрит на параметр и послушно передаёт параметр 
+--без преобразований в функцию треда)
+function lantern_AI(lantern)
+   lantern.sprite.x = -31;--ставим врага за экран слева
+   lantern.sprite.y = GAME_FIELD_HEIGHT-100;--чуть ниже верхней границы экрана
+   lantern:set_speed(1,0);--летим вправо
+   lantern:start_animation(1);--машем крыльями
+   wait_time(60);--ждём секунду
+   lantern:set_speed(0,-1);--летим вниз
    while true do
-      local her_xpos = hero_x();
-      local her_ypos = hero_y();
       local i
       for i = 1, 5 do
-	 local lan_xpos,lan_ypos
-	 lan_xpos,lan_ypos = sprite_get_position(sprite)
-	 local bullet = enbullet_create_target(sample_proto,lan_xpos,lan_ypos,4-(i*0.2),her_xpos,her_ypos,0);
+	 local bullet = lantern:shoot_at_hero(4-(i*0.2));--стреляем очередью из пяти пуль
+	 wait_time(3);
+      end
+      wait_time(45);--ждём 45 кадров
+   end
+end
+
+function lantern2_AI(lantern)
+   lantern.sprite.x = GAME_FIELD_WIDTH+31;
+   lantern.sprite.y = GAME_FIELD_HEIGHT-100;
+   lantern:set_speed(-1,0);
+   lantern:start_animation(1);
+   wait_time(60);
+   lantern:set_speed(0,-1);
+   while true do
+      local i
+      for i = 1, 5 do
+	 local bullet = lantern:shoot_at_hero(4-(i*0.2));
 	 wait_time(3);
       end
       wait_time(45);
    end
 end
 
-function lantern2_AI(sprite)
-   sprite_set_position(sprite,GAME_FIELD_WIDTH+31,GAME_FIELD_HEIGHT-100,0);
-   sprite_set_speed(sprite,-1,0,0);
-   sprite_start_animation(sprite,1,1);
-   wait_time(60);
-   sprite_set_speed(sprite,0,-1,0);
-   while true do
-      local her_xpos = hero_x();
-      local her_ypos = hero_y();
-      local i
-      sound_play(lantern_spawn_sound);
-      for i = 1, 5 do
-	 local lan_xpos,lan_ypos
-	 lan_xpos,lan_ypos = sprite_get_position(sprite)
-	 local bullet = enbullet_create_target(0,lan_xpos,lan_ypos,4-(i*0.2),her_xpos,her_ypos,0);
-	 wait_time(3);
-      end
-      wait_time(45);
-   end
-end
 
-function sample_AI(bullet)
+function sample_AI(bullet) --тред, крутящий пули
    while true do
-      enbullet_stray(bullet,5);
+      bullet:stray(5);
       wait_time(1);
    end
 end
 
 function sample_AI2(bullet)
    while true do
-      enbullet_lock_on_hero(bullet,0,3)
+      bullet:lock_on_hero(0,3)
       wait_time(60)
-      enbullet_stop(bullet)
+      bullet:stop()
       wait_time(60)
 
    end
 end
 
 -- Всякие загрузки-шмагрузки
-spritesheet_load("level1.png");
-spritesheet_load("lantern.png");
-spritesheet_load("bullete.png")
-spritesheet_load("fontscore.png")
-font1=font_load("fontscore.png")
-label1 = label_create(440,410,"SCORE",font1,LAYER_PANEL,0)
-lantern_spawn_sound = sound_create("spawn.wav");
+level_ss = game.ssheet:new("level1.png")
+lantern_ss = game.ssheet:new("lantern.png");
+bullete = game.ssheet:new("bullete.png")
+font_ss = game.ssheet:new("fontscore.png")
+font1 = game.lmanager:font_load(font_ss)
+--label1 = game.label:new(440,410,"SCORE",font1,LAYER_PANEL,0)
+--lantern_spawn_sound = game.:new("spawn.wav");
 log("Starting first level!");
-music_play("music.xm");
+log(".")
+--game.boom_box:music_play("music.xm");
 --sample_proto = enbullet_create_proto("bullets.png",0,0,1)
-sample_proto = enbullet_create_proto("bullete.png",3,0,.3,"explosion")
-enbullet_set_proto_tint(sample_proto, .781, .5, .25, 1.)
-sample_proto2 = enbullet_create_proto("bullete.png",0,0,1,"big_bad")
+log(".")
+sample_proto = game.ebmanager:create_proto(bullete,3,false,.3,"explosion") --создаём прототип пули
+log(".")
+game.ebmanager:set_proto_tint(sample_proto, .781, .5, .25, 1.) --раскрашиваем прототип
+log(".")
+sample_proto2 = game.ebmanager:create_proto(bullete.png,0,false,1,"big_bad") --создаём ещё прототип
+log(".")
 wait_time(1); -- Подождать кадр
+game.background:set_fog_density(.5,-0.004);-- создаём разрежающийся туман
 
-background_set_fog_density(.5,-0.004);
-
-logo = sprite_create("level1.png",LAYER_EMBLEM); -- Создание спрайта на слое переднего плана
-sprite_set_scale(logo,.5); -- Установка масштабирования спрайта
-sprite_set_position(logo,GAME_FIELD_WIDTH/2-10,GAME_FIELD_HEIGHT/2,0); -- Установка положения спрайта
-sprite_set_speed(logo,0.1,0,0); -- Установка скорости передвижения
-sprite_set_alpha(logo,0.0); -- Установка прозрачности логотипа
-sprite_set_alpha_speed(logo,0.01); -- Сгущаем логотип 
+logo = sprite:new(level_ss,game.LAYER_EMBLEM); -- Создание спрайта на слое переднего плана
+logo.scale = .5; -- Установка масштабирования спрайта
+logo.x = game.GAME_FIELD_WIDTH/2-10;
+logo.y = game.GAME_FIELD_HEIGHT/2; -- Установка положения спрайта
+logo:set_speed(0.1,0,0); -- Установка скорости передвижения
+logo.alpha = 0.0; -- Установка прозрачности логотипа
+logo.v_alpha = 0.01; -- Сгущаем логотип 
 wait_time(100); -- Ждём
-background_set_fog_density(.1,0);
+game.background:set_fog_density(.1);
 
-sprite_set_alpha_speed(logo,-0.01); -- Разгущаем его
+logo.v_alpha = -0.01; -- Разгущаем его
 wait_time(130); -- Ещё ждём
+-- game.background:set_fog_density(.7,0);
 
 for i = 1,5 do
-   local lantern = sprite_create("lantern.png",LAYER_ENEMY);
+   local lantern = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    --  thread_start(lantern_AI,string.format("sprite_destroyed(%d)",lantern),lantern);
-   control_sprite(lantern_AI, lantern);
-   local lantern2 = sprite_create("lantern.png",LAYER_ENEMY);
+   thread_start(lantern_AI,"enemy_destroyed(lantern)" , lantern);
+   local lantern2 = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    -- thread_start(lantern2_AI,string.format("sprite_destroyed(%d)",lantern2),lantern2);
    control_sprite(lantern2_AI, lantern2);
    wait_time(60);
 end
 --wait_time(10000);
-wait_cond("hero_y()>300");
+
+wait_cond("game.hero.y>300");
+log ("ok!")
 for k = 40, 340, 100 do
    sprite = enbullet_create(sample_proto2,k,300,3,0); -- Пускаем пули
    thread_start(sample_AI,string.format("enbullet_destroyed(%d)",sprite),sprite);

@@ -6,9 +6,11 @@
 #include <set>
 #include <cmath>
 #include <iostream>
+#include <map>
 
 #include "config.hpp"
 
+//tolua_begin
 enum EButton{
   B_NIL = 0,
   B_UP = 1,
@@ -52,16 +54,21 @@ struct controller_state{
   GLint attack;//
   bool skip;
 };
+
 class CController{
 public:
+  std::map<SDLKey,EButton> key_bindings; //биндинги
+  std::map<Uint8,EButton> joykey_bindings;
   CController();
   ~CController();
+  //tolua_end
   int handle_event(SDL_Event* event);
   void button(EButton key, bool key_state);
   int button(SDLKey key, bool key_state);
   int jbutton(Uint8 key, bool key_state);
   int axismove();
   void move_analog(GLfloat x, GLfloat y);
+  //tolua_begin
   GLfloat get_kx();
   GLfloat get_ky();
   struct controller_state get_state();
@@ -69,10 +76,10 @@ public:
   
   EButton get_confirm();//смотрит, нажата ли кнопка атаки или бомбы и 
   //очищает их состояние, нужно для меню
-  int get_pause();
+  bool get_pause();
   bool get_bomb();
+  //tolua_end
   int save_old();
-  
 private:
   SDL_Joystick *stick;//джойстик
   void analog_sync();
@@ -83,5 +90,9 @@ private:
   } analog_state;
   bool old_attack;
   bool old_focus;
+};//tolua_export
+
+namespace game{
+  extern CController* controller;//tolua_export
 };
 #endif

@@ -14,12 +14,13 @@ typedef std::tr1::shared_ptr<CSound> CSoundP;
 class CMusic;
 typedef std::tr1::shared_ptr<CMusic> CMusicP;
 
-class CBoomBox {
+class CBoomBox { //tolua_export
   std::vector<CSoundP> sounds; // keeps sounds alive while the user needs them
   std::vector<CSoundP> channels; // keeps sounds alive while the playback needs them
   CMusicP music;
   bool no_sound;
 public:
+  //tolua_begin
   CBoomBox();
   ~CBoomBox();
 
@@ -33,9 +34,10 @@ public:
 
   void sound_disable(){no_sound = true;};
 };
+//tolua_end
 
 namespace game {
-  extern CBoomBox *boom_box;
+  extern CBoomBox *boom_box;//tolua_export
 }
 
 #endif
