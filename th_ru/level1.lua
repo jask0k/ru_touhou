@@ -98,15 +98,17 @@ logo.v_alpha = -0.01; -- Разгущаем его
 wait_time(130); -- Ещё ждём
 -- game.background:set_fog_density(.7,0);
 
+lantern_proto = game.enmanager:create_enemy_proto(lantern_ss,1,20,sample_proto,"")
+
 for i = 1,5 do
-   local lantern = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
+   local lantern = game.enmanager:create_enemy(lantern_proto,-31,0,GAME_FIELD_HEIGHT-100);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    --  thread_start(lantern_AI,string.format("sprite_destroyed(%d)",lantern),lantern);
-   thread_start(lantern_AI,"enemy_destroyed(lantern)" , lantern);
-   local lantern2 = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
+   thread_start(lantern_AI,"game.enmanager:enemy_destroyed(lantern)" , lantern);
+--   local lantern2 = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    -- thread_start(lantern2_AI,string.format("sprite_destroyed(%d)",lantern2),lantern2);
-   control_sprite(lantern2_AI, lantern2);
+--   control_sprite(lantern2_AI, lantern2);
    wait_time(60);
 end
 --wait_time(10000);

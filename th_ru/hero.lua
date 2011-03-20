@@ -26,7 +26,7 @@ function hero_fire() -- эта функция вызывается каждый 
                                                        -- стрельба через кадр создаёт ощущение
                                                        -- _мигающей_ неподвижной струйки
       for i = 55,125,5 do
-	 bullet = game.hbullet:new(main_proto,10,i) -- наверно, здесь будет работать сборщик мусора
+	 bullet = game.hbullet:new(main_proto,10,i,0,0) -- наверно, здесь будет работать сборщик мусора
 --	 sprite = sprite_create("bullets.png", LAYER_HERO_BULLET);
 --	 sprite_set_position(sprite,hero_x(),hero_y(),i);
 --	 sprite_set_frame(sprite,8);

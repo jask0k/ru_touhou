@@ -50,6 +50,7 @@ void CHeroBulletManager::add(CHeroBullet *new_member){
     new_member -> sprite -> start_animation((GLuint)proto.frame_animation);
   else
     new_member -> sprite -> set_frame(proto.frame_animation);
+  collection.insert(new_member);
 }
 GLuint CHeroBulletManager::create_proto(std::string die_func, GLfloat damage, 
 					GLfloat scale, GLboolean animated, GLint frame_animation, 
