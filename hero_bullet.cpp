@@ -1,10 +1,14 @@
 #include "hero_bullet.hpp"
 CHeroBullet::CHeroBullet(GLuint proto_no, GLfloat speed, GLfloat angle, GLfloat xshift, GLfloat yshift){
-  CHeroBullet(proto_no, speed, angle, game::hero->sprite);
+  init(proto_no, speed, angle, game::hero->sprite);
   sprite -> x += xshift;
   sprite -> y += yshift;
 }
 CHeroBullet::CHeroBullet(GLuint proto_no, GLfloat speed, GLfloat angle, CSprite* shift){
+  init(proto_no,speed,angle,shift);
+}
+
+void CHeroBullet::init(GLuint proto_no, GLfloat speed, GLfloat angle, CSprite* shift){
   this -> proto_no = proto_no;
   game::hbmanager -> add(this);
   sprite -> x = shift->x;

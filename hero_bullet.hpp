@@ -14,6 +14,7 @@ public:
   //tolua_end
   GLboolean think();
 private:
+  void init(GLuint proto_no, GLfloat speed, GLfloat angle, CSprite* shift);  
   GLuint proto_no;
   friend class CHeroBulletManager;
   //tolua_begin
