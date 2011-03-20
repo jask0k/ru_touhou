@@ -40,6 +40,7 @@ int main(int argc, char* argv[]){
   delete game::boom_box;
   delete game::pmanager;
   delete game::hbmanager;
+  delete game::enmanager;
   delete game::ebmanager;
   delete game::background;
   delete game::engine;
