@@ -223,7 +223,7 @@ CSprite::CSprite(CSpriteSheet* ssheet, Layer layer):
   scale(1.f),blur(false),layer(layer),follow(NULL),ssheet(ssheet){
   game::smanager -> add_sprite(this);
 #ifdef DEBUG
-  std::cerr << "creating sprite!" <<std::endl;
+  //  std::cerr << "creating sprite!" <<std::endl;
 #endif
 }
 
