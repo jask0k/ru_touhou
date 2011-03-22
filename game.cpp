@@ -230,6 +230,7 @@ void CEngine::think(){
   game::background -> think();
   game::smanager -> think();
   game::ebmanager -> think();
+  game::enmanager -> think();
   game::pmanager -> think();
   if (state.god_timer > 0)
     --state.god_timer;

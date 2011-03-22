@@ -226,8 +226,8 @@ lua_State* CScript::create_AI_state(lua_State* L){
 // 	  const char* err_string = luaL_checklstring(state,-1,NULL);
 // 	  std::cerr << "script error:" << err_string << std::endl;
 // #endif
-//    if (cond.compare("")!=0 && check_cond(state,cond))
-//          return NULL;
+    if (cond.compare("")!=0 && check_cond(state,cond))
+          return NULL;
     if (ret!=LUA_YIELD && ret!=0){
 #ifdef DEBUG
       std::string err_message(luaL_checklstring(state,-1,NULL));
