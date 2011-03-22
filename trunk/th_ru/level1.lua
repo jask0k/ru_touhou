@@ -11,8 +11,10 @@ god_mode = 0;
 --(на самом деле что угодно, движок не смотрит на параметр и послушно передаёт параметр 
 --без преобразований в функцию треда)
 function lantern_AI(lantern)
-   lantern.sprite.x = -31;--ставим врага за экран слева
-   lantern.sprite.y = GAME_FIELD_HEIGHT-100;--чуть ниже верхней границы экрана
+--   lantern.sprite.x = -31;--ставим врага за экран слева
+--   lantern.sprite.y = GAME_FIELD_HEIGHT-100;--чуть ниже верхней границы экрана
+   log("starting AI thread!")
+   print ("enemy pointer is:", lantern)
    lantern:set_speed(1,0);--летим вправо
    lantern:start_animation(1);--машем крыльями
    wait_time(60);--ждём секунду
@@ -71,16 +73,11 @@ font1 = game.lmanager:font_load(font_ss)
 --label1 = game.label:new(440,410,"SCORE",font1,LAYER_PANEL,0)
 --lantern_spawn_sound = game.:new("spawn.wav");
 log("Starting first level!");
-log(".")
 --game.boom_box:music_play("music.xm");
 --sample_proto = enbullet_create_proto("bullets.png",0,0,1)
-log(".")
 sample_proto = game.ebmanager:create_proto(bullete,3,false,.3,"explosion") --создаём прототип пули
-log(".")
 game.ebmanager:set_proto_tint(sample_proto, .781, .5, .25, 1.) --раскрашиваем прототип
-log(".")
-sample_proto2 = game.ebmanager:create_proto(bullete.png,0,false,1,"big_bad") --создаём ещё прототип
-log(".")
+sample_proto2 = game.ebmanager:create_proto(bullete,0,false,1,"big_bad") --создаём ещё прототип
 wait_time(1); -- Подождать кадр
 game.background:set_fog_density(.5,-0.004)-- создаём разрежающийся туман
 
@@ -101,10 +98,11 @@ wait_time(130); -- Ещё ждём
 lantern_proto = game.enmanager:create_enemy_proto(lantern_ss,1,20,sample_proto,"")
 
 for i = 1,5 do
-   local lantern = game.enmanager:create_enemy(lantern_proto,-31,0,GAME_FIELD_HEIGHT-100);
+   local enemy = game.enmanager:create_enemy(lantern_proto,-31,GAME_FIELD_HEIGHT-100);
+   print (enemy)
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    --  thread_start(lantern_AI,string.format("sprite_destroyed(%d)",lantern),lantern);
-   thread_start(lantern_AI,"game.enmanager:enemy_destroyed(lantern)" , lantern);
+   thread_start(lantern_AI,"game.enmanager:enemy_destroyed(lantern)" , enemy);
 --   local lantern2 = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    -- thread_start(lantern2_AI,string.format("sprite_destroyed(%d)",lantern2),lantern2);
