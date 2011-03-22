@@ -195,11 +195,12 @@ lua_State* CScript::create_AI_state(lua_State* L){
     //    std::cerr << cond << std::endl;
     //и удаляем его оттудова
     lua_remove(L,2);
-    if (cond.compare("")!=0 && check_cond(L,cond))
-      return NULL;
     //смотрим, сколько лишних параметров у нас есть
     GLuint par_num = lua_gettop(L)-1;
-    //    std::cerr << par_num << std::endl;
+#ifdef DEBUG
+    std::cerr <<"par_num:"<< par_num << std::endl;
+    std::cerr <<"cond:"<< cond << std::endl;
+#endif
     //и суём их все в параметры треда
     lua_xmove(L,state,par_num);
     //создаём структуру, содержащую инфу про тред АИ
@@ -212,7 +213,21 @@ lua_State* CScript::create_AI_state(lua_State* L){
     reader << state; 
     //    std::cerr << state_name << std::endl;
     lua_setfield(L,1,reader.str().c_str());
-    int ret = lua_resume(state,1);
+// #ifdef DEBUG
+// 	  std::cerr << "stack content '"<<state<<"'"<<std::endl;
+// 	  int it;
+// 	  for (it=1;it<=lua_gettop(state);++it)
+// 	    std::cerr << lua_typename(state, lua_type(state, it)) << std::endl;
+// 	  std::cerr << "end!"<<std::endl;
+// #endif
+    int ret = lua_resume(state,par_num);
+// #ifdef DEBUG
+// 	  std::cerr << "error code:" << ret<< std::endl;
+// 	  const char* err_string = luaL_checklstring(state,-1,NULL);
+// 	  std::cerr << "script error:" << err_string << std::endl;
+// #endif
+//    if (cond.compare("")!=0 && check_cond(state,cond))
+//          return NULL;
     if (ret!=LUA_YIELD && ret!=0){
 #ifdef DEBUG
       std::string err_message(luaL_checklstring(state,-1,NULL));
