@@ -2,15 +2,21 @@
 #include "hero_bullet.hpp"
 
 CEnemy::CEnemy(GLuint proto, GLuint bullet_proto, CSprite* sprite, GLfloat max_hp):
-  proto_no(proto),bullet_proto(bullet_proto),hp(max_hp),sprite(sprite){}
+  proto_no(proto),bullet_proto(bullet_proto),hp(max_hp),ai_state(NULL),sprite(sprite){}
 
 CEnemy::~CEnemy(){
+  if (ai_state!=NULL)
+    game::script -> destroy_AI_state(ai_state);
   game::enmanager -> destroy_enemy(this);
 }
 
 GLboolean CEnemy::think(){
   hp -= game::hbmanager -> collide(sprite->x,sprite->y,sprite->get_width()/2.f);
   return (hp > 0.f);
+}
+
+void CEnemy::bind_AI(lua_State* AI){
+  this->ai_state = AI;
 }
 
 GLboolean CEnemy::damage(GLfloat amount){

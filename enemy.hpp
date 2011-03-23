@@ -7,6 +7,7 @@
 
 #include "enemy_bullet.hpp"
 #include "sprite.hpp"
+#include "script.hpp"
 
 #include "collection.hpp"
 class CEnemyBullet;
@@ -25,14 +26,17 @@ private:
   GLuint proto_no;
   GLuint bullet_proto;
   GLfloat hp;
-  CSprite* sprite;
-  
+  lua_State* ai_state;
   //  GLboolean managed;
 public:
-  CEnemy(GLuint proto, GLuint bullet_proto, CSprite* sprite, GLfloat max_hp);//tolua_export
+  //tolua_begin
+  CSprite* sprite;
+  CEnemy(GLuint proto, GLuint bullet_proto, CSprite* sprite, GLfloat max_hp);
   ~CEnemy();
+  //tolua_end
   GLboolean think();
   //tolua_begin
+  void bind_AI(lua_State* AI);
   GLboolean damage(GLfloat amount);
   GLfloat get_x();
   GLfloat get_y();

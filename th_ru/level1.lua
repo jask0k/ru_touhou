@@ -13,7 +13,9 @@ god_mode = 0;
 function lantern_AI(lantern)
 --   lantern.sprite.x = -31;--ставим врага за экран слева
 --   lantern.sprite.y = GAME_FIELD_HEIGHT-100;--чуть ниже верхней границы экрана
+   lantern:bind_AI()
    log("starting AI thread!")
+   local cond_enemy = lantern
    print ("enemy pointer is:", lantern)
    print ("enemy_destroyed:",game.enmanager:enemy_destroyed(lantern))
    lantern:set_speed(1,0);--летим вправо
@@ -109,7 +111,8 @@ for i = 1,5 do
    print (enemy)
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    --  thread_start(lantern_AI,string.format("sprite_destroyed(%d)",lantern),lantern);
-   thread_start(lantern_AI,"game.enmanager:enemy_destroyed(lantern)" , enemy);
+   thread_start(lantern_AI,"" , enemy)
+   
 --   local lantern2 = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    -- thread_start(lantern2_AI,string.format("sprite_destroyed(%d)",lantern2),lantern2);
