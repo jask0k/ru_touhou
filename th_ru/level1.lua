@@ -46,6 +46,12 @@ function lantern2_AI(lantern)
    end
 end
 
+function lantern_die(sprite)
+   sprite:start_animation(2)
+   sprite.decay_timer = 20
+   sprite.decay_active=true
+end
+
 
 function sample_AI(bullet) --тред, крутящий пули
    while true do
@@ -95,7 +101,7 @@ logo.v_alpha = -0.01; -- Разгущаем его
 wait_time(130); -- Ещё ждём
 -- game.background:set_fog_density(.7,0);
 
-lantern_proto = game.enmanager:create_enemy_proto(lantern_ss,1,20,sample_proto,"")
+lantern_proto = game.enmanager:create_enemy_proto(lantern_ss,1,20,sample_proto,"lantern_die")
 
 for i = 1,5 do
    local enemy = game.enmanager:create_enemy(lantern_proto,-31,GAME_FIELD_HEIGHT-100);
