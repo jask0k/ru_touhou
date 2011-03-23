@@ -9,6 +9,7 @@ CHero::CHero(const char* scriptname):
   sprite->x = x;
   sprite->y = y;
   sprite->scale = game::script->get_number("hero_scale");
+  sprite->start_animation(1);
   //  (game::smanager->get_sprite(sprite_no))->set_position(x,y);
   //  (game::smanager->get_sprite(sprite_no))->set_scale(0.0625f);
 }

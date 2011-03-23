@@ -25,7 +25,7 @@ find_program(ZIP_PACKER NAMES pkzip zip)
 set(DATA_FILE th_ru.dat)
 set(PICTURES ui.png grass.png icon.png ui_wide.png)
 set(SPRITESHEETS aya.png aya_2.png bullets.png fontg.png effects.png
-    level1.png lantern.png bullete.png fontscore.png)
+    level1.png lantern.png bullete.png fontscore.png player_sprite_mokou.png)
 set(SOUNDS spawn.wav)
 set(MUSIC music.xm)
 
