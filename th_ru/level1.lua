@@ -15,6 +15,7 @@ function lantern_AI(lantern)
 --   lantern.sprite.y = GAME_FIELD_HEIGHT-100;--чуть ниже верхней границы экрана
    log("starting AI thread!")
    print ("enemy pointer is:", lantern)
+   print ("enemy_destroyed:",game.enmanager:enemy_destroyed(lantern))
    lantern:set_speed(1,0);--летим вправо
    lantern:start_animation(1);--машем крыльями
    wait_time(60);--ждём секунду
