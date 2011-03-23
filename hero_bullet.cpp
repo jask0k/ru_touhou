@@ -32,7 +32,7 @@ GLfloat CHeroBulletManager::collide(GLfloat x, GLfloat y, GLfloat hitbox_radius)
   GLfloat damage=0.0f;
   for (i = collection.begin();i != collection.end();){
     CSprite* bullet_sprite = (*i)->sprite;
-    if (hypot(x-bullet_sprite->x, y-bullet_sprite->y) < hitbox_radius+bullet_sprite -> get_width()){
+    if (hypot(x-bullet_sprite->x, y-bullet_sprite->y) < (hitbox_radius+bullet_sprite -> get_width())/2){
       damage += proto_collection[(*i)->proto_no].damage;
       destroy(*(i++));
     }

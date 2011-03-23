@@ -208,10 +208,10 @@ lua_State* CScript::create_AI_state(lua_State* L){
     lua_remove(L,2);
     //смотрим, сколько лишних параметров у нас есть
     GLuint par_num = lua_gettop(L)-1;
-#ifdef DEBUG
-    std::cerr <<"par_num:"<< par_num << std::endl;
-    std::cerr <<"cond:"<< cond << std::endl;
-#endif
+// #ifdef DEBUG
+//     std::cerr <<"par_num:"<< par_num << std::endl;
+//     std::cerr <<"cond:"<< cond << std::endl;
+// #endif
     //и суём их все в параметры треда
     lua_xmove(L,state,par_num);
     //создаём структуру, содержащую инфу про тред АИ

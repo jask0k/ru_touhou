@@ -82,15 +82,16 @@ public:
   // CSprite(std::string ssheet, Layer layer=LAYER_EMBLEM);
   ~CSprite();
   void set_position(GLfloat x, GLfloat y, GLfloat rotation=0.0f);//установка положения
-  //  void set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r=0.f);//установка скорости
+  void set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r=0.f);//установка скорости
   void set_angle(GLfloat v, GLfloat angle);//установка вектора скорости по углу
   void set_tint(GLfloat red, GLfloat green, GLfloat blue);//установка окраски
   void clear_tint();
+  void stop();
   // void set_alpha(GLfloat amount);//установка альфоты
   // void set_alpha_speed(GLfloat amount);//установка скорости изменения альфоты
   // void set_scale(GLfloat scale, GLfloat v_scale=0.0f);//установка увеличения/уменьшения спрайта
   // void set_scale_speed(GLfloat v_scale){this->v_scale=v_scale;};
-  // void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
+  void set_decay(GLuint decay){decay_active = true; decay_timer = decay;};
   // void set_layer(Layer layer){this->layer=layer;};
   // void set_blur(GLboolean blur=true){this->blur=blur;};
   // void set_alpha_limit(GLfloat min_alpha, GLfloat max_alpha){this->min_alpha = min_alpha;this -> max_alpha = max_alpha;};

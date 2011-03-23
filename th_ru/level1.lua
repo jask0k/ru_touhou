@@ -14,10 +14,10 @@ function lantern_AI(lantern)
 --   lantern.sprite.x = -31;--ставим врага за экран слева
 --   lantern.sprite.y = GAME_FIELD_HEIGHT-100;--чуть ниже верхней границы экрана
    lantern:bind_AI()
-   log("starting AI thread!")
-   local cond_enemy = lantern
-   print ("enemy pointer is:", lantern)
-   print ("enemy_destroyed:",game.enmanager:enemy_destroyed(lantern))
+--   log("starting AI thread!")
+--   local cond_enemy = lantern
+--   print ("enemy pointer is:", lantern)
+--   print ("enemy_destroyed:",game.enmanager:enemy_destroyed(lantern))
    lantern:set_speed(1,0);--летим вправо
    lantern:start_animation(1);--машем крыльями
    wait_time(60);--ждём секунду
@@ -33,23 +33,27 @@ function lantern_AI(lantern)
 end
 
 function lantern2_AI(lantern)
-   lantern.sprite.x = GAME_FIELD_WIDTH+31;
-   lantern.sprite.y = GAME_FIELD_HEIGHT-100;
-   lantern:set_speed(-1,0);
-   lantern:start_animation(1);
-   wait_time(60);
-   lantern:set_speed(0,-1);
+   lantern:bind_AI()
+--   log("starting AI thread!")
+--   local cond_enemy = lantern
+--   print ("enemy pointer is:", lantern)
+--   print ("enemy_destroyed:",game.enmanager:enemy_destroyed(lantern))
+   lantern:set_speed(-1,0);--летим вправо
+   lantern:start_animation(1);--машем крыльями
+   wait_time(60);--ждём секунду
+   lantern:set_speed(0,-1);--летим вниз
    while true do
       local i
       for i = 1, 5 do
-	 local bullet = lantern:shoot_at_hero(4-(i*0.2));
+	 local bullet = lantern:shoot_at_hero(4-(i*0.2));--стреляем очередью из пяти пуль
 	 wait_time(3);
       end
-      wait_time(45);
+      wait_time(45);--ждём 45 кадров
    end
 end
 
 function lantern_die(sprite)
+   sprite:stop()
    sprite:start_animation(2)
    sprite.decay_timer = 20
    sprite.decay_active=true
@@ -82,7 +86,7 @@ font1 = game.lmanager:font_load(font_ss)
 --label1 = game.label:new(440,410,"SCORE",font1,LAYER_PANEL,0)
 --lantern_spawn_sound = game.:new("spawn.wav");
 log("Starting first level!");
---game.boom_box:music_play("music.xm");
+game.boom_box:play_music("music.xm");
 --sample_proto = enbullet_create_proto("bullets.png",0,0,1)
 sample_proto = game.ebmanager:create_proto(bullete,3,false,.3,"explosion") --создаём прототип пули
 game.ebmanager:set_proto_tint(sample_proto, .781, .5, .25, 1.) --раскрашиваем прототип
@@ -108,19 +112,19 @@ lantern_proto = game.enmanager:create_enemy_proto(lantern_ss,1,20,sample_proto,"
 
 for i = 1,5 do
    local enemy = game.enmanager:create_enemy(lantern_proto,-31,GAME_FIELD_HEIGHT-100);
-   print (enemy)
+--   print (enemy)
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
    --  thread_start(lantern_AI,string.format("sprite_destroyed(%d)",lantern),lantern);
    thread_start(lantern_AI,"" , enemy)
    
---   local lantern2 = game.sprite:new(lantern_ss,game.LAYER_ENEMY);
+  enemy = game.enmanager:create_enemy(lantern_proto,GAME_FIELD_WIDTH+31,GAME_FIELD_HEIGHT-100);
    --   enemy_table[i] = bind_AI(CONTROL_SPRITE,lantern,lantern_AI);
-   -- thread_start(lantern2_AI,string.format("sprite_destroyed(%d)",lantern2),lantern2);
+  thread_start(lantern2_AI,"",enemy);
 --   control_sprite(lantern2_AI, lantern2);
    wait_time(60);
 end
 --wait_time(10000);
-
+--[[
 wait_cond("game.hero.y>300");
 log ("ok!")
 for k = 40, 340, 100 do
@@ -130,6 +134,7 @@ for k = 40, 340, 100 do
    thread_start(sample_AI2,string.format("enbullet_destroyed(%d)",sprite),sprite);
 --   wait_time(30);
 end
+--]]
 --[[
 sprite = enbullet_create(69,100,300,3,0); -- Пускаем пули
 bind_AI(CONTROL_BULLET,sprite,sample_AI2);
