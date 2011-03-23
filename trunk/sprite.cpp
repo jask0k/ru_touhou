@@ -293,6 +293,18 @@ void CSprite::set_position(GLfloat new_x, GLfloat new_y, GLfloat new_rotation){
   rotation = new_rotation;
 }
 
+void CSprite::set_speed(GLfloat v_x, GLfloat v_y, GLfloat v_r){
+  this->v_x = v_x;
+  this->v_y = v_y;
+  this->v_r = v_r;
+}
+
+void CSprite::stop(){
+  this->v_x = 0;
+  this->v_y = 0;
+  this->v_r = 0;
+}
+
 // void CSprite::set_scale(GLfloat scale, GLfloat v_scale){
 //   if (scale>0)
 //     this -> scale = scale;

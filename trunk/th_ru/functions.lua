@@ -1,8 +1,8 @@
 function explosion(sprite)
-   sprite_set_speed(sprite,0,0,0);
-   sprite_set_scale_speed(sprite,.1);
-   sprite_set_alpha_speed(sprite, -.1);
-   sprite_set_decay(sprite,10);
+   sprite:stop();
+   sprite.v_scale=.1;
+   sprite.v_alpha = -.1;
+   sprite:set_decay(10);
 end
 
 function big_bad(sprite)
