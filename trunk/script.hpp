@@ -66,6 +66,7 @@ public:
   //создние треда с состоянием
   lua_State* create_AI_state(lua_State* L);
   int destroy_AI_state(std::map<lua_State*,AI_state>::iterator position);
+  int destroy_AI_state(lua_State* L);
   GLint get_integer(std::string var_name);
   GLint get_integer(const char* var_name);
   GLfloat get_number(std::string var_name);

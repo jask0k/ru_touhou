@@ -172,10 +172,21 @@ GLboolean CScript::check_cond(lua_State* L, std::string cond){
       std::string err_message(luaL_checklstring(level_state,-1,NULL));
       std::cerr << "lua error while checking condition(" << cond << "):" << err_message << std::endl;
 #endif
+      return false;
   }
-  GLboolean result = lua_toboolean(L,-1);
-  lua_pop(L,1);
-  return result;
+  else{
+    GLboolean result = lua_toboolean(L,-1);
+// #ifdef DEBUG
+//     std::cerr << "condition " << cond << ":";
+//     if (result)
+//       std::cerr << "true";
+//     else
+//       std::cerr << "false";
+//     std::cerr << std::endl;
+// #endif
+    lua_pop(L,1);
+    return result;
+  }
 }
 
 lua_State* CScript::create_AI_state(lua_State* L){
@@ -226,7 +237,7 @@ lua_State* CScript::create_AI_state(lua_State* L){
 // 	  const char* err_string = luaL_checklstring(state,-1,NULL);
 // 	  std::cerr << "script error:" << err_string << std::endl;
 // #endif
-    if (cond !="" && check_cond(state,cond))
+    if (cond != "" && check_cond(state,cond))
           return NULL;
     if (ret!=LUA_YIELD && ret!=0){
 #ifdef DEBUG
@@ -250,6 +261,17 @@ int CScript::destroy_AI_state(std::map<lua_State*,AI_state>::iterator position){
   lua_setfield(level_state,-2,reader.str().c_str());
   //  std::cerr << "destroing " << reader.str() << std::endl;
   AI_states.erase(position);
+  return 0;
+}
+
+int CScript::destroy_AI_state(lua_State* L){
+  std::ostringstream reader;
+  reader << L;
+  lua_getglobal(level_state,"AI_table");
+  lua_pushnil(level_state);
+  lua_setfield(level_state,-2,reader.str().c_str());
+  //  std::cerr << "destroing " << reader.str() << std::endl;
+  AI_states.erase(L);
   return 0;
 }
 
@@ -336,9 +358,9 @@ int CScript::think(){
       //      cleanup = true;
       //    }
       //    if (cleanup){
-      bad_handle = i;
-      ++i;
-      if (destroy_AI_state(bad_handle) == -1){
+      //      bad_handle = i;
+      //      ++i;
+      if (destroy_AI_state(i++) == -1){
 #ifdef DEBUG
 	std::cerr << "fixme:Could not destroy AI state!" << std::endl;
 #endif
