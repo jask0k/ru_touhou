@@ -7,12 +7,14 @@ find_package(SDL_mixer REQUIRED)
 find_package(Lua51 REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(OpenGL REQUIRED)
+find_program(TOLUA_PROGRAM NAMES tolua++ tolua++5.1)
+find_library(TOLUA_LIBRARY tolua++ tolua++5.1 HINTS ${PC_LUA_LIBDIR})
 
-set(danmaku_INCLUDES 
+set(danmaku_INCLUDES
   ${CMAKE_SOURCE_DIR}
   ${SDL_INCLUDE_DIR} ${SDLIMAGE_INCLUDE_DIR} ${SDLMIXER_INCLUDE_DIR}
   ${LUA_INCLUDE_DIR} ${PHYSFS_INCLUDE_DIR}
-  ${OPENGL_INCLUDE_DIR} 
+  ${OPENGL_INCLUDE_DIR}
 )
 
 include_directories(${danmaku_INCLUDES})
@@ -45,35 +47,36 @@ if(MINGW OR MSYS)
   set(LUA_LIBRARY liblua.a)
 endif()
 
-set(danmaku_LIBS 
+set(danmaku_LIBS
   ${SDL_LIBRARY} ${SDLIMAGE_LIBRARY} ${SDLMIXER_LIBRARY}
   ${LUA_LIBRARY} ${PHYSFS_LIBRARY}
-  ${OPENGL_LIBRARIES} tolua++
+  ${OPENGL_LIBRARIES} ${TOLUA_LIBRARY}
 )
 
-set(danmaku_SRCS 
+set(danmaku_SRCS
   back.cpp controller.cpp copypasta.cpp game.cpp hero.cpp enemy_bullet.cpp variables.cpp
   main.cpp particles.cpp script.cpp sprite.cpp text.cpp music.cpp enemy.cpp physfsrwops.c
-  danmaku.rc resolution.cpp danmaku_api.hpp hero_bullet.cpp
+  danmaku.rc resolution.cpp hero_bullet.cpp
 )
+
 
 #хедеры, из которых генерится апи, не забываем прописывать //tolua_export, //tolua_begin, //tolua_end
 set(danmaku_HEADERS
   back.hpp controller.hpp enemy.hpp enemy_bullet.hpp game.hpp hero.hpp music.hpp particles.hpp
-  sprite.hpp text.hpp variables.hpp hero_bullet.hpp)
+  sprite.hpp text.hpp variables.hpp hero_bullet.hpp
+)
 
-
-
-#генерим апи 
-add_custom_command( 
-  OUTPUT danmaku_api.hpp 
+#генерим апи
+add_custom_command(
+  OUTPUT danmaku_api.hpp
 #у меня tolua++ с параметром -o сегфолтится почему-то
-  COMMAND tolua++ danmaku_api.pkg > danmaku_api.hpp 
+  COMMAND ${TOLUA_PROGRAM} ${CMAKE_HOME_DIRECTORY}/danmaku_api.pkg > ${CMAKE_HOME_DIRECTORY}/danmaku_api.hpp
+  WORKING_DIRECTORY ${CMAKE_HOME_DIRECTORY}
   MAIN_DEPENDENCY danmaku_api.pkg
-  DEPENDS ${danmaku_HEADERS})
+  DEPENDS ${danmaku_HEADERS}
+)
 
-
-add_executable(danmaku ${danmaku_SRCS})
+add_executable(danmaku danmaku_api.hpp ${danmaku_SRCS})
 target_link_libraries(danmaku ${danmaku_LIBS})
 
 add_subdirectory(th_ru)
