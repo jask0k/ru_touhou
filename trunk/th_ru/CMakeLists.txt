@@ -38,13 +38,13 @@ foreach(RESOURCE ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS} ${SOUNDS} ${MUSIC})
 endforeach()
 list(APPEND RESOURCES ${LUA_B})
 
-add_custom_target(datafile ALL DEPENDS ../${DATA_FILE})
+add_custom_target(datafile ALL DEPENDS ${CMAKE_BINARY_DIR}/${DATA_FILE})
 
 add_custom_command(
-  OUTPUT ../${DATA_FILE}
+  OUTPUT ${CMAKE_BINARY_DIR}/${DATA_FILE}
 #-u - не добавлять файлы, которые уже есть
 #-j - не добавлять пути
 #-9 - максимальная компрессия
-  COMMAND ${ZIP_PACKER} -9 -u -j ../${DATA_FILE} ${RESOURCES}
+  COMMAND ${ZIP_PACKER} -9 -u -j ${CMAKE_BINARY_DIR}/${DATA_FILE} ${RESOURCES}
   DEPENDS ${LUA_B} ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS} ${SOUNDS} ${MUSIC}
 )
