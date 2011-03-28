@@ -5,7 +5,7 @@
 effects = game.ssheet:new("effects.png"); -- загрузка спрайтового листа
 hero_name="ayayaya";
 
-hero_spritesheet = game.ssheet:new("player_sprite_mokou.png")
+hero_spritesheet = game.ssheet:new("mokou.png")
 hero_scale = 0.25
 
 game.hbmanager:load_spritesheet(game.ssheet:new("bullets.png"));
