@@ -99,7 +99,7 @@ CEngine::CEngine(){
 
   //  glEnable(GL_TEXTURE_RECTANGLE_ARB);
   glEnable(GL_TEXTURE_2D);
-  glEnable(GL_ARB_texture_non_power_of_two);
+  //  glEnable(GL_ARB_texture_non_power_of_two);
   glEnable( GL_DEPTH_TEST );
   glDepthFunc(GL_LEQUAL);	
   glEnable( GL_LIGHTING );
@@ -154,7 +154,7 @@ int CEngine::read_config(){			//TODO: запилить нормальный ко
   
   
   int x, y, wide;
-  res_manager->setCustomValues( 1024, 600, DEFAULT_COLOUR, false, true );
+  res_manager->setCustomValues( 640, 480, DEFAULT_COLOUR, false, false );
   
  // res_manager->setValues( CURRENT_RES, DEFAULT_COLOUR, false );
   
