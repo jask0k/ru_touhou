@@ -52,6 +52,21 @@ function lantern2_AI(lantern)
    end
 end
 
+function midboss_AI(midboss)
+   midboss:bind_AI()
+   midboss.sprite.scale = 2
+   midboss:set_speed(0,-0.5)
+   wait_time(120)
+   midboss.sprite:stop()
+   while true do
+      local i
+      for i = 0,7 do
+	 midboss:shoot(4,i*45)
+      end
+      wait_time(45)
+   end
+end
+
 function lantern_die(sprite)
    sprite:stop()
    sprite:start_animation(2)
@@ -123,6 +138,11 @@ for i = 1,5 do
 --   control_sprite(lantern2_AI, lantern2);
    wait_time(60);
 end
+
+wait_time(600)
+
+mid_boss = game.enmanager:create_enemy(lantern_proto, GAME_FIELD_WIDTH/2, GAME_FIELD_HEIGHT+64)
+thread_start(midboss_AI, "", mid_boss)
 --wait_time(10000);
 --[[
 wait_cond("game.hero.y>300");
