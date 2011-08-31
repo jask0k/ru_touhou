@@ -173,7 +173,16 @@ SDL_RWops *PHYSFSRWOPS_makeRWops(PHYSFS_File *handle)
 
 SDL_RWops *PHYSFSRWOPS_openRead(const char *fname)
 {
-    return(create_rwops(PHYSFS_openRead(fname)));
+  SDL_RWops* handle;
+  if(handle = create_rwops(PHYSFS_openRead(fname)))
+    return(handle);
+  else{
+#ifdef DEBUG
+    printf("error:%s\n", SDL_GetError());
+    printf("fname:%s\n", fname);
+#endif
+    return NULL;
+  }
 } /* PHYSFSRWOPS_openRead */
 
 
