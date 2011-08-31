@@ -22,10 +22,12 @@ void CFrameManager::wait(){
     the_delay = target_ticks - current_ticks;
     SDL_Delay(the_delay);
     FPS = 1000.f/((float)(SDL_GetTicks()-last_ticks)/(frames+1));
+    lag = false;
   } else {
     frames = 0;
     last_ticks = SDL_GetTicks();
     FPS = 0;
+    lag = true;
 #ifdef DEBUG
     //    std::cerr << "LAG!"<<std::endl;
 #endif
@@ -414,7 +416,8 @@ void CEngine::draw(){
   glClear(GL_COLOR_BUFFER_BIT);
   switch (state.main_state){
   case ENGINE_STATE_GAME:
-    draw_game();
+    if (!(fps_manager -> lag))
+      draw_game();
     break;
   case ENGINE_STATE_MAIN_MENU:
     break;
@@ -422,7 +425,8 @@ void CEngine::draw(){
     break;
   }
   if (state.active){
-    SDL_GL_SwapBuffers();
+    if (!(fps_manager -> lag))
+      SDL_GL_SwapBuffers();
     if (state.screenshot){
       state.screenshot = false;
       save_screenshot();

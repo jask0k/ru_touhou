@@ -63,6 +63,7 @@ private:
   GLfloat fps_ticks;
   GLuint last_ticks;
 public:
+  bool lag;
   CFrameManager(CLabel* label);
   GLfloat get_FPS();//извлечение FPS //tolua_export
   // GLfloat get_aFPS();//извлечение среднего показателя FPS
