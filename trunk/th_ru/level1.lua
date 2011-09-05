@@ -55,7 +55,8 @@ end
 function midboss_AI(midboss)
    midboss:bind_AI()
    midboss.sprite.scale = 2
-   midboss:set_speed(0,-0.5)
+   midboss:start_animation(1);--машем крыльями
+   midboss:set_speed(0,-2)
    wait_time(120)
    midboss.sprite:stop()
    while true do
@@ -124,6 +125,7 @@ wait_time(130); -- Ещё ждём
 -- game.background:set_fog_density(.7,0);
 
 lantern_proto = game.enmanager:create_enemy_proto(lantern_ss,1,20,sample_proto,"lantern_die")
+midboss_proto = game.enmanager:create_enemy_proto(lantern_ss,1,500,sample_proto2,"lantern_die")
 
 for i = 1,5 do
    local enemy = game.enmanager:create_enemy(lantern_proto,-31,GAME_FIELD_HEIGHT-100);
@@ -141,7 +143,7 @@ end
 
 wait_time(600)
 
-mid_boss = game.enmanager:create_enemy(lantern_proto, GAME_FIELD_WIDTH/2, GAME_FIELD_HEIGHT+64)
+mid_boss = game.enmanager:create_enemy(midboss_proto, GAME_FIELD_WIDTH/2, GAME_FIELD_HEIGHT+64)
 thread_start(midboss_AI, "", mid_boss)
 --wait_time(10000);
 --[[

@@ -16,6 +16,18 @@
 
 #define CURRENT_RES RES_640x480
 
+#ifdef WIN32
+
+#define CONFIG_FILE "./config.dat"
+
+#else
+
+//здесь будет конфиг в $HOME
+#define CONFIG_FILE "./config.dat"
+
+#endif
+
+#define GAME_DATAFILE "th_ru.dat"
 
 enum decay_state{
   STILL_ALIVE,
