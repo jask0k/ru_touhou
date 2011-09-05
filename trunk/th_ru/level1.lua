@@ -63,6 +63,7 @@ function midboss_AI(midboss)
       local i
       for i = 0,7 do
 	 midboss:shoot(4,i*45)
+	 game.ebmanager:create_bullet(sample_proto, midboss.sprite.x, midboss.sprite.y, 4,i*45+22.5)
       end
       wait_time(45)
    end
