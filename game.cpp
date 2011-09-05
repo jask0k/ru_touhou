@@ -44,7 +44,7 @@ GLfloat CFrameManager::get_FPS(){
 //}
 
 CEngine::CEngine(){
-  PHYSFS_addToSearchPath("th_ru.dat", 1);
+  PHYSFS_addToSearchPath(GAME_DATAFILE, 1);
   state.screenshot = false;
   
   res_manager = new CResolutionManager;
@@ -153,7 +153,7 @@ int CEngine::read_config(){			//TODO: запилить нормальный ко
   yres = DEFAULT_Y;
   colour = DEFAULT_COLOUR;
   fullscreen = WINDOW_DEFAULT;*/
-  
+  std::ifstream configfile(CONFIG_FILE);
   
   int x, y, wide;
   res_manager->setCustomValues( 640, 480, DEFAULT_COLOUR, false, false );
