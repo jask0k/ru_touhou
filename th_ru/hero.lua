@@ -8,9 +8,9 @@ hero_name="ayayaya";
 hero_spritesheet = game.ssheet:new("mokou.png")
 hero_scale = 0.25
 
-game.hbmanager:load_spritesheet(game.ssheet:new("bullets.png"));
+game.hbmanager:load_spritesheet(game.ssheet:new("bullete.png"));
 
-main_proto = game.hbmanager:create_proto("", 1, 1, false, 8, 1, 1, 1, .2);
+main_proto = game.hbmanager:create_proto("", 1, .3, false, 1, 1, 0, 0, .2);
 log(main_proto)
 
 function hero_fire_begin() -- эта функция вызывается при нажатии кнопки атаки
@@ -27,12 +27,7 @@ function hero_fire() -- эта функция вызывается каждый 
                                                        -- _мигающей_ неподвижной струйки
       for i = 55,125,5 do
 	 bullet = game.hbullet:new(main_proto,10,i,0,0) -- наверно, здесь будет работать сборщик мусора
---	 sprite = sprite_create("bullets.png", LAYER_HERO_BULLET);
---	 sprite_set_position(sprite,hero_x(),hero_y(),i);
---	 sprite_set_frame(sprite,8);
---	 sprite_set_angle(sprite,10,i);
---	 sprite_set_alpha(sprite,.2);
---	 sprite_set_scale(sprite,2);
+	 --не будет, чтоб объекты собирались им, нужно вызывать особую функцию толуа
       end
    end
 end

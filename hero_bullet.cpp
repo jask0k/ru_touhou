@@ -54,6 +54,11 @@ void CHeroBulletManager::add(CHeroBullet *new_member){
     new_member -> sprite -> start_animation((GLuint)proto.frame_animation);
   else
     new_member -> sprite -> set_frame(proto.frame_animation);
+  new_member -> sprite -> scale = proto.scale;
+  new_member -> sprite -> tint_r = proto.r;
+  new_member -> sprite -> tint_g = proto.g;
+  new_member -> sprite -> tint_b = proto.b;
+  new_member -> sprite -> alpha = proto.a;
   collection.insert(new_member);
 }
 GLuint CHeroBulletManager::create_proto(std::string die_func, GLfloat damage, 
