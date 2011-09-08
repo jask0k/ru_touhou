@@ -339,7 +339,7 @@ void CEngine::loop(){
 }
 
 void CEngine::draw_game(){
-  
+/*
   if( res_manager->isWidescreen() )		// дорисовываем особенности широкоформатки
   {
   	glViewport( 0, 0, res_manager->getXRes(), res_manager->getYRes() );
@@ -360,7 +360,7 @@ void CEngine::draw_game(){
 	glDisable2D();
   }
   
-  
+*/ 
   glViewport(res_manager->getBorderW(), 0, res_manager->getWidth(), res_manager->getHeight());
   glLoadIdentity();
 
@@ -368,10 +368,10 @@ void CEngine::draw_game(){
   //рисуем панельку со статами здесь
   glBindTexture(GL_TEXTURE_2D, ui_background);
   glBegin( GL_QUADS );{
-    glTexCoord2i(0, 1); glVertex2i(0, 0);
-    glTexCoord2i(1, 1); glVertex2i(res_manager->getWidth(), 0);
-    glTexCoord2i(1, 0); glVertex2i(res_manager->getWidth(), res_manager->getHeight());
-    glTexCoord2i(0, 0); glVertex2i(0, res_manager->getHeight());}
+    glTexCoord2f(0, 480.f/512.f); glVertex2i(0, 0);
+    glTexCoord2f(640.f/1024.f, 480.0f/512.f); glVertex2i(res_manager->getWidth(), 0);
+    glTexCoord2f(640.0f/1024.f, 0); glVertex2i(res_manager->getWidth(), res_manager->getHeight());
+    glTexCoord2f(0, 0); glVertex2i(0, res_manager->getHeight());}
   glEnd();
   
   glScalef( res_manager->getScaleX(), res_manager->getScaleY(), 1.0f);	// растягиваем игровую область в соответствии с разрешением
