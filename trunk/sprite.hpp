@@ -60,7 +60,8 @@ enum Layer{
   LAYER_ENEMY,
   LAYER_HERO_BULLET,
   LAYER_HERO,
-  LAYER_EMBLEM
+  LAYER_EMBLEM,
+  LAYER_UI
 };
 
 class CSpriteSheetManager{

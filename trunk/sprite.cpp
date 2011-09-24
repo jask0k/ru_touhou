@@ -349,11 +349,11 @@ decay_state CSprite::think(){
   if (scale <= 0.f)
     return DECOMPOSED;
   x += v_x;
-  if (x < -get_width() || x > GAME_FIELD_WIDTH+get_width())
+  if ((x < -get_width() || x > GAME_FIELD_WIDTH+get_width()) && layer!=LAYER_UI)
     return DECOMPOSED;
   //std::cerr<<"x:"<<x <<" "<<-get_width()<<";"<<std::endl;
   y += v_y;
-  if (y < -get_height() || y > GAME_FIELD_HEIGHT+get_height())
+  if ((y < -get_height() || y > GAME_FIELD_HEIGHT+get_height()) && layer!=LAYER_UI)
     return DECOMPOSED;
   //std::cerr<<"y:"<<y <<" "<<get_height()<<";"<<std::endl;
 
