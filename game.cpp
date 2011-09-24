@@ -376,7 +376,7 @@ void CEngine::draw_game(){
   
   glScalef( res_manager->getScaleX(), res_manager->getScaleY(), 1.0f);	// растягиваем игровую область в соответствии с разрешением
   game::lmanager -> draw(LAYER_PANEL);
-
+  game::smanager -> draw(LAYER_UI);
   glDisable2D();
 
   glViewport(res_manager->getBorderW() + res_manager->getOriginX(), res_manager->getOriginY(), res_manager->getGFWidth(), res_manager->getGFHeight());
