@@ -20,7 +20,20 @@ foreach(COMPILED_SCRIPT ${LUA_B})
   endif()
 endforeach()
 
-find_program(ZIP_PACKER NAMES pkzip zip)
+if (NOT (DEFINED COMPRESSION))
+	set (COMPRESSION "zip")
+endif (NOT (DEFINED COMPRESSION))
+
+if (COMPRESSION STREQUAL "zip")
+	find_program(PACKER NAMES pkzip zip)
+	#-u - не добавлять файлы, которые уже есть
+	#-j - не добавлять пути
+	#-9 - максимальная компрессия
+	set(PACKER_OPTS -9 -u -j)
+elseif (COMPRESSION STREQUAL "7zip")
+	find_program(PACKER NAMES 7z)
+	set(PACKER_OPTS a)
+endif (COMPRESSION STREQUAL "zip")
 
 set(DATA_FILE th_ru.dat)
 set(PICTURES ui.png grass.png icon.png ui_wide.png)
@@ -41,10 +54,7 @@ list(APPEND RESOURCES ${LUA_B})
 add_custom_target(datafile ALL DEPENDS ${CMAKE_BINARY_DIR}/${DATA_FILE})
 
 add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/${DATA_FILE}
-#-u - не добавлять файлы, которые уже есть
-#-j - не добавлять пути
-#-9 - максимальная компрессия
-  COMMAND ${ZIP_PACKER} -9 -u -j ${CMAKE_BINARY_DIR}/${DATA_FILE} ${RESOURCES}
-  DEPENDS ${LUA_B} ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS} ${SOUNDS} ${MUSIC}
+	OUTPUT ${CMAKE_BINARY_DIR}/${DATA_FILE}
+	COMMAND ${PACKER} ${PACKER_OPTS} ${CMAKE_BINARY_DIR}/${DATA_FILE} ${RESOURCES}
+	DEPENDS ${LUA_B} ${PICTURES} ${SPRITESHEETS} ${ANIMATIONS} ${SOUNDS} ${MUSIC}
 )
