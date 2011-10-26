@@ -74,6 +74,7 @@ function lantern_die(sprite)
    sprite:start_animation(2)
    sprite.decay_timer = 20
    sprite.decay_active=true
+   v_score:inc(10)
 end
 
 

@@ -31,6 +31,7 @@ class CLabel;
 #include "music.hpp"
 #include "physfsrwops.h"
 #include "resolution.hpp"
+#include "variables.hpp"
 
 namespace game{
   extern CEngine* engine;//tolua_export

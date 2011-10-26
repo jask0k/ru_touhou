@@ -10,6 +10,7 @@ namespace game{
   CHero* hero;
   CHeroBulletManager* hbmanager;
   CEnemyBulletManager* ebmanager;
+  CVariableManager* vmanager;
   CEnemyManager* enmanager;
   CParticleManager* pmanager;
   CBoomBox* boom_box;
@@ -21,6 +22,7 @@ int main(int argc, char* argv[]){
   game::ssmanager = new CSpriteSheetManager;
   game::smanager = new CSpriteManager;
   game::lmanager = new CLabelManager;
+  game::vmanager = new CVariableManager;
   game::script = new CScript;
   game::engine = new CEngine;
   game::background = new CBack;
@@ -40,6 +42,7 @@ int main(int argc, char* argv[]){
   delete game::boom_box;
   delete game::pmanager;
   delete game::hbmanager;
+  delete game::vmanager;
   delete game::enmanager;
   delete game::ebmanager;
   delete game::background;

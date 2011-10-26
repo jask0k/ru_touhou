@@ -4,9 +4,13 @@
 -- spritesheet_load("aya_2.png");
 -- spritesheet_load("bullets.png");
 ss_ui=game.ssheet:new("panel_labels.png");
+font_texture=game.ssheet:new("fontscore.png");
+font_ui=game.lmanager:font_load(font_texture);
 l_score = game.sprite:new(ss_ui,game.LAYER_UI);
 l_score.x= 640-138
 l_score.y=480-48
+
+v_score = game.var:new("score", 100, 0, font_ui, 640-138, 480-77, game.LAYER_PANEL);
 
 l_lives = game.sprite:new(ss_ui,game.LAYER_UI);
 l_lives.frame=3;
