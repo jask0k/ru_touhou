@@ -4,6 +4,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 #include <vector>
+#include <set>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -27,7 +28,7 @@ enum text_layer{
 
 class CLabel{
 public:
-  CLabel(GLint x, GLint y, std::string text, CSpriteSheet* font, text_layer layer, GLuint decay=0);
+  CLabel(GLint x, GLint y, std::string text, int font_no, text_layer layer, GLuint decay=0);
   ~CLabel();
   //tolua_end
   void draw();
@@ -55,16 +56,19 @@ public:
   //tolua_end
   void draw(text_layer layer);
   void think();
+  void add_label(CLabel* label);
+  void del_label(CLabel* label);
   //tolua_begin
   int font_load(CSpriteSheet* fontsheet);
-  GLuint text_add(GLint x, GLint y, std::string text, GLuint font_n, text_layer layer, GLuint decay=0);
-  CLabel* get_label(GLuint handle); 
-  void destroy_label(GLuint handle);
+  CSpriteSheet* font_get(int no);
+  //  GLuint text_add(GLint x, GLint y, std::string text, GLuint font_n, text_layer layer, GLuint decay=0);
+  // CLabel* get_label(GLuint handle); 
+  //void destroy_label(GLuint handle);
   //tolua_end;
 private:
 
-  GLuint min_handle;
-  std::map<GLuint,CLabel*> labels;
+  //  GLuint min_handle;
+  std::set<CLabel*> collection;
   std::vector<CSpriteSheet*> fonts;
 }; //tolua_export
  

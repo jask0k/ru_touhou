@@ -119,9 +119,9 @@ CEngine::CEngine(){
   //  game::script -> run_script("hero");
   //Перенести в скрипты?
   CSpriteSheet* fps_font = new CSpriteSheet("fontg.png"); 
-  game::lmanager -> font_load (fps_font);
-  game::lmanager -> text_add(9, 18, std::string("fps:"), 0, LAYER_GAME, 0);
-  fps_manager = new CFrameManager(game::lmanager-> get_label (game::lmanager -> text_add(45, 18, std::string("0"), 0, LAYER_GAME, 0)));
+  int font_fps = game::lmanager -> font_load (fps_font);
+  CLabel* fps_label = new CLabel(9, 18, std::string("fps:"), font_fps, LAYER_GAME, 0);
+  fps_manager = new CFrameManager(new CLabel(45, 18, std::string("0"), font_fps, LAYER_GAME, 0));
   ui_background = LoadTexture_simple("ui.png");
  
  // if( res_manager->isWidescreen() )
